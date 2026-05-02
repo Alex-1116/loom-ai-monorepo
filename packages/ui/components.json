@@ -9,13 +9,13 @@
     "baseColor": "neutral",
     "cssVariables": true
   },
-  "iconLibrary": "hugeicons",
+  "iconLibrary": "lucide",
   "aliases": {
-    "components": "@workspace/ui/components",
-    "utils": "@workspace/ui/lib/utils",
-    "hooks": "@workspace/ui/hooks",
-    "lib": "@workspace/ui/lib",
-    "ui": "@workspace/ui/components"
+    "components": "@loom/ui/components",
+    "utils": "@loom/ui/lib/utils",
+    "hooks": "@loom/ui/hooks",
+    "lib": "@loom/ui/lib",
+    "ui": "@loom/ui/components"
   },
   "rtl": false,
   "menuColor": "default",
