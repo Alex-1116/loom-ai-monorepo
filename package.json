@@ -4,15 +4,17 @@
   "private": true,
   "scripts": {
     "build": "turbo build",
-    "catalog:local": "node ./scripts/catalog-local.mjs",
-    "catalog:official": "node ./scripts/catalog-official.mjs",
-    "cleanup": "node scripts/cleanup.mjs",
-    "cleanup:all": "node scripts/cleanup.mjs --del-lock",
     "dev": "turbo dev",
+    "dev:web": "pnpm --filter web dev",
+    "dev:edu": "pnpm --filter st-petersburg-edu dev",
     "lint": "turbo lint",
     "format": "turbo format",
     "typecheck": "turbo typecheck",
-    "prepare": "husky"
+    "prepare": "husky",
+    "catalog:local": "node ./scripts/catalog-local.mjs",
+    "catalog:official": "node ./scripts/catalog-official.mjs",
+    "cleanup": "node scripts/cleanup.mjs",
+    "cleanup:all": "node scripts/cleanup.mjs --del-lock"
   },
   "devDependencies": {
     "@commitlint/cli": "catalog:",

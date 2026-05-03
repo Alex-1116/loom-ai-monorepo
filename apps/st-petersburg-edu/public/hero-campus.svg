@@ -1,0 +1,40 @@
+<svg width="1600" height="960" viewBox="0 0 1600 960" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1600" height="960" fill="url(#bg)"/>
+  <circle cx="1220" cy="168" r="78" fill="url(#sun)" opacity="0.85"/>
+  <circle cx="1245" cy="196" r="126" fill="#FFF3D8" opacity="0.08"/>
+  <path d="M0 635C151 584 320 603 447 645C569 685 721 733 880 719C1074 701 1184 572 1384 580C1463 583 1530 603 1600 635V960H0V635Z" fill="#E3E9FF" opacity="0.35"/>
+  <path d="M0 691C187 660 356 691 480 735C609 780 726 816 883 805C1070 793 1234 654 1438 659C1494 660 1548 670 1600 691V960H0V691Z" fill="#D6DEFF" opacity="0.42"/>
+  <path d="M0 754C134 722 266 729 394 767C504 799 626 839 791 842C1016 845 1175 703 1379 706C1458 707 1531 720 1600 754V960H0V754Z" fill="#C6D3FF" opacity="0.5"/>
+  <path d="M0 794L132 783L160 754H180L193 793L248 781L270 745H291L302 791L349 795L371 762H390L406 794L476 789L496 716H519L538 788H566L588 762H603L624 788L696 792L716 706H742L762 793L820 783L838 739H857L877 791L929 783L946 721H970L989 792L1067 788L1090 713H1114L1135 790L1197 785L1218 734H1240L1258 791L1330 785L1350 752H1371L1390 790L1600 794V960H0V794Z" fill="#233262"/>
+  <path d="M616 612L639 579H667L690 612V794H616V612Z" fill="#314690"/>
+  <rect x="644" y="540" width="18" height="39" fill="#314690"/>
+  <path d="M760 579L782 534H812L834 579V794H760V579Z" fill="#314690"/>
+  <rect x="786" y="482" width="20" height="52" fill="#314690"/>
+  <path d="M1112 596L1138 560H1167L1194 596V794H1112V596Z" fill="#314690"/>
+  <rect x="1146" y="519" width="17" height="41" fill="#314690"/>
+  <path d="M236 791H456V718L439 702H419L403 718V791H389V692L371 675H349L332 692V791H318V733L300 717H279L263 733V791H236Z" fill="#1B2851"/>
+  <path d="M960 791H1268V702L1244 676H1215L1192 702V791H1173V646L1146 620H1114L1088 646V791H1067V690L1044 664H1013L990 690V791H960Z" fill="#1B2851"/>
+  <path d="M84 791H196V738L184 726H171L159 738V791H148V704L135 691H119L106 704V791H84Z" fill="#1B2851"/>
+  <path d="M1310 791H1514V728L1496 710H1474L1458 728V791H1440V676L1420 657H1394L1375 676V791H1355V720L1338 703H1319L1310 713V791Z" fill="#1B2851"/>
+  <rect y="791" width="1600" height="169" fill="url(#ground)"/>
+  <g opacity="0.4">
+    <rect x="120" y="152" width="76" height="3" rx="1.5" fill="white"/>
+    <rect x="238" y="184" width="52" height="3" rx="1.5" fill="white"/>
+    <rect x="1290" y="250" width="62" height="3" rx="1.5" fill="white"/>
+  </g>
+  <defs>
+    <linearGradient id="bg" x1="800" y1="0" x2="800" y2="960" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#F5F8FF"/>
+      <stop offset="0.42" stop-color="#EAF0FF"/>
+      <stop offset="1" stop-color="#C8D5FF"/>
+    </linearGradient>
+    <radialGradient id="sun" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(1220 168) rotate(90) scale(78)">
+      <stop stop-color="#FFD89A"/>
+      <stop offset="1" stop-color="#FFD89A" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="ground" x1="800" y1="791" x2="800" y2="960" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#152043"/>
+      <stop offset="1" stop-color="#101733"/>
+    </linearGradient>
+  </defs>
+</svg>

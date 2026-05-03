@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" contentScriptType="text/ecmascript" zoomAndPan="magnify" contentStyleType="text/css" style="stroke-opacity: 1.0;" version="1.0" width="48" fill="none" preserveAspectRatio="xMidYMid meet" viewBox="0 0 48 48" height="48" opacity="1.0">
+<path stroke-linecap="round" fill-opacity="1.0" fill="#5961F9" stroke-linejoin="round" d="M4 6V42H30V6H4Z" stroke="#5961F9" stroke-width="2.0"/>
+<path d="M12 42V6" stroke-width="2.0" stroke-linejoin="round" stroke-linecap="round" stroke="white"/>
+<path stroke-linecap="round" fill-opacity="1.0" fill="#5961F9" stroke-linejoin="round" d="M44 6H36V38L40 42L44 38V6Z" stroke="#5961F9" stroke-width="2.0"/>
+<path d="M36 12H44" stroke-width="2.0" stroke-linejoin="round" stroke-linecap="round" stroke="white"/>
+<path d="M30 6H4" stroke-width="2.0" stroke-linejoin="round" stroke-linecap="round" stroke="#5961F9"/>
+<path d="M30 42H4" stroke-width="2.0" stroke-linejoin="round" stroke-linecap="round" stroke="#5961F9"/>
+<path d="M36 6V22" stroke-width="2.0" stroke-linejoin="round" stroke-linecap="round" stroke="#5961F9"/>
+<path d="M44 6V22" stroke-width="2.0" stroke-linejoin="round" stroke-linecap="round" stroke="#5961F9"/>
+</svg>
