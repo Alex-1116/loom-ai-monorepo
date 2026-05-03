@@ -1,4 +1,10 @@
 {
+  "files.exclude": {
+    "**/.agents": true,
+    "**/.husky": true,
+    "**/.trae": true,
+    "**/.vscode": true
+  },
   "eslint.workingDirectories": [
     {
       "mode": "auto"

@@ -26,7 +26,7 @@ catalogs:
       version: 4.2.4
     '@turbo/gen':
       specifier: ^2.8.1
-      version: 2.9.7
+      version: 2.9.8
     '@types/node':
       specifier: ^25.1.0
       version: 25.6.0
@@ -74,7 +74,7 @@ catalogs:
       version: 7.1.1
     eslint-plugin-turbo:
       specifier: ^2.8.1
-      version: 2.9.7
+      version: 2.9.8
     globals:
       specifier: ^17.2.0
       version: 17.6.0
@@ -116,7 +116,7 @@ catalogs:
       version: 19.2.5
     react-resizable-panels:
       specifier: ^4.10.0
-      version: 4.10.0
+      version: 4.11.0
     recharts:
       specifier: 3.8.0
       version: 3.8.0
@@ -134,7 +134,7 @@ catalogs:
       version: 4.2.4
     turbo:
       specifier: ^2.9.7
-      version: 2.9.7
+      version: 2.9.8
     tw-animate-css:
       specifier: ^1.4.0
       version: 1.4.0
@@ -184,7 +184,7 @@ importers:
         version: 0.7.4(prettier@3.8.3)
       turbo:
         specifier: 'catalog:'
-        version: 2.9.7
+        version: 2.9.8
       typescript:
         specifier: 'catalog:'
         version: 5.9.3
@@ -278,7 +278,7 @@ importers:
         version: 19.2.5(react@19.2.5)
       react-resizable-panels:
         specifier: 'catalog:'
-        version: 4.10.0(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
+        version: 4.11.0(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
       recharts:
         specifier: 'catalog:'
         version: 3.8.0(@types/react@19.2.14)(react-dom@19.2.5(react@19.2.5))(react-is@16.13.1)(react@19.2.5)(redux@5.0.1)
@@ -312,7 +312,7 @@ importers:
         version: 4.2.4
       '@turbo/gen':
         specifier: 'catalog:'
-        version: 2.9.7(@types/node@25.6.0)
+        version: 2.9.8(@types/node@25.6.0)
       '@types/node':
         specifier: 'catalog:'
         version: 25.6.0
@@ -363,7 +363,7 @@ importers:
         version: 7.1.1(eslint@9.39.4(jiti@2.6.1))
       eslint-plugin-turbo:
         specifier: 'catalog:'
-        version: 2.9.7(eslint@9.39.4(jiti@2.6.1))(turbo@2.9.7)
+        version: 2.9.8(eslint@9.39.4(jiti@2.6.1))(turbo@2.9.8)
       globals:
         specifier: 'catalog:'
         version: 17.6.0
@@ -1722,6 +1722,19 @@ packages:
       '@types/react-dom':
         optional: true
 
+  '@radix-ui/react-primitive@2.1.4':
+    resolution: {integrity: sha512-9hQc4+GNVtJAIEPEqlYqW5RiYdrr8ea5XQ0ZOnD6fgru+83kqT15mq2OCcbe8KnjRZl5vF3ks69AKz3kh1jrhg==, tarball: https://registry.npmjs.org/@radix-ui/react-primitive/-/react-primitive-2.1.4.tgz}
+    peerDependencies:
+      '@types/react': '*'
+      '@types/react-dom': '*'
+      react: ^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc
+      react-dom: ^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc
+    peerDependenciesMeta:
+      '@types/react':
+        optional: true
+      '@types/react-dom':
+        optional: true
+
   '@radix-ui/react-progress@1.1.7':
     resolution: {integrity: sha512-vPdg/tF6YC/ynuBIJlk1mm7Le0VgW6ub6J2UWnTQ7/D23KXcPI1qy+0vBkgKgd38RCMJavBXpB83HPNFMTb0Fg==, tarball: https://registry.npmjs.org/@radix-ui/react-progress/-/react-progress-1.1.7.tgz}
     peerDependencies:
@@ -1815,6 +1828,15 @@ packages:
 
   '@radix-ui/react-slot@1.2.3':
     resolution: {integrity: sha512-aeNmHnBxbi2St0au6VBVC7JXFlhLlOnvIIlePNniyUNAClzmtAUEY8/pBiK3iHjufOlwA+c20/8jngo7xcrg8A==, tarball: https://registry.npmjs.org/@radix-ui/react-slot/-/react-slot-1.2.3.tgz}
+    peerDependencies:
+      '@types/react': '*'
+      react: ^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc
+    peerDependenciesMeta:
+      '@types/react':
+        optional: true
+
+  '@radix-ui/react-slot@1.2.4':
+    resolution: {integrity: sha512-Jl+bCv8HxKnlTLVrcDE8zTMJ09R9/ukw4qBs/oZClOfoQk/cOTbDn+NceXfV7j09YPVQUryJPHurafcSg6EVKA==, tarball: https://registry.npmjs.org/@radix-ui/react-slot/-/react-slot-1.2.4.tgz}
     peerDependencies:
       '@types/react': '*'
       react: ^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc
@@ -2144,37 +2166,37 @@ packages:
   '@ts-morph/common@0.27.0':
     resolution: {integrity: sha512-Wf29UqxWDpc+i61k3oIOzcUfQt79PIT9y/MWfAGlrkjg6lBC1hwDECLXPVJAhWjiGbfBCxZd65F/LIZF3+jeJQ==, tarball: https://registry.npmjs.org/@ts-morph/common/-/common-0.27.0.tgz}
 
-  '@turbo/darwin-64@2.9.7':
-    resolution: {integrity: sha512-wnvOWuVWJ5EUHNKxExEWiGlTeVpLG1L0PCu5MUozyC1P2SHGiWsmpW6/yAuShH91Fa2TAHOvdCRBzriZh4j4Eg==, tarball: https://registry.npmjs.org/@turbo/darwin-64/-/darwin-64-2.9.7.tgz}
+  '@turbo/darwin-64@2.9.8':
+    resolution: {integrity: sha512-zU1P95ygDpsQ+2QHh7CVTqvYwi9UBlhKWzoIyUnP3vUoge7H9SQEzrd8dj+XcTrslAp9Db3vIBcXtMVoTEYDnA==, tarball: https://registry.npmjs.org/@turbo/darwin-64/-/darwin-64-2.9.8.tgz}
     cpu: [x64]
     os: [darwin]
 
-  '@turbo/darwin-arm64@2.9.7':
-    resolution: {integrity: sha512-mA0FIPMwwN3lodDkQYaGxj6PeT7ZaN5aCEbkKn/WB+ZB9yJdVWA4J83GH7t43jqDc5dcnVluVN5UFx3plRiXhA==, tarball: https://registry.npmjs.org/@turbo/darwin-arm64/-/darwin-arm64-2.9.7.tgz}
+  '@turbo/darwin-arm64@2.9.8':
+    resolution: {integrity: sha512-nKRFI5ZhCGUi4eXNlrojzWcT/CehMj0raot1WE4lw5qf66ZxZHbRbBqcwNEy+ZLY7RkJJRY+TaU89fuj3BcgGg==, tarball: https://registry.npmjs.org/@turbo/darwin-arm64/-/darwin-arm64-2.9.8.tgz}
     cpu: [arm64]
     os: [darwin]
 
-  '@turbo/gen@2.9.7':
-    resolution: {integrity: sha512-gj587JKFqIEMw442LrE+M3V13isvN9GB/wUlApHorihvLB6Cv1ZVZEhR+8lTAduqLoafzwlhbCwZsT3wHC8Pow==, tarball: https://registry.npmjs.org/@turbo/gen/-/gen-2.9.7.tgz}
+  '@turbo/gen@2.9.8':
+    resolution: {integrity: sha512-whc1xUXvYQ05etSNs6akwU4KpB1mn8q8GIVTz+nB0ruTqvN0tdS7gN/l+UZC0hvipoKUPW9IRrUIxljMq8AKWg==, tarball: https://registry.npmjs.org/@turbo/gen/-/gen-2.9.8.tgz}
     hasBin: true
 
-  '@turbo/linux-64@2.9.7':
-    resolution: {integrity: sha512-fEbUYpgb5l7P+q+5tsWF2gw+/GSjUsuUTcnfm+f0lozUjgcjLKyOat6PgtAChmIFcTPchCL/8rJ3TvkBy01gfA==, tarball: https://registry.npmjs.org/@turbo/linux-64/-/linux-64-2.9.7.tgz}
+  '@turbo/linux-64@2.9.8':
+    resolution: {integrity: sha512-Wf/kQpVDCaWM3P5d6lKvJnqjYn/ofUBGbT4h4vRFrdC4N6B/nsun03S2kQNJJMXpXg39woeS4CI367RMU3/OAg==, tarball: https://registry.npmjs.org/@turbo/linux-64/-/linux-64-2.9.8.tgz}
     cpu: [x64]
     os: [linux]
 
-  '@turbo/linux-arm64@2.9.7':
-    resolution: {integrity: sha512-VkUjulo9ytfHKUHOS5gy0XPoh4CTKPXWCL8nLdrlHVi9fSut31ECeUqnm/dAbETP5D4xo9mH9XkJ+qMzGe/zmg==, tarball: https://registry.npmjs.org/@turbo/linux-arm64/-/linux-arm64-2.9.7.tgz}
+  '@turbo/linux-arm64@2.9.8':
+    resolution: {integrity: sha512-v6S3HuKVoa9CEx16IxKj1i/+crxXx22A9O80zW1350zyUlcX0T/zLOxVf1k+ruK/7ssXnDJVg8uSYOxlYRedlA==, tarball: https://registry.npmjs.org/@turbo/linux-arm64/-/linux-arm64-2.9.8.tgz}
     cpu: [arm64]
     os: [linux]
 
-  '@turbo/windows-64@2.9.7':
-    resolution: {integrity: sha512-/GWdY6/x4aIHqkYJq596Rpdk1x0MkpRPkJcLAoB3yGRwyUms0+u2F1GnV54IbyAZTeKLRWSJKzNC+QwVGdYchA==, tarball: https://registry.npmjs.org/@turbo/windows-64/-/windows-64-2.9.7.tgz}
+  '@turbo/windows-64@2.9.8':
+    resolution: {integrity: sha512-JaefWOJNBazDylAn3f+lLB34XMNu8nEBbgPRP/Ewysg81cBubGfcyyyzpQOGVuMwfaqdNAE/kitG7w3AbJn9/g==, tarball: https://registry.npmjs.org/@turbo/windows-64/-/windows-64-2.9.8.tgz}
     cpu: [x64]
     os: [win32]
 
-  '@turbo/windows-arm64@2.9.7':
-    resolution: {integrity: sha512-xBBgxCC5PK2+WZ1PPRZdp+aJ0bMBcEbweXWux3RUHJvX9ZodcoQySkrW6qt+ahb+uk8ZjyQodLfDwtVSoYds1w==, tarball: https://registry.npmjs.org/@turbo/windows-arm64/-/windows-arm64-2.9.7.tgz}
+  '@turbo/windows-arm64@2.9.8':
+    resolution: {integrity: sha512-Or6ljjB4TiiwCdVKDYWew0SokQ9kep5zruL8P3nbum9WdkH5XA41rQID4Ulc215Z+R3DrB+qXSHPsJjU3/n2ng==, tarball: https://registry.npmjs.org/@turbo/windows-arm64/-/windows-arm64-2.9.8.tgz}
     cpu: [arm64]
     os: [win32]
 
@@ -2865,8 +2887,8 @@ packages:
     peerDependencies:
       eslint: ^3 || ^4 || ^5 || ^6 || ^7 || ^8 || ^9.7
 
-  eslint-plugin-turbo@2.9.7:
-    resolution: {integrity: sha512-jFCPV+hnGXNBFjESdF3jmKFD11orR8JcXEjuPSGDW7QyLeYG76shsTHO5JjuRvOFwRO0SEPkTfMdxHKnVnnuWg==, tarball: https://registry.npmjs.org/eslint-plugin-turbo/-/eslint-plugin-turbo-2.9.7.tgz}
+  eslint-plugin-turbo@2.9.8:
+    resolution: {integrity: sha512-czP2GjPzR6G+BpVEKXNa7Vs45/Zz0QjUEyB+SSLNpVJTqBe331AlE9IxkC2Eh00H6a1hf/Q6BVwf+1WJupyVYA==, tarball: https://registry.npmjs.org/eslint-plugin-turbo/-/eslint-plugin-turbo-2.9.8.tgz}
     peerDependencies:
       eslint: '>6.6.0'
       turbo: '>2.0.0'
@@ -4071,8 +4093,8 @@ packages:
       '@types/react':
         optional: true
 
-  react-resizable-panels@4.10.0:
-    resolution: {integrity: sha512-frjewRQt7TCv/vCH1pJfjZ7RxAhr5pKuqVQtVgzFq/vherxBFOWyC3xMbryx5Ti2wylViGUFc93Etg4rB3E0UA==, tarball: https://registry.npmjs.org/react-resizable-panels/-/react-resizable-panels-4.10.0.tgz}
+  react-resizable-panels@4.11.0:
+    resolution: {integrity: sha512-LPk/AkFDGkg7SsbOyL93ojrE6E7lhrxxDwnYNjfmnSeI6BE7Sje6dB24PXgZk8DeugdeXNk1LO+ohRqIjhxiLw==, tarball: https://registry.npmjs.org/react-resizable-panels/-/react-resizable-panels-4.11.0.tgz}
     peerDependencies:
       react: ^18.0.0 || ^19.0.0
       react-dom: ^18.0.0 || ^19.0.0
@@ -4444,8 +4466,8 @@ packages:
   tslib@2.8.1:
     resolution: {integrity: sha512-oJFu94HQb+KVduSUQL7wnpmqnfmLsOA/nAh6b6EH0wCEoK0/mPeXU6c3wKDV83MkOuHPRHtSXKKU99IBazS/2w==, tarball: https://registry.npmjs.org/tslib/-/tslib-2.8.1.tgz}
 
-  turbo@2.9.7:
-    resolution: {integrity: sha512-epxzqVO2s0IxcSWcgb+qKrtco8isfe7g3VtiS6hkYnEK4A9XQDZbrtavQ6MtWR1KoQn+1fUomaQth2rfRHlUlg==, tarball: https://registry.npmjs.org/turbo/-/turbo-2.9.7.tgz}
+  turbo@2.9.8:
+    resolution: {integrity: sha512-REEB2rVTVDTf4hav1gJ5dIsGylWZrNonvjXFtk1dCi8gND3PhZtnYkyry1bra/Fo+iP6ctTEZbg6vWfdfHq/1A==, tarball: https://registry.npmjs.org/turbo/-/turbo-2.9.8.tgz}
     hasBin: true
 
   tw-animate-css@1.4.0:
@@ -4669,6 +4691,9 @@ packages:
 
   zod@3.25.76:
     resolution: {integrity: sha512-gzUt/qt81nXsFGKIFcC3YnfEAx5NkunCfnDlvuBSSFS02bcXu4Lmea0AFIUwbLWxWPx3d9p8S5QoaujKcNQxcQ==, tarball: https://registry.npmjs.org/zod/-/zod-3.25.76.tgz}
+
+  zod@4.4.2:
+    resolution: {integrity: sha512-IynmDyxsEsb9RKzO3J9+4SxXnl2FTFSzNBaKKaMV6tsSk0rw9gYw9gs+JFCq/qk2LCZ78KDwyj+Z289TijSkUw==, tarball: https://registry.npmjs.org/zod/-/zod-4.4.2.tgz}
 
 snapshots:
 
@@ -5987,6 +6012,15 @@ snapshots:
       '@types/react': 19.2.14
       '@types/react-dom': 19.2.3(@types/react@19.2.14)
 
+  '@radix-ui/react-primitive@2.1.4(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(react-dom@19.2.5(react@19.2.5))(react@19.2.5)':
+    dependencies:
+      '@radix-ui/react-slot': 1.2.4(@types/react@19.2.14)(react@19.2.5)
+      react: 19.2.5
+      react-dom: 19.2.5(react@19.2.5)
+    optionalDependencies:
+      '@types/react': 19.2.14
+      '@types/react-dom': 19.2.3(@types/react@19.2.14)
+
   '@radix-ui/react-progress@1.1.7(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(react-dom@19.2.5(react@19.2.5))(react@19.2.5)':
     dependencies:
       '@radix-ui/react-context': 1.1.2(@types/react@19.2.14)(react@19.2.5)
@@ -6107,6 +6141,13 @@ snapshots:
       '@types/react-dom': 19.2.3(@types/react@19.2.14)
 
   '@radix-ui/react-slot@1.2.3(@types/react@19.2.14)(react@19.2.5)':
+    dependencies:
+      '@radix-ui/react-compose-refs': 1.1.2(@types/react@19.2.14)(react@19.2.5)
+      react: 19.2.5
+    optionalDependencies:
+      '@types/react': 19.2.14
+
+  '@radix-ui/react-slot@1.2.4(@types/react@19.2.14)(react@19.2.5)':
     dependencies:
       '@radix-ui/react-compose-refs': 1.1.2(@types/react@19.2.14)(react@19.2.5)
       react: 19.2.5
@@ -6404,29 +6445,29 @@ snapshots:
       minimatch: 10.2.5
       path-browserify: 1.0.1
 
-  '@turbo/darwin-64@2.9.7':
+  '@turbo/darwin-64@2.9.8':
     optional: true
 
-  '@turbo/darwin-arm64@2.9.7':
+  '@turbo/darwin-arm64@2.9.8':
     optional: true
 
-  '@turbo/gen@2.9.7(@types/node@25.6.0)':
+  '@turbo/gen@2.9.8(@types/node@25.6.0)':
     dependencies:
       '@inquirer/prompts': 7.10.1(@types/node@25.6.0)
       esbuild: 0.25.12
     transitivePeerDependencies:
       - '@types/node'
 
-  '@turbo/linux-64@2.9.7':
+  '@turbo/linux-64@2.9.8':
     optional: true
 
-  '@turbo/linux-arm64@2.9.7':
+  '@turbo/linux-arm64@2.9.8':
     optional: true
 
-  '@turbo/windows-64@2.9.7':
+  '@turbo/windows-64@2.9.8':
     optional: true
 
-  '@turbo/windows-arm64@2.9.7':
+  '@turbo/windows-arm64@2.9.8':
     optional: true
 
   '@types/d3-array@3.2.2': {}
@@ -6799,7 +6840,7 @@ snapshots:
       '@radix-ui/react-compose-refs': 1.1.2(@types/react@19.2.14)(react@19.2.5)
       '@radix-ui/react-dialog': 1.1.15(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
       '@radix-ui/react-id': 1.1.1(@types/react@19.2.14)(react@19.2.5)
-      '@radix-ui/react-primitive': 2.1.3(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
+      '@radix-ui/react-primitive': 2.1.4(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
       react: 19.2.5
       react-dom: 19.2.5(react@19.2.5)
     transitivePeerDependencies:
@@ -7196,8 +7237,8 @@ snapshots:
       '@babel/parser': 7.29.3
       eslint: 9.39.4(jiti@2.6.1)
       hermes-parser: 0.25.1
-      zod: 3.25.76
-      zod-validation-error: 4.0.2(zod@3.25.76)
+      zod: 4.4.2
+      zod-validation-error: 4.0.2(zod@4.4.2)
     transitivePeerDependencies:
       - supports-color
 
@@ -7223,11 +7264,11 @@ snapshots:
       string.prototype.matchall: 4.0.12
       string.prototype.repeat: 1.0.0
 
-  eslint-plugin-turbo@2.9.7(eslint@9.39.4(jiti@2.6.1))(turbo@2.9.7):
+  eslint-plugin-turbo@2.9.8(eslint@9.39.4(jiti@2.6.1))(turbo@2.9.8):
     dependencies:
       dotenv: 16.0.3
       eslint: 9.39.4(jiti@2.6.1)
-      turbo: 2.9.7
+      turbo: 2.9.8
 
   eslint-scope@8.4.0:
     dependencies:
@@ -8426,7 +8467,7 @@ snapshots:
     optionalDependencies:
       '@types/react': 19.2.14
 
-  react-resizable-panels@4.10.0(react-dom@19.2.5(react@19.2.5))(react@19.2.5):
+  react-resizable-panels@4.11.0(react-dom@19.2.5(react@19.2.5))(react@19.2.5):
     dependencies:
       react: 19.2.5
       react-dom: 19.2.5(react@19.2.5)
@@ -8910,14 +8951,14 @@ snapshots:
 
   tslib@2.8.1: {}
 
-  turbo@2.9.7:
+  turbo@2.9.8:
     optionalDependencies:
-      '@turbo/darwin-64': 2.9.7
-      '@turbo/darwin-arm64': 2.9.7
-      '@turbo/linux-64': 2.9.7
-      '@turbo/linux-arm64': 2.9.7
-      '@turbo/windows-64': 2.9.7
-      '@turbo/windows-arm64': 2.9.7
+      '@turbo/darwin-64': 2.9.8
+      '@turbo/darwin-arm64': 2.9.8
+      '@turbo/linux-64': 2.9.8
+      '@turbo/linux-arm64': 2.9.8
+      '@turbo/windows-64': 2.9.8
+      '@turbo/windows-arm64': 2.9.8
 
   tw-animate-css@1.4.0: {}
 
@@ -9169,8 +9210,10 @@ snapshots:
     dependencies:
       zod: 3.25.76
 
-  zod-validation-error@4.0.2(zod@3.25.76):
+  zod-validation-error@4.0.2(zod@4.4.2):
     dependencies:
-      zod: 3.25.76
+      zod: 4.4.2
 
   zod@3.25.76: {}
+
+  zod@4.4.2: {}
