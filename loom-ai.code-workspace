@@ -1,0 +1,12 @@
+{
+  "folders": [
+    {
+      "name": "@loom/typescript-config",
+      "path": "tooling/typescript-config",
+    },
+    {
+      "name": "@loom/eslint-config",
+      "path": "tooling/eslint-config",
+    },
+  ]
+}

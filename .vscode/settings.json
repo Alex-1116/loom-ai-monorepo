@@ -1,0 +1,18 @@
+{
+  "eslint.workingDirectories": [
+    {
+      "mode": "auto"
+    }
+  ],
+  "tailwindCSS.experimental.configFile": "packages/ui/src/styles/globals.css",
+  // 控制相关文件嵌套展示
+  "explorer.fileNesting.enabled": true,
+  "explorer.fileNesting.expand": false,
+  "explorer.fileNesting.patterns": {
+    "*.env": "$(capture).env.*",
+    "README.md": "README*,CHANGELOG*,LICENSE,CNAME",
+    "package.json": "pnpm-lock.yaml,pnpm-workspace.yaml",
+    "eslint.config.mjs": "prettier.config.*,stylelint.config.*,commitlint.config.*,.eslintignore,.prettierignore,.stylelintignore",
+    "tailwind.config.mjs": "postcss.*"
+  },
+}
