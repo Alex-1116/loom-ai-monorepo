@@ -1,9 +1,10 @@
 {
   "files.exclude": {
+    // 隐藏 .agents .husky .trae 目录
     "**/.agents": true,
     "**/.husky": true,
     "**/.trae": true,
-    "**/.vscode": true
+    "**/.vscode": false
   },
   "eslint.workingDirectories": [
     {
