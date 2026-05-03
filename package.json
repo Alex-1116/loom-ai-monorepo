@@ -4,6 +4,8 @@
   "private": true,
   "scripts": {
     "build": "turbo build",
+    "catalog:local": "node ./scripts/catalog-local.mjs",
+    "catalog:official": "node ./scripts/catalog-official.mjs",
     "dev": "turbo dev",
     "lint": "turbo lint",
     "format": "turbo format",
@@ -12,10 +14,10 @@
   "devDependencies": {
     "@loom/eslint-config": "workspace:*",
     "@loom/typescript-config": "workspace:*",
-    "prettier": "^3.8.1",
-    "prettier-plugin-tailwindcss": "^0.7.2",
-    "turbo": "^2.9.7",
-    "typescript": "5.9.3"
+    "prettier": "catalog:",
+    "prettier-plugin-tailwindcss": "catalog:",
+    "turbo": "catalog:",
+    "typescript": "catalog:"
   },
   "packageManager": "pnpm@10.33.2",
   "engines": {
