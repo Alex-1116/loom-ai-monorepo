@@ -3,6 +3,7 @@
 import { motion } from "framer-motion"
 import { FileText, GraduationCap, Plane, ScanSearch } from "lucide-react"
 
+import { AdvisorTriggerButton } from "@/src/components/ai-advisor"
 import { SectionHeading } from "@/src/components/blocks/section-heading"
 
 const steps = [
@@ -68,6 +69,24 @@ export function Process() {
             </motion.div>
           ))}
         </div>
+
+        <motion.div
+          initial={{ opacity: 0, y: 24 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-100px" }}
+          transition={{ duration: 0.5, delay: 0.28 }}
+          className="mt-8 flex justify-center"
+        >
+          <AdvisorTriggerButton
+            entryPoint="process_section"
+            size="lg"
+            variant="outline"
+            className="rounded-full border-primary/20 bg-background/90 px-6"
+            question="申请流程怎么走？"
+          >
+            让 AI 帮我判断从哪一步开始
+          </AdvisorTriggerButton>
+        </motion.div>
       </div>
     </section>
   )

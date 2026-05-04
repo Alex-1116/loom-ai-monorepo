@@ -2,9 +2,11 @@
 
 import Image from "next/image"
 
-import { Button } from "@loom/ui/components/button"
 import { ArrowRight, CheckCircle2, Sparkles } from "lucide-react"
 import { motion } from "framer-motion"
+
+import { AdvisorTriggerButton } from "@/src/components/ai-advisor"
+import { Button } from "@loom/ui/components/button"
 
 const highlights = [
   "一年总预算约 5-6 万",
@@ -105,13 +107,15 @@ export function Hero() {
             variants={itemVariants}
             className="flex flex-col gap-4 sm:flex-row"
           >
-            <Button
+            <AdvisorTriggerButton
+              entryPoint="hero_cta"
               size="lg"
               className="h-12 w-full rounded-full border-0 bg-white px-6 text-base text-slate-950 shadow-[0_18px_45px_-20px_rgba(72,92,255,0.75)] transition-transform hover:scale-[1.02] hover:bg-white/92 sm:w-auto"
+              question="我适合申请吗？"
             >
               免费获取评估方案
               <ArrowRight className="ml-2 h-4 w-4" />
-            </Button>
+            </AdvisorTriggerButton>
             <Button
               size="lg"
               variant="outline"

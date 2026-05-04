@@ -1,9 +1,9 @@
 "use client"
 
 import { motion } from "framer-motion"
-import { Button } from "@loom/ui/components/button"
 import { ArrowRight, MessageCircleMore } from "lucide-react"
 
+import { AdvisorTriggerButton } from "@/src/components/ai-advisor"
 import { cardReveal, staggerContainer, viewportOnce } from "@/src/lib/motion"
 
 export function FinalCta() {
@@ -47,22 +47,26 @@ export function FinalCta() {
               variants={cardReveal}
               className="mt-8 flex flex-col items-center justify-center gap-4 sm:flex-row"
             >
-              <Button
+              <AdvisorTriggerButton
+                entryPoint="final_cta"
                 size="lg"
                 variant="secondary"
                 className="h-12 rounded-full border-0 bg-white px-6 text-base text-slate-900 hover:bg-white/90"
+                question="我这种情况适不适合这条路径？"
               >
                 立即获取评估
                 <ArrowRight className="ml-2 h-4 w-4" />
-              </Button>
-              <Button
+              </AdvisorTriggerButton>
+              <AdvisorTriggerButton
+                entryPoint="final_cta"
                 size="lg"
                 variant="outline"
                 className="h-12 rounded-full border-white/30 bg-white/8 px-6 text-base text-white hover:bg-white/12"
+                question="可以直接转人工顾问吗？"
               >
                 微信咨询入口
                 <MessageCircleMore className="ml-2 h-4 w-4" />
-              </Button>
+              </AdvisorTriggerButton>
             </motion.div>
           </motion.div>
         </motion.div>

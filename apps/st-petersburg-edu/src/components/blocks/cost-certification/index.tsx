@@ -17,6 +17,7 @@ import {
   CardTitle,
 } from "@loom/ui/components/card"
 
+import { AdvisorTriggerButton } from "@/src/components/ai-advisor"
 import { SectionHeading } from "@/src/components/blocks/section-heading"
 import {
   cardReveal,
@@ -206,6 +207,24 @@ export function CostCertification() {
             </Card>
           </motion.div>
         </div>
+
+        <motion.div
+          variants={sectionReveal}
+          initial="hidden"
+          whileInView="visible"
+          viewport={viewportOnce}
+          className="mt-8 flex justify-center"
+        >
+          <AdvisorTriggerButton
+            entryPoint="cost_section"
+            size="lg"
+            variant="outline"
+            className="rounded-full border-primary/20 bg-background/90 px-6"
+            question="能做学历认证吗？"
+          >
+            问问认证和预算是否适合我
+          </AdvisorTriggerButton>
+        </motion.div>
       </div>
     </section>
   )
