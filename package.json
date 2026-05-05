@@ -7,6 +7,7 @@
     "dev": "turbo dev",
     "dev:web": "pnpm --filter web dev",
     "dev:edu": "pnpm --filter st-petersburg-edu dev",
+    "dev:pilot": "pnpm --filter ai-pilot-flow dev",
     "lint": "turbo lint",
     "format": "turbo format",
     "typecheck": "turbo typecheck",
