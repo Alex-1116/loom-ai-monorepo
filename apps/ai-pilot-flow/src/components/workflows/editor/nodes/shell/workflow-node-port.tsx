@@ -3,6 +3,7 @@
 import * as React from "react"
 
 import { cn } from "@loom/ui/lib/utils"
+import { NodeHoverLabel } from "@/components/workflows/editor/nodes/shared/node-hover-label"
 
 export type WorkflowNodePortProps = React.HTMLAttributes<HTMLDivElement> & {
   side?: "left" | "right"
@@ -35,7 +36,10 @@ export function WorkflowNodePort({
         ? "left-0 top-6 -translate-x-1/2"
         : "top-1/2 -left-2.5 -translate-y-1/2"
 
-  const labelOffsetClassName = side === "right" ? "left-6" : "right-6"
+  const labelOffsetClassName =
+    side === "right"
+      ? "bottom-auto left-6 right-auto -top-3 mb-0 translate-x-0"
+      : "bottom-auto right-6 left-auto -top-3 mb-0 translate-x-0"
 
   return (
     <div
@@ -47,33 +51,33 @@ export function WorkflowNodePort({
       {...props}
     >
       {side === "left" && label ? (
-        <span
-          className={cn(
-            "pointer-events-none absolute -top-3 text-xs font-medium whitespace-nowrap",
-            labelOffsetClassName,
-            labelToneClassName,
-            labelVisibility === "hover" &&
-              "opacity-0 transition-opacity duration-150 group-hover:opacity-100"
+        <NodeHoverLabel
+          side="top"
+          visibility={labelVisibility}
+          className={labelOffsetClassName}
+          toneClassName={cn(
+            "border-transparent bg-transparent p-0 shadow-none",
+            labelToneClassName
           )}
         >
           {label}
-        </span>
+        </NodeHoverLabel>
       ) : null}
 
       <div className={cn("size-5 rounded-full border-2", portToneClassName)} />
 
       {side === "right" && label ? (
-        <span
-          className={cn(
-            "pointer-events-none absolute -top-3 text-xs font-medium whitespace-nowrap",
-            labelOffsetClassName,
-            labelToneClassName,
-            labelVisibility === "hover" &&
-              "opacity-0 transition-opacity duration-150 group-hover:opacity-100"
+        <NodeHoverLabel
+          side="top"
+          visibility={labelVisibility}
+          className={labelOffsetClassName}
+          toneClassName={cn(
+            "border-transparent bg-transparent p-0 shadow-none",
+            labelToneClassName
           )}
         >
           {label}
-        </span>
+        </NodeHoverLabel>
       ) : null}
     </div>
   )
