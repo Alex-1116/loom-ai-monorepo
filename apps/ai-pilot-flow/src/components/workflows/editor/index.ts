@@ -1,5 +1,9 @@
 export { WorkflowCanvasViewport } from "@/components/workflows/editor/canvas/canvas-viewport"
 export { WorkflowCanvasSelectionLayer } from "@/components/workflows/editor/canvas/canvas-selection-layer"
+export { WorkflowNodeInspectorPanel } from "@/components/workflows/editor/chrome/panels/node-inspector-panel"
+export { WorkflowOutlinePanel } from "@/components/workflows/editor/chrome/panels/workflow-outline-panel"
+export { WorkflowEmptyState } from "@/components/workflows/editor/chrome/overlays/empty-state"
+export { WorkflowZoomIndicator } from "@/components/workflows/editor/chrome/overlays/zoom-indicator"
 
 export { useWorkflowEditorStore } from "@/components/workflows/editor/state/workflow-editor-store"
 

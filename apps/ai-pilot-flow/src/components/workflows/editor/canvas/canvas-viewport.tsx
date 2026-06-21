@@ -13,6 +13,10 @@ import { WorkflowCanvasContextMenu } from "@/components/workflows/editor/canvas/
 import { WorkflowCanvasGuidesLayer } from "@/components/workflows/editor/canvas/canvas-guides-layer"
 import { WorkflowCanvasSelectionLayer } from "@/components/workflows/editor/canvas/canvas-selection-layer"
 import { WorkflowCanvasLeftToolbar } from "@/components/workflows/editor/chrome/toolbar/canvas-left-toolbar"
+import { WorkflowNodeInspectorPanel } from "@/components/workflows/editor/chrome/panels/node-inspector-panel"
+import { WorkflowOutlinePanel } from "@/components/workflows/editor/chrome/panels/workflow-outline-panel"
+import { WorkflowEmptyState } from "@/components/workflows/editor/chrome/overlays/empty-state"
+import { WorkflowZoomIndicator } from "@/components/workflows/editor/chrome/overlays/zoom-indicator"
 import {
   createInitialWorkflowNodes,
   createWorkflowNode,
@@ -81,6 +85,13 @@ export function WorkflowCanvasViewport() {
     () => new Set(selectedNodeIds),
     [selectedNodeIds]
   )
+  const selectedNode = React.useMemo(() => {
+    if (selectedNodeIds.length !== 1) {
+      return null
+    }
+
+    return nodes.find((node) => node.id === selectedNodeIds[0]) ?? null
+  }, [nodes, selectedNodeIds])
 
   const setNodesTransient = React.useCallback(
     (updater: React.SetStateAction<WorkflowCanvasNode[]>) => {
@@ -298,6 +309,45 @@ export function WorkflowCanvasViewport() {
     [clearGuides, setNodesCommitted, viewport.scale, viewport.x, viewport.y]
   )
 
+  const handlePatchNode = React.useCallback(
+    (
+      nodeId: string,
+      patch: Partial<NonNullable<WorkflowCanvasNode["data"]>>
+    ) => {
+      setNodesTransient((current) =>
+        current.map((node) =>
+          node.id === nodeId
+            ? {
+                ...node,
+                data: {
+                  ...node.data,
+                  ...patch,
+                },
+              }
+            : node
+        )
+      )
+    },
+    [setNodesTransient]
+  )
+
+  const handleCreateFirstNode = React.useCallback(() => {
+    setNodesCommitted((current) => {
+      if (current.length > 0) {
+        return current
+      }
+
+      return [
+        createWorkflowNode({
+          type: "prompt",
+          x: 0,
+          y: 0,
+        }),
+      ]
+    })
+    clearGuides()
+  }, [clearGuides, setNodesCommitted])
+
   return (
     <WorkflowCanvasContextMenu
       className="absolute inset-0 z-10"
@@ -357,6 +407,17 @@ export function WorkflowCanvasViewport() {
         </div>
 
         <div
+          className="absolute top-4 bottom-4 left-20 z-20 hidden xl:block"
+          data-workflow-overlay
+        >
+          <WorkflowOutlinePanel
+            nodes={nodes}
+            selectedNodeIds={selectedNodeIds}
+            onSelectNode={(nodeId) => setSelectedNodeIds([nodeId])}
+          />
+        </div>
+
+        <div
           className="absolute bottom-4 left-1/2 z-20 -translate-x-1/2"
           data-workflow-overlay
         >
@@ -381,6 +442,24 @@ export function WorkflowCanvasViewport() {
             canRedo={canRedo}
           />
         </div>
+
+        <div
+          className="absolute top-4 right-4 bottom-4 z-20 hidden xl:block"
+          data-workflow-overlay
+        >
+          <WorkflowNodeInspectorPanel
+            selectedCount={selectedNodeIds.length}
+            selectedNode={selectedNode}
+            onPatchNode={handlePatchNode}
+            onCommitChanges={flushHistory}
+          />
+        </div>
+
+        <WorkflowEmptyState
+          visible={nodes.length === 0}
+          onCreateFirstNode={handleCreateFirstNode}
+        />
+        <WorkflowZoomIndicator scale={viewport.scale} />
 
         <div className="absolute inset-0 overflow-hidden">
           <div
