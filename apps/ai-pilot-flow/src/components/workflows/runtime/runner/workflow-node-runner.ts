@@ -86,6 +86,22 @@ function createBuiltInWorkflowNodeHandlers(): Record<
         },
       }
     },
+    preview({ node, graph, context }) {
+      const inputs = getWorkflowNodeInputs(node, graph, context)
+
+      return {
+        output: {
+          kind: "preview",
+          nodeId: node.id,
+          title: node.data?.title ?? "Preview",
+          inputLabel: node.data?.inputLabel ?? "File",
+          source:
+            inputs.upstreamOutputs.length === 1
+              ? inputs.upstreamOutputs[0]
+              : inputs.upstreamOutputs,
+        },
+      }
+    },
     export({ node, graph, context }) {
       const inputs = getWorkflowNodeInputs(node, graph, context)
 

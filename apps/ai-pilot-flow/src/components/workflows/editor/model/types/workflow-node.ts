@@ -1,4 +1,4 @@
-export type WorkflowNodeType = "prompt" | "file" | "export"
+export type WorkflowNodeType = "prompt" | "file" | "preview" | "export"
 
 export type WorkflowNodeData = {
   title?: string

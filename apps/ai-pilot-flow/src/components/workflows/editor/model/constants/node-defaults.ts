@@ -17,6 +17,10 @@ export const WORKFLOW_NODE_DEFAULTS: Record<
   file: {
     title: "File",
   },
+  preview: {
+    title: "Preview",
+    inputLabel: "File",
+  },
   export: {
     title: "Export",
     inputLabel: "Input",

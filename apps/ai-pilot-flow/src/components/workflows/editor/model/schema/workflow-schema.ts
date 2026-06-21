@@ -3,6 +3,8 @@ import { exportNodeConfig } from "@/components/workflows/editor/nodes/blocks/exp
 import { exportNodeSchema } from "@/components/workflows/editor/nodes/blocks/export/export-node.schema"
 import { fileNodeConfig } from "@/components/workflows/editor/nodes/blocks/file/file-node.config"
 import { fileNodeSchema } from "@/components/workflows/editor/nodes/blocks/file/file-node.schema"
+import { previewNodeConfig } from "@/components/workflows/editor/nodes/blocks/preview/preview-node.config"
+import { previewNodeSchema } from "@/components/workflows/editor/nodes/blocks/preview/preview-node.schema"
 import { promptNodeConfig } from "@/components/workflows/editor/nodes/blocks/prompt/prompt-node.config"
 import { promptNodeSchema } from "@/components/workflows/editor/nodes/blocks/prompt/prompt-node.schema"
 
@@ -29,6 +31,10 @@ export const workflowSchema: WorkflowSchema = {
     {
       config: exportNodeConfig,
       schema: exportNodeSchema,
+    },
+    {
+      config: previewNodeConfig,
+      schema: previewNodeSchema,
     },
   ],
 }

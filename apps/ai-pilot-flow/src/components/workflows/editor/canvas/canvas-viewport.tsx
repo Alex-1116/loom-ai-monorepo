@@ -30,6 +30,7 @@ import {
 } from "@/components/workflows/editor/nodes/registry/workflow-node-factory"
 import { WorkflowPromptNode } from "@/components/workflows/editor/nodes/blocks/prompt/workflow-prompt-node"
 import { WorkflowFileNode } from "@/components/workflows/editor/nodes/blocks/file/workflow-file-node"
+import { WorkflowPreviewNode } from "@/components/workflows/editor/nodes/blocks/preview/workflow-preview-node"
 import { WorkflowExportNode } from "@/components/workflows/editor/nodes/blocks/export/workflow-export-node"
 import { useCanvasPan } from "@/components/workflows/editor/interactions/hooks/useCanvasPan"
 import { useCanvasNodeDrag } from "@/components/workflows/editor/interactions/hooks/useCanvasNodeDrag"
@@ -846,12 +847,21 @@ export function WorkflowCanvasViewport() {
                       actionLabel={node.data?.actionLabel}
                       onPortPointerDown={handlePortPointerDown}
                     />
-                  ) : (
+                  ) : node.type === "file" ? (
                     <WorkflowFileNode
                       nodeId={node.id}
                       isSelected={selectedNodeIdSet.has(node.id)}
                       executionStatus={nodeExecutionStatuses[node.id]}
                       title={node.data?.title}
+                      onPortPointerDown={handlePortPointerDown}
+                    />
+                  ) : (
+                    <WorkflowPreviewNode
+                      nodeId={node.id}
+                      isSelected={selectedNodeIdSet.has(node.id)}
+                      executionStatus={nodeExecutionStatuses[node.id]}
+                      title={node.data?.title}
+                      inputLabel={node.data?.inputLabel}
                       onPortPointerDown={handlePortPointerDown}
                     />
                   )}

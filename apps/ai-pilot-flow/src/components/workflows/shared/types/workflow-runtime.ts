@@ -6,7 +6,7 @@ export type SharedWorkflowPortRef = {
   key?: string
 }
 
-export type SharedWorkflowNodeType = "prompt" | "file" | "export"
+export type SharedWorkflowNodeType = "prompt" | "file" | "preview" | "export"
 
 export type SharedWorkflowNodeData = {
   title?: string

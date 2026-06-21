@@ -24,7 +24,6 @@ const menuItems: readonly MenuItem[] = [
     label: item.label,
     nodeType: item.type,
   })),
-  { label: "Preview" },
   { label: "Import Model" },
   { label: "Import LoRA" },
   { label: "Import Multiple LoRAs" },
