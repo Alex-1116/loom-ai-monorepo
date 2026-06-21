@@ -16,6 +16,10 @@ export type WorkflowEditorState = WorkflowEditorSnapshot & {
 
 export type WorkflowEditorAction =
   | {
+      type: "workflow-editor/replace-document"
+      snapshot: WorkflowEditorSnapshot
+    }
+  | {
       type: "workflow-editor/set-nodes"
       updater: WorkflowEditorUpdater<WorkflowCanvasNode[]>
       historyMode: WorkflowEditorHistoryMode
@@ -58,6 +62,15 @@ export function setWorkflowEditorNodes(
     type: "workflow-editor/set-nodes",
     updater,
     historyMode,
+  }
+}
+
+export function replaceWorkflowEditorDocument(
+  snapshot: WorkflowEditorSnapshot
+): WorkflowEditorAction {
+  return {
+    type: "workflow-editor/replace-document",
+    snapshot,
   }
 }
 

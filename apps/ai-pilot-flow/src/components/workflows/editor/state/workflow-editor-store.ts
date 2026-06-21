@@ -6,6 +6,7 @@ import type { WorkflowEditorSnapshot } from "@/components/workflows/editor/model
 import {
   flushWorkflowEditorPendingHistory,
   redoWorkflowEditor,
+  replaceWorkflowEditorDocument,
   setWorkflowEditorEdges,
   setWorkflowEditorNodes,
   setWorkflowEditorSelectedEdgeIds,
@@ -102,6 +103,9 @@ function workflowEditorReducer(
   action: WorkflowEditorAction
 ): WorkflowEditorState {
   switch (action.type) {
+    case "workflow-editor/replace-document":
+      return createWorkflowEditorState(action.snapshot)
+
     case "workflow-editor/set-nodes": {
       const nextNodes = resolveUpdater(state.nodes, action.updater)
 
@@ -249,6 +253,13 @@ export function useWorkflowEditorStore({
     []
   )
 
+  const replaceDocument = React.useCallback(
+    (snapshot: WorkflowEditorSnapshot) => {
+      dispatch(replaceWorkflowEditorDocument(snapshot))
+    },
+    []
+  )
+
   const setEdges = React.useCallback(
     (
       updater: WorkflowEditorUpdater<WorkflowEditorState["edges"]>,
@@ -304,6 +315,7 @@ export function useWorkflowEditorStore({
     selectedEdgeIds: selectWorkflowEditorSelectedEdgeIds(state),
     canUndo: selectWorkflowEditorCanUndo(state),
     canRedo: selectWorkflowEditorCanRedo(state),
+    replaceDocument,
     setNodes,
     setEdges,
     setViewport,

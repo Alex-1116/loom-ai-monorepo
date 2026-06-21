@@ -258,8 +258,15 @@ export function useCanvasEdgeConnection({
     [surfaceRef, viewport]
   )
 
+  const cancelConnection = React.useCallback(() => {
+    activeConnectionRef.current = null
+    setPreviewConnection(null)
+  }, [])
+
   return {
+    hasActiveConnection: previewConnection !== null,
     previewConnection,
     handlePortPointerDown,
+    cancelConnection,
   }
 }

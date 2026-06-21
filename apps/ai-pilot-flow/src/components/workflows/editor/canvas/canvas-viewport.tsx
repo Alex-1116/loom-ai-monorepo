@@ -19,6 +19,10 @@ import { WorkflowOutlinePanel } from "@/components/workflows/editor/chrome/panel
 import { WorkflowEmptyState } from "@/components/workflows/editor/chrome/overlays/empty-state"
 import { WorkflowZoomIndicator } from "@/components/workflows/editor/chrome/overlays/zoom-indicator"
 import { type WorkflowCanvasNode } from "@/components/workflows/editor/model/types/workflow-node"
+import { autoLayout } from "@/components/workflows/editor/services/layout/auto-layout"
+import { deserializeWorkflow } from "@/components/workflows/editor/services/serializer/deserialize-workflow"
+import { serializeWorkflow } from "@/components/workflows/editor/services/serializer/serialize-workflow"
+import { validateWorkflow } from "@/components/workflows/editor/services/validators/validate-workflow"
 import {
   createInitialWorkflowNodes,
   createWorkflowNode,
@@ -68,6 +72,7 @@ function isEditableTarget(target: EventTarget | null) {
 
 export function WorkflowCanvasViewport() {
   const surfaceRef = React.useRef<HTMLDivElement | null>(null)
+  const importInputRef = React.useRef<HTMLInputElement | null>(null)
   const nodesRef = React.useRef<WorkflowCanvasNode[]>(initialNodes)
   const nodeSizesRef = React.useRef<Record<string, WorkflowCanvasNodeSize>>({})
   const [activeTool, setActiveTool] =
@@ -80,6 +85,7 @@ export function WorkflowCanvasViewport() {
     selectedEdgeIds,
     canUndo,
     canRedo,
+    replaceDocument,
     setNodes,
     setEdges,
     setViewport,
@@ -265,7 +271,12 @@ export function WorkflowCanvasViewport() {
         clearGuides()
       },
     })
-  const { previewConnection, handlePortPointerDown } = useCanvasEdgeConnection({
+  const {
+    hasActiveConnection,
+    previewConnection,
+    handlePortPointerDown,
+    cancelConnection,
+  } = useCanvasEdgeConnection({
     surfaceRef,
     viewport,
     edges,
@@ -382,8 +393,117 @@ export function WorkflowCanvasViewport() {
     [setSelectedEdgeIds, setSelectedNodeIds]
   )
 
+  const handleAutoLayout = React.useCallback(() => {
+    if (nodes.length === 0) {
+      return
+    }
+
+    setNodes(
+      (current) =>
+        autoLayout(current, {
+          direction: "horizontal",
+          startX: 0,
+          startY: 0,
+          edges,
+        }),
+      "commit"
+    )
+    setSelectedEdgeIds([])
+    clearGuides()
+  }, [clearGuides, edges, nodes.length, setNodes, setSelectedEdgeIds])
+
+  const handleExportJson = React.useCallback(() => {
+    const serialized = serializeWorkflow({
+      nodes,
+      edges,
+      viewport,
+    })
+    const blob = new Blob([serialized], { type: "application/json" })
+    const objectUrl = URL.createObjectURL(blob)
+    const link = document.createElement("a")
+    const fileTimestamp = new Date()
+      .toISOString()
+      .slice(0, 19)
+      .replace(/[:T]/g, "-")
+
+    link.href = objectUrl
+    link.download = `workflow-${fileTimestamp}.json`
+    document.body.appendChild(link)
+    link.click()
+    link.remove()
+    URL.revokeObjectURL(objectUrl)
+  }, [edges, nodes, viewport])
+
+  const handleTriggerImport = React.useCallback(() => {
+    if (!importInputRef.current) {
+      return
+    }
+
+    importInputRef.current.value = ""
+    importInputRef.current.click()
+  }, [])
+
+  const handleImportJson = React.useCallback(
+    async (event: React.ChangeEvent<HTMLInputElement>) => {
+      const file = event.target.files?.[0]
+      event.target.value = ""
+      if (!file) {
+        return
+      }
+
+      try {
+        const rawText = await file.text()
+        const document = deserializeWorkflow(rawText)
+        const validation = validateWorkflow({
+          nodes: document.nodes,
+          edges: document.edges,
+          viewport: document.viewport,
+        })
+
+        if (!validation.isValid) {
+          const errorMessages = validation.issues
+            .filter((issue) => issue.level === "error")
+            .map((issue) => `- ${issue.message}`)
+            .join("\n")
+
+          window.alert(`导入失败，工作流校验未通过：\n${errorMessages}`)
+          return
+        }
+
+        replaceDocument({
+          nodes: document.nodes,
+          edges: document.edges,
+          viewport: document.viewport,
+          selectedNodeIds: [],
+          selectedEdgeIds: [],
+        })
+        clearGuides()
+      } catch (error) {
+        const message =
+          error instanceof Error ? error.message : "无法解析所选 JSON 文件。"
+        window.alert(`导入失败：${message}`)
+      }
+    },
+    [clearGuides, replaceDocument]
+  )
+
   React.useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape" && !isEditableTarget(event.target)) {
+        if (hasActiveConnection) {
+          cancelConnection()
+          event.preventDefault()
+          return
+        }
+
+        if (selectedNodeIds.length > 0 || selectedEdgeIds.length > 0) {
+          setSelectedNodeIds([])
+          setSelectedEdgeIds([])
+          event.preventDefault()
+        }
+        return
+      }
+
       if (
         (event.key !== "Backspace" && event.key !== "Delete") ||
         isEditableTarget(event.target)
@@ -429,6 +549,8 @@ export function WorkflowCanvasViewport() {
     window.addEventListener("keydown", handleKeyDown)
     return () => window.removeEventListener("keydown", handleKeyDown)
   }, [
+    cancelConnection,
+    hasActiveConnection,
     selectedEdgeIds,
     selectedNodeIds,
     setEdges,
@@ -523,6 +645,9 @@ export function WorkflowCanvasViewport() {
             activeTool={activeTool}
             zoomLabel={formatZoom(viewport.scale)}
             onToolChange={setActiveTool}
+            onImportJson={handleTriggerImport}
+            onExportJson={handleExportJson}
+            onAutoLayout={handleAutoLayout}
             onZoomIn={handleZoomIn}
             onZoomOut={handleZoomOut}
             onZoomReset={handleZoomReset}
@@ -558,6 +683,13 @@ export function WorkflowCanvasViewport() {
           onCreateFirstNode={handleCreateFirstNode}
         />
         <WorkflowZoomIndicator scale={viewport.scale} />
+        <input
+          ref={importInputRef}
+          accept="application/json,.json"
+          className="hidden"
+          type="file"
+          onChange={handleImportJson}
+        />
 
         <div className="absolute inset-0 overflow-hidden">
           <div

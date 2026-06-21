@@ -2,11 +2,14 @@
 
 import {
   ChevronDown,
+  Download,
   Hand,
+  LayoutGrid,
   MousePointer2,
   Redo2,
   RotateCcw,
   Undo2,
+  Upload,
 } from "lucide-react"
 
 import { Button } from "@loom/ui/components/button"
@@ -70,6 +73,9 @@ type WorkflowCanvasBottomToolbarProps = {
   onResetView?: () => void
   onUndo?: () => void
   onRedo?: () => void
+  onImportJson?: () => void
+  onExportJson?: () => void
+  onAutoLayout?: () => void
   canUndo?: boolean
   canRedo?: boolean
 }
@@ -85,6 +91,9 @@ export function WorkflowCanvasBottomToolbar({
   onResetView,
   onUndo,
   onRedo,
+  onImportJson,
+  onExportJson,
+  onAutoLayout,
   canUndo = false,
   canRedo = false,
 }: WorkflowCanvasBottomToolbarProps) {
@@ -122,7 +131,7 @@ export function WorkflowCanvasBottomToolbar({
         </Button>
       ))}
 
-      <div className="h-6 w-px bg-secondary" aria-hidden="true" />
+      <div className="h-5 w-px bg-white/8" aria-hidden="true" />
 
       <Button
         type="button"
@@ -150,7 +159,43 @@ export function WorkflowCanvasBottomToolbar({
         <Redo2 className="size-4" strokeWidth={2.2} />
       </Button>
 
-      <div className="h-6 w-px bg-secondary" aria-hidden="true" />
+      <div className="h-5 w-px bg-white/8" aria-hidden="true" />
+
+      <Button
+        type="button"
+        size="icon-sm"
+        variant="ghost"
+        aria-label="导入 JSON"
+        title="导入 JSON"
+        onClick={onImportJson}
+        className="rounded-lg text-white/65 shadow-none hover:bg-white/6 hover:text-white"
+      >
+        <Upload className="size-4" strokeWidth={2.2} />
+      </Button>
+
+      <Button
+        type="button"
+        size="icon-sm"
+        variant="ghost"
+        aria-label="导出 JSON"
+        title="导出 JSON"
+        onClick={onExportJson}
+        className="rounded-lg text-white/65 shadow-none hover:bg-white/6 hover:text-white"
+      >
+        <Download className="size-4" strokeWidth={2.2} />
+      </Button>
+
+      <Button
+        type="button"
+        size="icon-sm"
+        variant="ghost"
+        aria-label="自动布局"
+        title="自动布局"
+        onClick={onAutoLayout}
+        className="rounded-lg text-white/65 shadow-none hover:bg-white/6 hover:text-white"
+      >
+        <LayoutGrid className="size-4" strokeWidth={2.2} />
+      </Button>
 
       <Button
         type="button"
@@ -164,7 +209,7 @@ export function WorkflowCanvasBottomToolbar({
         <RotateCcw className="size-4" strokeWidth={2.2} />
       </Button>
 
-      <div className="h-6 w-px bg-secondary" aria-hidden="true" />
+      <div className="h-5 w-px bg-white/8" aria-hidden="true" />
 
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
