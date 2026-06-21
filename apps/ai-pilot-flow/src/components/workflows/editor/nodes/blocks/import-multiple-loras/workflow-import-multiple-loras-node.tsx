@@ -140,7 +140,7 @@ export function WorkflowImportMultipleLorasNode({
         labelVisibility={weightPort.labelVisibility}
         portToneClassName={weightPort.portToneClassName}
         labelToneClassName={weightPort.labelToneClassName}
-        className="top-auto -right-2.5 right-0 bottom-0 translate-y-1/2"
+        className="top-auto right-0 bottom-0 translate-x-1/2 translate-y-1/2"
         onPortPointerDown={onPortPointerDown}
       />
     </WorkflowNodeShell>
