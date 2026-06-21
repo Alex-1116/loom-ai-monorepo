@@ -275,6 +275,7 @@ export function WorkflowCanvasViewport() {
     hasActiveConnection,
     previewConnection,
     handlePortPointerDown,
+    handleEdgeReconnectPointerDown,
     cancelConnection,
   } = useCanvasEdgeConnection({
     surfaceRef,
@@ -707,6 +708,7 @@ export function WorkflowCanvasViewport() {
                 edges={edges}
                 selectedEdgeIds={selectedEdgeIds}
                 onSelectEdge={handleSelectEdge}
+                onReconnectEdgePointerDown={handleEdgeReconnectPointerDown}
                 previewConnection={previewConnection}
               />
 

@@ -13,8 +13,10 @@ import {
 } from "@/components/workflows/editor/interactions/utils/pointer"
 import { getSurfaceCenter } from "@/components/workflows/editor/interactions/utils/viewport"
 
-type EdgeConnectionPreview = {
-  source: WorkflowPortRef
+export type EdgeConnectionPreview = {
+  edgeId?: string
+  mode: "from-source" | "to-target"
+  anchorPort: WorkflowPortRef
   currentPoint: Point
 } | null
 
@@ -38,7 +40,9 @@ type UseCanvasEdgeConnectionParams = {
 
 type ActiveConnectionState = {
   pointerId: number
-  source: WorkflowPortRef
+  mode: "create" | "reconnect-source" | "reconnect-target"
+  edgeId?: string
+  fixedPort: WorkflowPortRef
 } | null
 
 const PORT_SELECTOR = "[data-workflow-port='true']"
@@ -108,6 +112,50 @@ function canCreateEdge(source: WorkflowPortRef, target: WorkflowPortRef) {
   return source.side === "right" && target.side === "left"
 }
 
+function isSamePort(left: WorkflowPortRef, right: WorkflowPortRef) {
+  return (
+    left.nodeId === right.nodeId &&
+    left.side === right.side &&
+    left.key === right.key
+  )
+}
+
+function isSameEdgeConnection(
+  edge: Pick<WorkflowEdge, "source" | "target">,
+  source: WorkflowPortRef,
+  target: WorkflowPortRef
+) {
+  return isSamePort(edge.source, source) && isSamePort(edge.target, target)
+}
+
+function createPreviewConnection(
+  activeConnection: NonNullable<ActiveConnectionState>,
+  currentPoint: Point
+): NonNullable<EdgeConnectionPreview> {
+  if (activeConnection.mode === "reconnect-source") {
+    return {
+      edgeId: activeConnection.edgeId,
+      mode: "to-target",
+      anchorPort: activeConnection.fixedPort,
+      currentPoint,
+    }
+  }
+
+  return {
+    edgeId: activeConnection.edgeId,
+    mode: "from-source",
+    anchorPort: activeConnection.fixedPort,
+    currentPoint,
+  }
+}
+
+function findReconnectEdge(
+  edges: WorkflowEdge[],
+  edgeId: string
+): WorkflowEdge | null {
+  return edges.find((edge) => edge.id === edgeId) ?? null
+}
+
 export function useCanvasEdgeConnection({
   surfaceRef,
   viewport,
@@ -163,8 +211,7 @@ export function useCanvasEdgeConnection({
       }
 
       setPreviewConnection({
-        source: activeConnection.source,
-        currentPoint: worldPoint,
+        ...createPreviewConnection(activeConnection, worldPoint),
       })
       event.preventDefault()
     }
@@ -181,32 +228,63 @@ export function useCanvasEdgeConnection({
           : document.elementFromPoint(event.clientX, event.clientY)
       const targetPort = getPortRefFromElement(targetElement)
 
-      if (
-        targetPort &&
-        canCreateEdge(activeConnection.source, targetPort) &&
-        !edgesRef.current.some(
+      if (targetPort) {
+        const nextSource =
+          activeConnection.mode === "reconnect-source"
+            ? targetPort
+            : activeConnection.fixedPort
+        const nextTarget =
+          activeConnection.mode === "reconnect-source"
+            ? activeConnection.fixedPort
+            : targetPort
+        const reconnectEdge = activeConnection.edgeId
+          ? findReconnectEdge(edgesRef.current, activeConnection.edgeId)
+          : null
+        const hasDuplicateEdge = edgesRef.current.some(
           (edge) =>
-            edge.source.nodeId === activeConnection.source.nodeId &&
-            edge.source.side === activeConnection.source.side &&
-            edge.source.key === activeConnection.source.key &&
-            edge.target.nodeId === targetPort.nodeId &&
-            edge.target.side === targetPort.side &&
-            edge.target.key === targetPort.key
+            edge.id !== activeConnection.edgeId &&
+            isSameEdgeConnection(edge, nextSource, nextTarget)
         )
-      ) {
-        const edgeId = createEdgeId()
-        setEdgesRef.current(
-          (current) => [
-            ...current,
-            {
-              id: edgeId,
-              source: activeConnection.source,
-              target: targetPort,
-            },
-          ],
-          "commit"
-        )
-        setSelectedEdgeIdsRef.current([])
+
+        if (
+          canCreateEdge(nextSource, nextTarget) &&
+          !hasDuplicateEdge &&
+          (!reconnectEdge ||
+            !isSameEdgeConnection(reconnectEdge, nextSource, nextTarget))
+        ) {
+          if (activeConnection.edgeId) {
+            setEdgesRef.current(
+              (current) =>
+                current.map((edge) =>
+                  edge.id === activeConnection.edgeId
+                    ? {
+                        ...edge,
+                        source: nextSource,
+                        target: nextTarget,
+                      }
+                    : edge
+                ),
+              "commit"
+            )
+            setSelectedEdgeIdsRef.current([activeConnection.edgeId])
+          } else {
+            const edgeId = createEdgeId()
+            setEdgesRef.current(
+              (current) => [
+                ...current,
+                {
+                  id: edgeId,
+                  source: nextSource,
+                  target: nextTarget,
+                },
+              ],
+              "commit"
+            )
+            setSelectedEdgeIdsRef.current([])
+          }
+        } else if (activeConnection.edgeId) {
+          setSelectedEdgeIdsRef.current([activeConnection.edgeId])
+        }
       }
 
       activeConnectionRef.current = null
@@ -246,16 +324,82 @@ export function useCanvasEdgeConnection({
 
       activeConnectionRef.current = {
         pointerId: event.pointerId,
-        source: port,
+        mode: "create",
+        fixedPort: port,
       }
-      setPreviewConnection({
-        source: port,
-        currentPoint: worldPoint,
-      })
+      setPreviewConnection(
+        createPreviewConnection(
+          {
+            pointerId: event.pointerId,
+            mode: "create",
+            fixedPort: port,
+          },
+          worldPoint
+        )
+      )
       event.preventDefault()
       event.stopPropagation()
     },
     [surfaceRef, viewport]
+  )
+
+  const handleEdgeReconnectPointerDown = React.useCallback(
+    (
+      event: React.PointerEvent<SVGCircleElement>,
+      edgeId: string,
+      anchor: "source" | "target",
+      port: WorkflowPortRef
+    ) => {
+      if (event.button !== 0 || event.pointerType === "touch") {
+        return
+      }
+
+      const edge = findReconnectEdge(edgesRef.current, edgeId)
+      if (!edge) {
+        return
+      }
+
+      if (
+        (anchor === "source" && !isSamePort(edge.source, port)) ||
+        (anchor === "target" && !isSamePort(edge.target, port))
+      ) {
+        return
+      }
+
+      const worldPoint = getWorldPointFromClientPosition({
+        surface: surfaceRef.current,
+        viewport,
+        clientX: event.clientX,
+        clientY: event.clientY,
+      })
+      if (!worldPoint) {
+        return
+      }
+
+      const activeConnection: NonNullable<ActiveConnectionState> =
+        anchor === "source"
+          ? {
+              pointerId: event.pointerId,
+              mode: "reconnect-source",
+              edgeId,
+              fixedPort: edge.target,
+            }
+          : {
+              pointerId: event.pointerId,
+              mode: "reconnect-target",
+              edgeId,
+              fixedPort: edge.source,
+            }
+
+      activeConnectionRef.current = activeConnection
+      setPreviewConnection(
+        createPreviewConnection(activeConnection, worldPoint)
+      )
+      setSelectedEdgeIds([edgeId])
+      event.preventDefault()
+      event.stopPropagation()
+    },
+    [setSelectedEdgeIds, surfaceRef, viewport]
   )
 
   const cancelConnection = React.useCallback(() => {
@@ -267,6 +411,7 @@ export function useCanvasEdgeConnection({
     hasActiveConnection: previewConnection !== null,
     previewConnection,
     handlePortPointerDown,
+    handleEdgeReconnectPointerDown,
     cancelConnection,
   }
 }

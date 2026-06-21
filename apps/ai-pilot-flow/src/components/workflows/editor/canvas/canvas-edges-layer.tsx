@@ -9,6 +9,7 @@ import type {
   WorkflowPortRef,
 } from "@/components/workflows/editor/model/types/workflow-edge"
 import type { WorkflowCanvasNode } from "@/components/workflows/editor/model/types/workflow-node"
+import type { EdgeConnectionPreview } from "@/components/workflows/editor/interactions/hooks/useCanvasEdgeConnection"
 
 type WorkflowCanvasNodeSize = {
   width: number
@@ -21,10 +22,13 @@ type WorkflowCanvasEdgesLayerProps = {
   edges: WorkflowEdge[]
   selectedEdgeIds?: string[]
   onSelectEdge?: (edgeId: string) => void
-  previewConnection?: {
-    source: WorkflowPortRef
-    currentPoint: EdgeAnchor
-  } | null
+  onReconnectEdgePointerDown?: (
+    event: React.PointerEvent<SVGCircleElement>,
+    edgeId: string,
+    anchor: "source" | "target",
+    port: WorkflowPortRef
+  ) => void
+  previewConnection?: EdgeConnectionPreview
 }
 
 type EdgeAnchor = {
@@ -64,6 +68,7 @@ export function WorkflowCanvasEdgesLayer({
   edges,
   selectedEdgeIds = [],
   onSelectEdge,
+  onReconnectEdgePointerDown,
   previewConnection = null,
 }: WorkflowCanvasEdgesLayerProps) {
   const [hoveredEdgeId, setHoveredEdgeId] = React.useState<string | null>(null)
@@ -78,6 +83,10 @@ export function WorkflowCanvasEdgesLayer({
 
   const edgePaths = React.useMemo(() => {
     const persistedEdgePaths = edges.flatMap((edge) => {
+      if (previewConnection?.edgeId === edge.id) {
+        return []
+      }
+
       const sourceNode = nodeMap.get(edge.source.nodeId)
       const targetNode = nodeMap.get(edge.target.nodeId)
       if (!sourceNode || !targetNode) {
@@ -108,6 +117,10 @@ export function WorkflowCanvasEdgesLayer({
           isSelected: selectedEdgeIdSet.has(edge.id),
           isHovered: hoveredEdgeId === edge.id,
           tone: "persisted" as const,
+          source,
+          target,
+          sourcePort: edge.source,
+          targetPort: edge.target,
         },
       ]
     })
@@ -116,27 +129,30 @@ export function WorkflowCanvasEdgesLayer({
       return persistedEdgePaths
     }
 
-    const sourceNode = nodeMap.get(previewConnection.source.nodeId)
-    if (!sourceNode) {
+    const anchorNode = nodeMap.get(previewConnection.anchorPort.nodeId)
+    if (!anchorNode) {
       return persistedEdgePaths
     }
 
-    const sourceNodeSize = nodeSizes[sourceNode.id]
-    if (!sourceNodeSize) {
+    const anchorNodeSize = nodeSizes[anchorNode.id]
+    if (!anchorNodeSize) {
       return persistedEdgePaths
     }
 
-    const source = getEdgeAnchor({
-      node: sourceNode,
-      nodeSize: sourceNodeSize,
-      side: previewConnection.source.side,
+    const anchor = getEdgeAnchor({
+      node: anchorNode,
+      nodeSize: anchorNodeSize,
+      side: previewConnection.anchorPort.side,
     })
 
     return [
       ...persistedEdgePaths,
       {
         id: "workflow-edge-preview",
-        path: createEdgePath(source, previewConnection.currentPoint),
+        path:
+          previewConnection.mode === "from-source"
+            ? createEdgePath(anchor, previewConnection.currentPoint)
+            : createEdgePath(previewConnection.currentPoint, anchor),
         isSelected: false,
         isHovered: false,
         tone: "preview" as const,
@@ -217,30 +233,72 @@ export function WorkflowCanvasEdgesLayer({
             strokeWidth={edgePath.isSelected || edgePath.isHovered ? 3 : 2}
           />
           {edgePath.tone === "persisted" ? (
-            <path
-              data-workflow-edge-hit="true"
-              d={edgePath.path}
-              fill="none"
-              pointerEvents="stroke"
-              stroke="transparent"
-              strokeLinecap="round"
-              strokeWidth={18}
-              onClick={(event) => {
-                event.preventDefault()
-                event.stopPropagation()
-                onSelectEdge?.(edgePath.id)
-              }}
-              onPointerDown={(event) => {
-                event.preventDefault()
-                event.stopPropagation()
-              }}
-              onPointerEnter={() => setHoveredEdgeId(edgePath.id)}
-              onPointerLeave={() =>
-                setHoveredEdgeId((current) =>
-                  current === edgePath.id ? null : current
-                )
-              }
-            />
+            <>
+              <path
+                data-workflow-edge-hit="true"
+                d={edgePath.path}
+                fill="none"
+                pointerEvents="stroke"
+                stroke="transparent"
+                strokeLinecap="round"
+                strokeWidth={18}
+                onClick={(event) => {
+                  event.preventDefault()
+                  event.stopPropagation()
+                  onSelectEdge?.(edgePath.id)
+                }}
+                onPointerDown={(event) => {
+                  event.preventDefault()
+                  event.stopPropagation()
+                }}
+                onPointerEnter={() => setHoveredEdgeId(edgePath.id)}
+                onPointerLeave={() =>
+                  setHoveredEdgeId((current) =>
+                    current === edgePath.id ? null : current
+                  )
+                }
+              />
+              {edgePath.isSelected || edgePath.isHovered ? (
+                <>
+                  <circle
+                    cx={edgePath.source.x}
+                    cy={edgePath.source.y}
+                    r={5.5}
+                    data-workflow-edge-hit="true"
+                    fill="#1d1e27"
+                    pointerEvents="all"
+                    stroke="#60a5fa"
+                    strokeWidth={2}
+                    onPointerDown={(event) =>
+                      onReconnectEdgePointerDown?.(
+                        event,
+                        edgePath.id,
+                        "source",
+                        edgePath.sourcePort
+                      )
+                    }
+                  />
+                  <circle
+                    cx={edgePath.target.x}
+                    cy={edgePath.target.y}
+                    r={5.5}
+                    data-workflow-edge-hit="true"
+                    fill="#1d1e27"
+                    pointerEvents="all"
+                    stroke="#60a5fa"
+                    strokeWidth={2}
+                    onPointerDown={(event) =>
+                      onReconnectEdgePointerDown?.(
+                        event,
+                        edgePath.id,
+                        "target",
+                        edgePath.targetPort
+                      )
+                    }
+                  />
+                </>
+              ) : null}
+            </>
           ) : null}
         </g>
       ))}

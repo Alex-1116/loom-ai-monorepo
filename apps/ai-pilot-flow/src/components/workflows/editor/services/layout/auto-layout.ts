@@ -15,6 +15,11 @@ export type AutoLayoutOptions = {
 const DEFAULT_HORIZONTAL_GAP = 420
 const DEFAULT_VERTICAL_GAP = 260
 
+type ValidEdgeConnection = {
+  sourceId: string
+  targetId: string
+}
+
 function layoutSequentially(
   nodes: WorkflowCanvasNode[],
   options: Required<
@@ -129,6 +134,146 @@ function getLayerRanks(nodes: WorkflowCanvasNode[], edges: WorkflowEdge[]) {
   return ranks
 }
 
+function getValidEdgeConnections(
+  nodes: WorkflowCanvasNode[],
+  edges: WorkflowEdge[]
+): ValidEdgeConnection[] {
+  const nodeIdSet = new Set(nodes.map((node) => node.id))
+  const edgeKeys = new Set<string>()
+  const connections: ValidEdgeConnection[] = []
+
+  edges.forEach((edge) => {
+    const sourceId = edge.source.nodeId
+    const targetId = edge.target.nodeId
+
+    if (
+      sourceId === targetId ||
+      !nodeIdSet.has(sourceId) ||
+      !nodeIdSet.has(targetId)
+    ) {
+      return
+    }
+
+    const edgeKey = `${sourceId}::${targetId}`
+    if (edgeKeys.has(edgeKey)) {
+      return
+    }
+
+    edgeKeys.add(edgeKey)
+    connections.push({
+      sourceId,
+      targetId,
+    })
+  })
+
+  return connections
+}
+
+function sortLayerNodesByReferences(
+  layerNodes: WorkflowCanvasNode[],
+  referenceIdsByNodeId: Map<string, string[]>,
+  laneIndexByNodeId: Map<string, number>,
+  originalOrder: Map<string, number>
+) {
+  const getNodeScore = (node: WorkflowCanvasNode) => {
+    const referenceIds = referenceIdsByNodeId.get(node.id) ?? []
+    const referenceLanes = referenceIds
+      .map((referenceId) => laneIndexByNodeId.get(referenceId))
+      .filter((laneIndex): laneIndex is number => laneIndex !== undefined)
+
+    if (referenceLanes.length === 0) {
+      return originalOrder.get(node.id) ?? 0
+    }
+
+    return (
+      referenceLanes.reduce((sum, laneIndex) => sum + laneIndex, 0) /
+      referenceLanes.length
+    )
+  }
+
+  return [...layerNodes].sort((left, right) => {
+    const scoreDiff = getNodeScore(left) - getNodeScore(right)
+    if (scoreDiff !== 0) {
+      return scoreDiff
+    }
+
+    return (
+      (originalOrder.get(left.id) ?? 0) - (originalOrder.get(right.id) ?? 0)
+    )
+  })
+}
+
+function sortLayersByNeighbors(
+  layers: Map<number, WorkflowCanvasNode[]>,
+  edges: WorkflowEdge[],
+  originalOrder: Map<string, number>
+) {
+  const rankList = Array.from(layers.keys()).sort((left, right) => left - right)
+  const validConnections = getValidEdgeConnections(
+    Array.from(layers.values()).flat(),
+    edges
+  )
+  const predecessorIdsByNodeId = new Map<string, string[]>()
+  const successorIdsByNodeId = new Map<string, string[]>()
+
+  validConnections.forEach(({ sourceId, targetId }) => {
+    const predecessorIds = predecessorIdsByNodeId.get(targetId) ?? []
+    predecessorIds.push(sourceId)
+    predecessorIdsByNodeId.set(targetId, predecessorIds)
+
+    const successorIds = successorIdsByNodeId.get(sourceId) ?? []
+    successorIds.push(targetId)
+    successorIdsByNodeId.set(sourceId, successorIds)
+  })
+
+  const sortedLayers = new Map<number, WorkflowCanvasNode[]>(
+    rankList.map((rank) => [
+      rank,
+      [...(layers.get(rank) ?? [])].sort(
+        (left, right) =>
+          (originalOrder.get(left.id) ?? 0) - (originalOrder.get(right.id) ?? 0)
+      ),
+    ])
+  )
+  const forwardLaneIndexByNodeId = new Map<string, number>()
+
+  rankList.forEach((rank) => {
+    const currentLayer = sortedLayers.get(rank) ?? []
+    const sortedLayer = sortLayerNodesByReferences(
+      currentLayer,
+      predecessorIdsByNodeId,
+      forwardLaneIndexByNodeId,
+      originalOrder
+    )
+
+    sortedLayers.set(rank, sortedLayer)
+    sortedLayer.forEach((node, laneIndex) => {
+      forwardLaneIndexByNodeId.set(node.id, laneIndex)
+    })
+  })
+
+  const backwardLaneIndexByNodeId = new Map<string, number>()
+
+  Array.from(rankList)
+    .reverse()
+    .forEach((rank) => {
+      const currentLayer = sortedLayers.get(rank) ?? []
+      const sortedLayer = sortLayerNodesByReferences(
+        currentLayer,
+        successorIdsByNodeId,
+        backwardLaneIndexByNodeId,
+        originalOrder
+      )
+
+      sortedLayers.set(rank, sortedLayer)
+      sortedLayer.forEach((node, laneIndex) => {
+        backwardLaneIndexByNodeId.set(node.id, laneIndex)
+      })
+    })
+
+  return sortedLayers
+}
+
 export function autoLayout(
   nodes: WorkflowCanvasNode[],
   options: AutoLayoutOptions = {}
@@ -149,6 +294,9 @@ export function autoLayout(
     gapX,
     gapY,
   } as const
+  const originalOrder = new Map(
+    nodes.map((node, index) => [node.id, index] as const)
+  )
 
   if (nodes.length <= 1) {
     return layoutSequentially(nodes, layoutOptions)
@@ -172,9 +320,11 @@ export function autoLayout(
     layers.set(rank, [node])
   })
 
+  const sortedLayers = sortLayersByNeighbors(layers, edges, originalOrder)
+
   return nodes.map((node) => {
     const rank = ranks.get(node.id) ?? 0
-    const layerNodes = layers.get(rank) ?? [node]
+    const layerNodes = sortedLayers.get(rank) ?? [node]
     const laneIndex = layerNodes.findIndex(
       (layerNode) => layerNode.id === node.id
     )
