@@ -3,6 +3,8 @@ import { exportNodeConfig } from "@/components/workflows/editor/nodes/blocks/exp
 import { exportNodeSchema } from "@/components/workflows/editor/nodes/blocks/export/export-node.schema"
 import { fileNodeConfig } from "@/components/workflows/editor/nodes/blocks/file/file-node.config"
 import { fileNodeSchema } from "@/components/workflows/editor/nodes/blocks/file/file-node.schema"
+import { importLoraNodeConfig } from "@/components/workflows/editor/nodes/blocks/import-lora/import-lora-node.config"
+import { importLoraNodeSchema } from "@/components/workflows/editor/nodes/blocks/import-lora/import-lora-node.schema"
 import { previewNodeConfig } from "@/components/workflows/editor/nodes/blocks/preview/preview-node.config"
 import { previewNodeSchema } from "@/components/workflows/editor/nodes/blocks/preview/preview-node.schema"
 import { promptNodeConfig } from "@/components/workflows/editor/nodes/blocks/prompt/prompt-node.config"
@@ -35,6 +37,10 @@ export const workflowSchema: WorkflowSchema = {
     {
       config: previewNodeConfig,
       schema: previewNodeSchema,
+    },
+    {
+      config: importLoraNodeConfig,
+      schema: importLoraNodeSchema,
     },
   ],
 }

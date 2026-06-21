@@ -25,7 +25,6 @@ const menuItems: readonly MenuItem[] = [
     nodeType: item.type,
   })),
   { label: "Import Model" },
-  { label: "Import LoRA" },
   { label: "Import Multiple LoRAs" },
   { label: "Runway Gen-4.5" },
   { label: "Tools", hasChildren: true },

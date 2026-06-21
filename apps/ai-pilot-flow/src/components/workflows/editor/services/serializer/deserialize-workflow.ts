@@ -31,7 +31,13 @@ function isRecord(value: unknown): value is Record<string, unknown> {
 }
 
 function isWorkflowNodeType(value: unknown): value is WorkflowNodeType {
-  return value === "prompt" || value === "file" || value === "export"
+  return (
+    value === "prompt" ||
+    value === "file" ||
+    value === "preview" ||
+    value === "export" ||
+    value === "import-lora"
+  )
 }
 
 function isWorkflowPortSide(value: unknown): value is WorkflowPortRef["side"] {

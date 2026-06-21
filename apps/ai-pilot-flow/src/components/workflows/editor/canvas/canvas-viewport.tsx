@@ -32,6 +32,7 @@ import { WorkflowPromptNode } from "@/components/workflows/editor/nodes/blocks/p
 import { WorkflowFileNode } from "@/components/workflows/editor/nodes/blocks/file/workflow-file-node"
 import { WorkflowPreviewNode } from "@/components/workflows/editor/nodes/blocks/preview/workflow-preview-node"
 import { WorkflowExportNode } from "@/components/workflows/editor/nodes/blocks/export/workflow-export-node"
+import { WorkflowImportLoraNode } from "@/components/workflows/editor/nodes/blocks/import-lora/workflow-import-lora-node"
 import { useCanvasPan } from "@/components/workflows/editor/interactions/hooks/useCanvasPan"
 import { useCanvasNodeDrag } from "@/components/workflows/editor/interactions/hooks/useCanvasNodeDrag"
 import { useCanvasNodeMeasurements } from "@/components/workflows/editor/interactions/hooks/useCanvasNodeMeasurements"
@@ -855,13 +856,22 @@ export function WorkflowCanvasViewport() {
                       title={node.data?.title}
                       onPortPointerDown={handlePortPointerDown}
                     />
-                  ) : (
+                  ) : node.type === "preview" ? (
                     <WorkflowPreviewNode
                       nodeId={node.id}
                       isSelected={selectedNodeIdSet.has(node.id)}
                       executionStatus={nodeExecutionStatuses[node.id]}
                       title={node.data?.title}
                       inputLabel={node.data?.inputLabel}
+                      onPortPointerDown={handlePortPointerDown}
+                    />
+                  ) : (
+                    <WorkflowImportLoraNode
+                      nodeId={node.id}
+                      isSelected={selectedNodeIdSet.has(node.id)}
+                      executionStatus={nodeExecutionStatuses[node.id]}
+                      title={node.data?.title}
+                      outputLabel={node.data?.outputLabel}
                       onPortPointerDown={handlePortPointerDown}
                     />
                   )}

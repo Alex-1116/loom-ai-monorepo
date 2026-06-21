@@ -26,4 +26,8 @@ export const WORKFLOW_NODE_DEFAULTS: Record<
     inputLabel: "Input",
     actionLabel: "Export",
   },
+  "import-lora": {
+    title: "Import LoRA",
+    outputLabel: "LoRA URL",
+  },
 }

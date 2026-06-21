@@ -6,12 +6,18 @@ export type SharedWorkflowPortRef = {
   key?: string
 }
 
-export type SharedWorkflowNodeType = "prompt" | "file" | "preview" | "export"
+export type SharedWorkflowNodeType =
+  | "prompt"
+  | "file"
+  | "preview"
+  | "export"
+  | "import-lora"
 
 export type SharedWorkflowNodeData = {
   title?: string
   content?: string
   inputLabel?: string
+  outputLabel?: string
   actionLabel?: string
 }
 

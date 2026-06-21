@@ -1,9 +1,15 @@
-export type WorkflowNodeType = "prompt" | "file" | "preview" | "export"
+export type WorkflowNodeType =
+  | "prompt"
+  | "file"
+  | "preview"
+  | "export"
+  | "import-lora"
 
 export type WorkflowNodeData = {
   title?: string
   content?: string
   inputLabel?: string
+  outputLabel?: string
   actionLabel?: string
 }
 

@@ -86,6 +86,23 @@ function createBuiltInWorkflowNodeHandlers(): Record<
         },
       }
     },
+    "import-lora"({ node }) {
+      return {
+        output: {
+          kind: "import-lora",
+          nodeId: node.id,
+          title: node.data?.title ?? "Import LoRA",
+          outputLabel: node.data?.outputLabel ?? "LoRA URL",
+          url: `mock://lora/${node.id}`,
+          files: [
+            {
+              name: `${node.id}.safetensors`,
+              source: "mock-runtime",
+            },
+          ],
+        },
+      }
+    },
     preview({ node, graph, context }) {
       const inputs = getWorkflowNodeInputs(node, graph, context)
 
