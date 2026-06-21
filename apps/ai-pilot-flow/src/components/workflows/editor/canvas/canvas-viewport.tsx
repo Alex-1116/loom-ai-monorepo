@@ -8,6 +8,7 @@ import {
   WorkflowCanvasBottomToolbar,
   type WorkflowCanvasTool,
 } from "@/components/workflows/editor/chrome/toolbar/canvas-bottom-toolbar"
+import { WorkflowCanvasViewToolbar } from "@/components/workflows/editor/chrome/toolbar/canvas-view-toolbar"
 import { WorkflowCanvasBackground } from "@/components/workflows/editor/canvas/canvas-background"
 import { WorkflowCanvasContextMenu } from "@/components/workflows/editor/canvas/canvas-context-menu"
 import { WorkflowCanvasEdgesLayer } from "@/components/workflows/editor/canvas/canvas-edges-layer"
@@ -87,6 +88,7 @@ export function WorkflowCanvasViewport() {
   const [activeTool, setActiveTool] =
     React.useState<WorkflowCanvasTool>("select")
   const [isRunningPreview, setIsRunningPreview] = React.useState(false)
+  const [isOutlineVisible, setIsOutlineVisible] = React.useState(false)
   const [runPreviewResult, setRunPreviewResult] =
     React.useState<WorkflowRunResult | null>(null)
   const [runPreviewError, setRunPreviewError] = React.useState<string | null>(
@@ -678,7 +680,22 @@ export function WorkflowCanvasViewport() {
         </div>
 
         <div
-          className="absolute top-4 bottom-4 left-20 z-20 hidden xl:block"
+          className="absolute top-4 left-4 z-20 hidden xl:block"
+          data-workflow-overlay
+        >
+          <WorkflowCanvasViewToolbar
+            isOutlineVisible={isOutlineVisible}
+            onToggleOutline={() => setIsOutlineVisible((current) => !current)}
+          />
+        </div>
+
+        <div
+          className={cn(
+            "absolute top-4 bottom-4 left-20 z-20 hidden origin-top-left transition-all duration-200 ease-out xl:block",
+            isOutlineVisible
+              ? "translate-x-0 translate-y-0 scale-100 opacity-100"
+              : "pointer-events-none -translate-y-2 scale-95 opacity-0"
+          )}
           data-workflow-overlay
         >
           <WorkflowOutlinePanel
@@ -741,7 +758,12 @@ export function WorkflowCanvasViewport() {
         </div>
 
         <div
-          className="absolute top-4 right-4 bottom-4 z-20 hidden xl:block"
+          className={cn(
+            "absolute top-4 right-4 bottom-4 z-20 hidden transition-all duration-200 ease-out xl:block",
+            selectedNodeIds.length > 0
+              ? "translate-x-0 opacity-100"
+              : "pointer-events-none translate-x-[calc(100%+1rem)] opacity-0"
+          )}
           data-workflow-overlay
         >
           <WorkflowNodeInspectorPanel
