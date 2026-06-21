@@ -11,11 +11,15 @@ import { Upload } from "lucide-react"
 
 type WorkflowFileNodeProps = {
   title?: string
+  isSelected?: boolean
 }
 
-export function WorkflowFileNode({ title = "File" }: WorkflowFileNodeProps) {
+export function WorkflowFileNode({
+  title = "File",
+  isSelected = false,
+}: WorkflowFileNodeProps) {
   return (
-    <WorkflowNodeShell>
+    <WorkflowNodeShell isSelected={isSelected}>
       <WorkflowNodeHeader title={title} />
 
       <WorkflowNodeBody>

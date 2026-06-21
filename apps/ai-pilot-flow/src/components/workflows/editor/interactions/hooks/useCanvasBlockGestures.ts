@@ -3,10 +3,14 @@
 import * as React from "react"
 
 export function useCanvasBlockGestures<T extends HTMLElement>() {
-  const elementRef = React.useRef<T | null>(null)
+  const cleanupRef = React.useRef<(() => void) | null>(null)
 
-  React.useEffect(() => {
-    const element = elementRef.current
+  const ref = React.useCallback((element: T | null) => {
+    if (cleanupRef.current) {
+      cleanupRef.current()
+      cleanupRef.current = null
+    }
+
     if (!element) {
       return
     }
@@ -27,7 +31,7 @@ export function useCanvasBlockGestures<T extends HTMLElement>() {
     element.addEventListener("gesturechange", stopGesture)
     element.addEventListener("gestureend", stopGesture)
 
-    return () => {
+    cleanupRef.current = () => {
       element.removeEventListener("wheel", stopWheel)
       element.removeEventListener("gesturestart", stopGesture)
       element.removeEventListener("gesturechange", stopGesture)
@@ -35,5 +39,5 @@ export function useCanvasBlockGestures<T extends HTMLElement>() {
     }
   }, [])
 
-  return elementRef
+  return ref
 }

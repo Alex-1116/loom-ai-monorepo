@@ -26,7 +26,7 @@ type UseCanvasSnappingParams<Node extends CanvasNodePosition> = {
   }
   nodesRef: React.RefObject<Node[]>
   nodeSizesRef: React.RefObject<Record<string, CanvasNodeSize>>
-  setNodes: React.Dispatch<React.SetStateAction<Node[]>>
+  setNodes: (updater: React.SetStateAction<Node[]>) => void
 }
 
 function createEmptyGuides(): SnapGuides {

@@ -12,15 +12,17 @@ type WorkflowExportNodeProps = {
   title?: string
   inputLabel?: string
   actionLabel?: string
+  isSelected?: boolean
 }
 
 export function WorkflowExportNode({
   title = "Export",
   inputLabel = "Input",
   actionLabel = "Export",
+  isSelected = false,
 }: WorkflowExportNodeProps) {
   return (
-    <WorkflowNodeShell>
+    <WorkflowNodeShell isSelected={isSelected}>
       <WorkflowNodeHeader title={title} />
 
       <WorkflowNodeBody>

@@ -11,6 +11,7 @@ import { Button } from "@loom/ui/components/button"
 type WorkflowPromptNodeProps = {
   title?: string
   content?: string
+  isSelected?: boolean
 }
 
 const defaultPromptContent =
@@ -19,9 +20,10 @@ const defaultPromptContent =
 export function WorkflowPromptNode({
   title = "Prompt",
   content = defaultPromptContent,
+  isSelected = false,
 }: WorkflowPromptNodeProps) {
   return (
-    <WorkflowNodeShell>
+    <WorkflowNodeShell isSelected={isSelected}>
       <WorkflowNodeHeader title={title} />
 
       <WorkflowNodeBody className="flex flex-col items-start gap-4">

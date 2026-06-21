@@ -29,13 +29,11 @@ import {
   getElementRelativePoint,
   getElementSize,
 } from "@/components/workflows/editor/interactions/utils/pointer"
+import { getSurfaceCenter } from "@/components/workflows/editor/interactions/utils/viewport"
 import { useCanvasZoom } from "@/components/workflows/editor/interactions/hooks/useCanvasZoom"
-
-type ViewportState = {
-  x: number
-  y: number
-  scale: number
-}
+import { useWorkflowEditorStore } from "@/components/workflows/editor/state/workflow-editor-store"
+import { useCanvasSelection } from "@/components/workflows/editor/interactions/hooks/useCanvasSelection"
+import { useCanvasSelectionDrag } from "@/components/workflows/editor/interactions/hooks/useCanvasSelectionDrag"
 
 type WorkflowCanvasNodeSize = {
   width: number
@@ -43,6 +41,7 @@ type WorkflowCanvasNodeSize = {
 }
 
 const initialNodes = createInitialWorkflowNodes()
+const SELECTION_OVERLAY_PADDING = 5
 
 function formatZoom(scale: number) {
   return `${Math.round(scale * 100)}%`
@@ -54,17 +53,73 @@ export function WorkflowCanvasViewport() {
   const nodeSizesRef = React.useRef<Record<string, WorkflowCanvasNodeSize>>({})
   const [activeTool, setActiveTool] =
     React.useState<WorkflowCanvasTool>("select")
-  const [viewport, setViewport] = React.useState<ViewportState>({
-    x: 0,
-    y: 0,
-    scale: 1,
+  const {
+    nodes,
+    viewport,
+    selectedNodeIds,
+    canUndo,
+    canRedo,
+    setNodes,
+    setViewport,
+    setSelectedNodeIds,
+    flushHistory,
+    undo,
+    redo,
+  } = useWorkflowEditorStore({
+    initialNodes,
+    initialViewport: {
+      x: 0,
+      y: 0,
+      scale: 1,
+    },
   })
-  const [nodes, setNodes] = React.useState<WorkflowCanvasNode[]>(
-    () => initialNodes
-  )
   const { nodeSizes, handleNodeElementRef } = useCanvasNodeMeasurements({
     nodes,
   })
+  const selectedNodeIdSet = React.useMemo(
+    () => new Set(selectedNodeIds),
+    [selectedNodeIds]
+  )
+
+  const setNodesTransient = React.useCallback(
+    (updater: React.SetStateAction<WorkflowCanvasNode[]>) => {
+      setNodes(updater, "deferred")
+    },
+    [setNodes]
+  )
+
+  const setNodesCommitted = React.useCallback(
+    (updater: React.SetStateAction<WorkflowCanvasNode[]>) => {
+      setNodes(updater, "commit")
+    },
+    [setNodes]
+  )
+
+  const setViewportTransient = React.useCallback(
+    (
+      updater: React.SetStateAction<{
+        x: number
+        y: number
+        scale: number
+      }>
+    ) => {
+      setViewport(updater, "deferred")
+    },
+    [setViewport]
+  )
+
+  const setViewportCommitted = React.useCallback(
+    (
+      updater: React.SetStateAction<{
+        x: number
+        y: number
+        scale: number
+      }>
+    ) => {
+      setViewport(updater, "commit")
+    },
+    [setViewport]
+  )
 
   React.useEffect(() => {
     // 拖拽和吸附逻辑依赖最新节点数据，但不希望因为闭包导致频繁重绑事件。
@@ -84,14 +139,101 @@ export function WorkflowCanvasViewport() {
     viewport,
     nodesRef,
     nodeSizesRef,
-    setNodes,
+    setNodes: setNodesTransient,
   })
+
+  const {
+    isSelectionOverlayVisible,
+    selectionBox,
+    handleSelectionPointerDown,
+    handleSelectionPointerMove,
+    handleSelectionPointerEnd,
+  } = useCanvasSelection({
+    surfaceRef,
+    activeTool,
+    viewport,
+    nodesRef,
+    nodeSizesRef,
+    selectedNodeIds,
+    setSelectedNodeIds,
+  })
+
+  const persistedSelectionOverlayBox = React.useMemo(() => {
+    const surfaceSize = getElementSize(surfaceRef.current)
+    if (!surfaceSize || selectedNodeIdSet.size === 0) {
+      return null
+    }
+
+    const center = getSurfaceCenter(surfaceSize)
+    const safeScale = Math.max(viewport.scale, 0.01)
+    const selectedNodeBounds = nodes.flatMap((node) => {
+      if (!selectedNodeIdSet.has(node.id)) {
+        return []
+      }
+
+      const nodeSize = nodeSizes[node.id]
+      if (!nodeSize) {
+        return []
+      }
+
+      return [
+        {
+          left: center.x + viewport.x + node.x * safeScale,
+          top: center.y + viewport.y + node.y * safeScale,
+          width: nodeSize.width * safeScale,
+          height: nodeSize.height * safeScale,
+        },
+      ]
+    })
+
+    if (selectedNodeBounds.length === 0) {
+      return null
+    }
+
+    const left = Math.min(...selectedNodeBounds.map((node) => node.left))
+    const top = Math.min(...selectedNodeBounds.map((node) => node.top))
+    const right = Math.max(
+      ...selectedNodeBounds.map((node) => node.left + node.width)
+    )
+    const bottom = Math.max(
+      ...selectedNodeBounds.map((node) => node.top + node.height)
+    )
+
+    return {
+      left: left - SELECTION_OVERLAY_PADDING,
+      top: top - SELECTION_OVERLAY_PADDING,
+      width: right - left + SELECTION_OVERLAY_PADDING * 2,
+      height: bottom - top + SELECTION_OVERLAY_PADDING * 2,
+    }
+  }, [
+    nodeSizes,
+    nodes,
+    selectedNodeIdSet,
+    viewport.scale,
+    viewport.x,
+    viewport.y,
+  ])
 
   const { draggingNodeId, handleNodePointerDown } = useCanvasNodeDrag({
     scale: viewport.scale,
     onNodePositionChange: handleNodePositionChange,
-    onDragEnd: clearGuides,
+    onDragEnd: () => {
+      flushHistory()
+      clearGuides()
+    },
   })
+  const { isDraggingSelection, handleSelectionDragPointerDown } =
+    useCanvasSelectionDrag({
+      activeTool,
+      scale: viewport.scale,
+      selectedNodeIds,
+      nodesRef,
+      setNodes: setNodesTransient,
+      onDragEnd: () => {
+        flushHistory()
+        clearGuides()
+      },
+    })
 
   const {
     handleTouchPointerDown,
@@ -104,21 +246,22 @@ export function WorkflowCanvasViewport() {
   } = useCanvasZoom({
     surfaceRef,
     viewport,
-    setViewport,
+    setViewport: setViewportTransient,
+    commitViewport: setViewportCommitted,
   })
 
   const { isPanning, handlePointerDown, handlePointerMove, handlePointerEnd } =
     useCanvasPan({
       activeTool,
       viewport,
-      setViewport,
+      setViewport: setViewportTransient,
       handleTouchPointerDown,
       handleTouchPointerMove,
       handleTouchPointerEnd,
     })
 
   const { handleResetView } = useCanvasViewportControls({
-    setViewport,
+    setViewport: setViewportCommitted,
     clearGuides,
   })
 
@@ -141,7 +284,7 @@ export function WorkflowCanvasViewport() {
       const y =
         (surfacePoint.y - surfaceSize.height / 2 - viewport.y) / safeScale
 
-      setNodes((current) => [
+      setNodesCommitted((current) => [
         ...current,
         createWorkflowNode({
           type: payload.type,
@@ -151,7 +294,7 @@ export function WorkflowCanvasViewport() {
       ])
       clearGuides()
     },
-    [clearGuides, viewport.scale, viewport.x, viewport.y]
+    [clearGuides, setNodesCommitted, viewport.scale, viewport.x, viewport.y]
   )
 
   return (
@@ -165,19 +308,46 @@ export function WorkflowCanvasViewport() {
           "relative h-full w-full touch-none overflow-hidden overscroll-none",
           activeTool === "hand" && !isPanning && "cursor-grab",
           activeTool === "hand" && isPanning && "cursor-grabbing",
-          draggingNodeId && "cursor-grabbing"
+          isDraggingSelection && "cursor-grabbing",
+          draggingNodeId && "cursor-grabbing",
+          selectionBox && "cursor-crosshair"
         )}
-        onPointerDown={handlePointerDown}
-        onPointerMove={handlePointerMove}
-        onPointerUp={handlePointerEnd}
-        onPointerCancel={handlePointerEnd}
+        onPointerDown={(event) => {
+          if (handleSelectionPointerDown(event)) {
+            return
+          }
+
+          handlePointerDown(event)
+        }}
+        onPointerMove={(event) => {
+          if (handleSelectionPointerMove(event)) {
+            return
+          }
+
+          handlePointerMove(event)
+        }}
+        onPointerUp={(event) => {
+          if (handleSelectionPointerEnd(event)) {
+            return
+          }
+
+          handlePointerEnd(event)
+          flushHistory()
+        }}
+        onPointerCancel={(event) => {
+          if (handleSelectionPointerEnd(event)) {
+            return
+          }
+
+          handlePointerEnd(event)
+          flushHistory()
+        }}
       >
         <WorkflowCanvasBackground viewport={viewport} />
         <WorkflowCanvasGuidesLayer
           guides={activeSnapGuides}
           viewport={viewport}
         />
-
         <div
           className="absolute inset-y-0 left-4 z-20 hidden items-center xl:flex"
           data-workflow-overlay
@@ -198,6 +368,16 @@ export function WorkflowCanvasViewport() {
             onZoomReset={handleZoomReset}
             onZoomFit={handleZoomFit}
             onResetView={handleResetView}
+            onUndo={() => {
+              undo()
+              clearGuides()
+            }}
+            onRedo={() => {
+              redo()
+              clearGuides()
+            }}
+            canUndo={canUndo}
+            canRedo={canRedo}
           />
         </div>
 
@@ -227,34 +407,105 @@ export function WorkflowCanvasViewport() {
                     "absolute select-none",
                     draggingNodeId === node.id
                       ? "z-20 cursor-grabbing"
-                      : "cursor-grab"
+                      : "cursor-grab",
+                    selectedNodeIdSet.has(node.id) && "z-10"
                   )}
                   style={{
                     left: 0,
                     top: 0,
                     transform: `translate(${node.x}px, ${node.y}px)`,
                   }}
-                  onPointerDown={(event) => handleNodePointerDown(event, node)}
+                  onPointerDown={(event) => {
+                    const isAdditiveSelection =
+                      event.shiftKey || event.metaKey || event.ctrlKey
+
+                    if (isAdditiveSelection) {
+                      setSelectedNodeIds(
+                        selectedNodeIdSet.has(node.id)
+                          ? selectedNodeIds.filter(
+                              (selectedNodeId) => selectedNodeId !== node.id
+                            )
+                          : [...selectedNodeIds, node.id]
+                      )
+                    } else {
+                      setSelectedNodeIds([node.id])
+                    }
+
+                    handleNodePointerDown(event, node)
+                  }}
                 >
                   {node.type === "prompt" ? (
                     <WorkflowPromptNode
+                      isSelected={selectedNodeIdSet.has(node.id)}
                       title={node.data?.title}
                       content={node.data?.content}
                     />
                   ) : node.type === "export" ? (
                     <WorkflowExportNode
+                      isSelected={selectedNodeIdSet.has(node.id)}
                       title={node.data?.title}
                       inputLabel={node.data?.inputLabel}
                       actionLabel={node.data?.actionLabel}
                     />
                   ) : (
-                    <WorkflowFileNode title={node.data?.title} />
+                    <WorkflowFileNode
+                      isSelected={selectedNodeIdSet.has(node.id)}
+                      title={node.data?.title}
+                    />
                   )}
                 </div>
               ))}
             </div>
           </div>
         </div>
+
+        {isSelectionOverlayVisible ? (
+          <div
+            aria-hidden="true"
+            className="pointer-events-none absolute inset-0 z-[60] bg-slate-950/14"
+          >
+            {(selectionBox ?? persistedSelectionOverlayBox) ? (
+              <>
+                {selectionBox ? (
+                  <div
+                    className="absolute size-2 -translate-x-1/2 -translate-y-1/2 rounded-full border border-sky-300/80 bg-sky-300/30 shadow-[0_0_20px_rgba(56,189,248,0.45)]"
+                    style={{
+                      left: selectionBox.left,
+                      top: selectionBox.top,
+                    }}
+                  />
+                ) : null}
+                {selectionBox ? (
+                  <div
+                    className="absolute rounded-2xl shadow-[0_18px_40px_rgba(15,23,42,0.16)]"
+                    style={{
+                      left: selectionBox.left,
+                      top: selectionBox.top,
+                      width: selectionBox.width,
+                      height: selectionBox.height,
+                      backgroundColor: "rgba(71, 85, 105, 0.12)",
+                    }}
+                  />
+                ) : persistedSelectionOverlayBox ? (
+                  <div
+                    className={cn(
+                      "pointer-events-auto absolute rounded-2xl shadow-[0_18px_40px_rgba(15,23,42,0.16)]",
+                      isDraggingSelection ? "cursor-grabbing" : "cursor-grab"
+                    )}
+                    style={{
+                      left: persistedSelectionOverlayBox.left,
+                      top: persistedSelectionOverlayBox.top,
+                      width: persistedSelectionOverlayBox.width,
+                      height: persistedSelectionOverlayBox.height,
+                      backgroundColor: "rgba(71, 85, 105, 0.12)",
+                    }}
+                    onPointerDown={handleSelectionDragPointerDown}
+                  />
+                ) : null}
+              </>
+            ) : null}
+          </div>
+        ) : null}
       </div>
     </WorkflowCanvasContextMenu>
   )

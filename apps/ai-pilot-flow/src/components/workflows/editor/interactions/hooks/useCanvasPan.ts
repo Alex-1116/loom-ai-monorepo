@@ -11,7 +11,7 @@ type ViewportState = {
 type UseCanvasPanParams = {
   activeTool: "select" | "hand"
   viewport: ViewportState
-  setViewport: React.Dispatch<React.SetStateAction<ViewportState>>
+  setViewport: (updater: React.SetStateAction<ViewportState>) => void
   handleTouchPointerDown: (event: React.PointerEvent<HTMLDivElement>) => boolean
   handleTouchPointerMove: (event: React.PointerEvent<HTMLDivElement>) => boolean
   handleTouchPointerEnd: (event?: React.PointerEvent<HTMLDivElement>) => boolean

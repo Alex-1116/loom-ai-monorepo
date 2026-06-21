@@ -34,13 +34,15 @@ type TouchGestureState = {
 type UseCanvasZoomParams = {
   surfaceRef: React.RefObject<HTMLDivElement | null>
   viewport: ViewportState
-  setViewport: React.Dispatch<React.SetStateAction<ViewportState>>
+  setViewport: (updater: React.SetStateAction<ViewportState>) => void
+  commitViewport: (updater: React.SetStateAction<ViewportState>) => void
 }
 
 export function useCanvasZoom({
   surfaceRef,
   viewport,
   setViewport,
+  commitViewport,
 }: UseCanvasZoomParams) {
   const viewportRef = React.useRef<ViewportState>(viewport)
   const touchPointersRef = React.useRef<Map<number, Point>>(new Map())
@@ -80,7 +82,7 @@ export function useCanvasZoom({
   )
 
   const handleZoomIn = React.useCallback(() => {
-    setViewport((current) => {
+    commitViewport((current) => {
       const size = getSurfaceSize()
       if (!size) {
         return current
@@ -94,10 +96,10 @@ export function useCanvasZoom({
         center
       )
     })
-  }, [getSurfaceSize, setViewport])
+  }, [commitViewport, getSurfaceSize])
 
   const handleZoomOut = React.useCallback(() => {
-    setViewport((current) => {
+    commitViewport((current) => {
       const size = getSurfaceSize()
       if (!size) {
         return current
@@ -111,22 +113,22 @@ export function useCanvasZoom({
         center
       )
     })
-  }, [getSurfaceSize, setViewport])
+  }, [commitViewport, getSurfaceSize])
 
   const handleZoomReset = React.useCallback(() => {
-    setViewport((current) => ({
+    commitViewport((current) => ({
       ...current,
       scale: normalizeScale(1),
     }))
-  }, [setViewport])
+  }, [commitViewport])
 
   const handleZoomFit = React.useCallback(() => {
-    setViewport({
+    commitViewport({
       x: 0,
       y: 0,
       scale: normalizeScale(1),
     })
-  }, [setViewport])
+  }, [commitViewport])
 
   React.useEffect(() => {
     function handleKeyDown(event: KeyboardEvent) {

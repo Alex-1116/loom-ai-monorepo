@@ -184,6 +184,7 @@ export function WorkflowCanvasBottomToolbar({
           side="top"
           align="start"
           sideOffset={14}
+          data-workflow-overlay
           className="w-20 rounded-lg border border-white/10 bg-[#1d1e27]/98 p-1 text-white shadow-[0_18px_48px_rgba(0,0,0,0.42)] ring-0"
         >
           {zoomItems.map((item) => (

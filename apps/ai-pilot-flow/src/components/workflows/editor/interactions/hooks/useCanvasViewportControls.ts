@@ -5,7 +5,7 @@ import * as React from "react"
 import { type ViewportState } from "@/components/workflows/editor/interactions/utils/viewport"
 
 type UseCanvasViewportControlsParams = {
-  setViewport: React.Dispatch<React.SetStateAction<ViewportState>>
+  setViewport: (updater: React.SetStateAction<ViewportState>) => void
   clearGuides?: () => void
 }
 

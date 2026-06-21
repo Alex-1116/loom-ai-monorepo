@@ -150,7 +150,7 @@ export function WorkflowCanvasContextMenu({
         <div
           ref={(node) => {
             menuRef.current = node
-            gestureBlockRef.current = node
+            gestureBlockRef(node)
           }}
           className="absolute z-30 flex w-[200px] flex-col gap-1.5 rounded-xl border border-white/10 bg-[#1c1d26]/98 p-1.5 text-white shadow-[0_18px_48px_rgba(0,0,0,0.55)] backdrop-blur-xl"
           style={{ left: position.x, top: position.y }}
