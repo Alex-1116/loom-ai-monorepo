@@ -11,6 +11,7 @@ import {
 import { WorkflowCanvasBackground } from "@/components/workflows/editor/canvas/canvas-background"
 import { WorkflowCanvasContextMenu } from "@/components/workflows/editor/canvas/canvas-context-menu"
 import { WorkflowCanvasGuidesLayer } from "@/components/workflows/editor/canvas/canvas-guides-layer"
+import { WorkflowCanvasSelectionLayer } from "@/components/workflows/editor/canvas/canvas-selection-layer"
 import { WorkflowCanvasLeftToolbar } from "@/components/workflows/editor/chrome/toolbar/canvas-left-toolbar"
 import {
   createInitialWorkflowNodes,
@@ -459,53 +460,13 @@ export function WorkflowCanvasViewport() {
           </div>
         </div>
 
-        {isSelectionOverlayVisible ? (
-          <div
-            aria-hidden="true"
-            className="pointer-events-none absolute inset-0 z-[60] bg-slate-950/14"
-          >
-            {(selectionBox ?? persistedSelectionOverlayBox) ? (
-              <>
-                {selectionBox ? (
-                  <div
-                    className="absolute size-2 -translate-x-1/2 -translate-y-1/2 rounded-full border border-sky-300/80 bg-sky-300/30 shadow-[0_0_20px_rgba(56,189,248,0.45)]"
-                    style={{
-                      left: selectionBox.left,
-                      top: selectionBox.top,
-                    }}
-                  />
-                ) : null}
-                {selectionBox ? (
-                  <div
-                    className="absolute rounded-2xl shadow-[0_18px_40px_rgba(15,23,42,0.16)]"
-                    style={{
-                      left: selectionBox.left,
-                      top: selectionBox.top,
-                      width: selectionBox.width,
-                      height: selectionBox.height,
-                      backgroundColor: "rgba(71, 85, 105, 0.12)",
-                    }}
-                  />
-                ) : persistedSelectionOverlayBox ? (
-                  <div
-                    className={cn(
-                      "pointer-events-auto absolute rounded-2xl shadow-[0_18px_40px_rgba(15,23,42,0.16)]",
-                      isDraggingSelection ? "cursor-grabbing" : "cursor-grab"
-                    )}
-                    style={{
-                      left: persistedSelectionOverlayBox.left,
-                      top: persistedSelectionOverlayBox.top,
-                      width: persistedSelectionOverlayBox.width,
-                      height: persistedSelectionOverlayBox.height,
-                      backgroundColor: "rgba(71, 85, 105, 0.12)",
-                    }}
-                    onPointerDown={handleSelectionDragPointerDown}
-                  />
-                ) : null}
-              </>
-            ) : null}
-          </div>
-        ) : null}
+        <WorkflowCanvasSelectionLayer
+          isVisible={isSelectionOverlayVisible}
+          selectionBox={selectionBox}
+          persistedSelectionBox={persistedSelectionOverlayBox}
+          isDraggingSelection={isDraggingSelection}
+          onSelectionDragPointerDown={handleSelectionDragPointerDown}
+        />
       </div>
     </WorkflowCanvasContextMenu>
   )
