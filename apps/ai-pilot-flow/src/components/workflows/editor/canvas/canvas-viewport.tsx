@@ -10,6 +10,7 @@ import {
 } from "@/components/workflows/editor/chrome/toolbar/canvas-bottom-toolbar"
 import { WorkflowCanvasBackground } from "@/components/workflows/editor/canvas/canvas-background"
 import { WorkflowCanvasContextMenu } from "@/components/workflows/editor/canvas/canvas-context-menu"
+import { WorkflowCanvasEdgesLayer } from "@/components/workflows/editor/canvas/canvas-edges-layer"
 import { WorkflowCanvasGuidesLayer } from "@/components/workflows/editor/canvas/canvas-guides-layer"
 import { WorkflowCanvasSelectionLayer } from "@/components/workflows/editor/canvas/canvas-selection-layer"
 import { WorkflowCanvasLeftToolbar } from "@/components/workflows/editor/chrome/toolbar/canvas-left-toolbar"
@@ -17,11 +18,11 @@ import { WorkflowNodeInspectorPanel } from "@/components/workflows/editor/chrome
 import { WorkflowOutlinePanel } from "@/components/workflows/editor/chrome/panels/workflow-outline-panel"
 import { WorkflowEmptyState } from "@/components/workflows/editor/chrome/overlays/empty-state"
 import { WorkflowZoomIndicator } from "@/components/workflows/editor/chrome/overlays/zoom-indicator"
+import { type WorkflowCanvasNode } from "@/components/workflows/editor/model/types/workflow-node"
 import {
   createInitialWorkflowNodes,
   createWorkflowNode,
 } from "@/components/workflows/editor/nodes/registry/workflow-node-factory"
-import { type WorkflowCanvasNode } from "@/components/workflows/editor/nodes/registry/workflow-node-registry"
 import { WorkflowPromptNode } from "@/components/workflows/editor/nodes/blocks/prompt/workflow-prompt-node"
 import { WorkflowFileNode } from "@/components/workflows/editor/nodes/blocks/file/workflow-file-node"
 import { WorkflowExportNode } from "@/components/workflows/editor/nodes/blocks/export/workflow-export-node"
@@ -39,6 +40,7 @@ import { useCanvasZoom } from "@/components/workflows/editor/interactions/hooks/
 import { useWorkflowEditorStore } from "@/components/workflows/editor/state/workflow-editor-store"
 import { useCanvasSelection } from "@/components/workflows/editor/interactions/hooks/useCanvasSelection"
 import { useCanvasSelectionDrag } from "@/components/workflows/editor/interactions/hooks/useCanvasSelectionDrag"
+import { useCanvasEdgeConnection } from "@/components/workflows/editor/interactions/hooks/useCanvasEdgeConnection"
 
 type WorkflowCanvasNodeSize = {
   width: number
@@ -52,6 +54,18 @@ function formatZoom(scale: number) {
   return `${Math.round(scale * 100)}%`
 }
 
+function isEditableTarget(target: EventTarget | null) {
+  if (!(target instanceof HTMLElement)) {
+    return false
+  }
+
+  return Boolean(
+    target.closest(
+      'input, textarea, select, [contenteditable="true"], [role="textbox"]'
+    )
+  )
+}
+
 export function WorkflowCanvasViewport() {
   const surfaceRef = React.useRef<HTMLDivElement | null>(null)
   const nodesRef = React.useRef<WorkflowCanvasNode[]>(initialNodes)
@@ -60,12 +74,16 @@ export function WorkflowCanvasViewport() {
     React.useState<WorkflowCanvasTool>("select")
   const {
     nodes,
+    edges,
     viewport,
     selectedNodeIds,
+    selectedEdgeIds,
     canUndo,
     canRedo,
     setNodes,
+    setEdges,
     setViewport,
+    setSelectedEdgeIds,
     setSelectedNodeIds,
     flushHistory,
     undo,
@@ -168,6 +186,7 @@ export function WorkflowCanvasViewport() {
     nodeSizesRef,
     selectedNodeIds,
     setSelectedNodeIds,
+    clearSecondarySelection: () => setSelectedEdgeIds([]),
   })
 
   const persistedSelectionOverlayBox = React.useMemo(() => {
@@ -246,6 +265,13 @@ export function WorkflowCanvasViewport() {
         clearGuides()
       },
     })
+  const { previewConnection, handlePortPointerDown } = useCanvasEdgeConnection({
+    surfaceRef,
+    viewport,
+    edges,
+    setEdges,
+    setSelectedEdgeIds,
+  })
 
   const {
     handleTouchPointerDown,
@@ -348,6 +374,69 @@ export function WorkflowCanvasViewport() {
     clearGuides()
   }, [clearGuides, setNodesCommitted])
 
+  const handleSelectEdge = React.useCallback(
+    (edgeId: string) => {
+      setSelectedNodeIds([])
+      setSelectedEdgeIds([edgeId])
+    },
+    [setSelectedEdgeIds, setSelectedNodeIds]
+  )
+
+  React.useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (
+        (event.key !== "Backspace" && event.key !== "Delete") ||
+        isEditableTarget(event.target)
+      ) {
+        return
+      }
+
+      if (selectedEdgeIds.length > 0) {
+        const selectedEdgeIdSet = new Set(selectedEdgeIds)
+        setEdges(
+          (current) =>
+            current.filter((edge) => !selectedEdgeIdSet.has(edge.id)),
+          "commit"
+        )
+        setSelectedEdgeIds([])
+        event.preventDefault()
+        return
+      }
+
+      if (selectedNodeIds.length === 0) {
+        return
+      }
+
+      const selectedNodeIdSet = new Set(selectedNodeIds)
+      setNodes(
+        (current) => current.filter((node) => !selectedNodeIdSet.has(node.id)),
+        "commit"
+      )
+      setEdges(
+        (current) =>
+          current.filter(
+            (edge) =>
+              !selectedNodeIdSet.has(edge.source.nodeId) &&
+              !selectedNodeIdSet.has(edge.target.nodeId)
+          ),
+        "skip"
+      )
+      setSelectedNodeIds([])
+      setSelectedEdgeIds([])
+      event.preventDefault()
+    }
+
+    window.addEventListener("keydown", handleKeyDown)
+    return () => window.removeEventListener("keydown", handleKeyDown)
+  }, [
+    selectedEdgeIds,
+    selectedNodeIds,
+    setEdges,
+    setNodes,
+    setSelectedEdgeIds,
+    setSelectedNodeIds,
+  ])
+
   return (
     <WorkflowCanvasContextMenu
       className="absolute inset-0 z-10"
@@ -366,6 +455,12 @@ export function WorkflowCanvasViewport() {
         onPointerDown={(event) => {
           if (handleSelectionPointerDown(event)) {
             return
+          }
+
+          if (
+            !(event.target as HTMLElement).closest("[data-workflow-edge-hit]")
+          ) {
+            setSelectedEdgeIds([])
           }
 
           handlePointerDown(event)
@@ -413,7 +508,10 @@ export function WorkflowCanvasViewport() {
           <WorkflowOutlinePanel
             nodes={nodes}
             selectedNodeIds={selectedNodeIds}
-            onSelectNode={(nodeId) => setSelectedNodeIds([nodeId])}
+            onSelectNode={(nodeId) => {
+              setSelectedEdgeIds([])
+              setSelectedNodeIds([nodeId])
+            }}
           />
         </div>
 
@@ -471,6 +569,15 @@ export function WorkflowCanvasViewport() {
             }}
           >
             <div className="relative h-0 w-0">
+              <WorkflowCanvasEdgesLayer
+                nodes={nodes}
+                nodeSizes={nodeSizes}
+                edges={edges}
+                selectedEdgeIds={selectedEdgeIds}
+                onSelectEdge={handleSelectEdge}
+                previewConnection={previewConnection}
+              />
+
               <div
                 aria-hidden="true"
                 className="pointer-events-none absolute top-0 left-0"
@@ -500,6 +607,7 @@ export function WorkflowCanvasViewport() {
                       event.shiftKey || event.metaKey || event.ctrlKey
 
                     if (isAdditiveSelection) {
+                      setSelectedEdgeIds([])
                       setSelectedNodeIds(
                         selectedNodeIdSet.has(node.id)
                           ? selectedNodeIds.filter(
@@ -508,6 +616,7 @@ export function WorkflowCanvasViewport() {
                           : [...selectedNodeIds, node.id]
                       )
                     } else {
+                      setSelectedEdgeIds([])
                       setSelectedNodeIds([node.id])
                     }
 
@@ -516,21 +625,27 @@ export function WorkflowCanvasViewport() {
                 >
                   {node.type === "prompt" ? (
                     <WorkflowPromptNode
+                      nodeId={node.id}
                       isSelected={selectedNodeIdSet.has(node.id)}
                       title={node.data?.title}
                       content={node.data?.content}
+                      onPortPointerDown={handlePortPointerDown}
                     />
                   ) : node.type === "export" ? (
                     <WorkflowExportNode
+                      nodeId={node.id}
                       isSelected={selectedNodeIdSet.has(node.id)}
                       title={node.data?.title}
                       inputLabel={node.data?.inputLabel}
                       actionLabel={node.data?.actionLabel}
+                      onPortPointerDown={handlePortPointerDown}
                     />
                   ) : (
                     <WorkflowFileNode
+                      nodeId={node.id}
                       isSelected={selectedNodeIdSet.has(node.id)}
                       title={node.data?.title}
+                      onPortPointerDown={handlePortPointerDown}
                     />
                   )}
                 </div>

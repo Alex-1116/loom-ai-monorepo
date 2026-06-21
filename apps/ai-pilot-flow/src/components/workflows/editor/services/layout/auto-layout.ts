@@ -1,4 +1,4 @@
-import type { WorkflowCanvasNode } from "@/components/workflows/editor/nodes/registry/workflow-node-registry"
+import type { WorkflowCanvasNode } from "@/components/workflows/editor/model/types/workflow-node"
 
 export type AutoLayoutDirection = "horizontal" | "vertical"
 

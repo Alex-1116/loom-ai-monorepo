@@ -6,8 +6,10 @@ import { areWorkflowEditorSnapshotsEqual } from "@/components/workflows/editor/s
 function createWorkflowEditorSnapshot(state: WorkflowEditorState) {
   return {
     nodes: state.nodes,
+    edges: state.edges,
     viewport: state.viewport,
     selectedNodeIds: state.selectedNodeIds,
+    selectedEdgeIds: state.selectedEdgeIds,
   }
 }
 
@@ -19,10 +21,20 @@ export function selectWorkflowEditorViewport(state: WorkflowEditorState) {
   return state.viewport
 }
 
+export function selectWorkflowEditorEdges(state: WorkflowEditorState) {
+  return state.edges
+}
+
 export function selectWorkflowEditorSelectedNodeIds(
   state: WorkflowEditorState
 ) {
   return state.selectedNodeIds
+}
+
+export function selectWorkflowEditorSelectedEdgeIds(
+  state: WorkflowEditorState
+) {
+  return state.selectedEdgeIds
 }
 
 export function selectWorkflowEditorCanUndo(state: WorkflowEditorState) {

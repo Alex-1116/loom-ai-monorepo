@@ -2,6 +2,7 @@
 
 import * as React from "react"
 
+import type { ViewportState } from "@/components/workflows/editor/model/types/viewport"
 import {
   distance,
   getElementRelativePoint,
@@ -16,7 +17,6 @@ import {
   getSurfaceCenter,
   normalizeScale,
   scaleViewport,
-  type ViewportState,
 } from "@/components/workflows/editor/interactions/utils/viewport"
 
 type TouchGestureState = {

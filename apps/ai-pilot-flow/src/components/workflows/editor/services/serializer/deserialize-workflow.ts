@@ -1,16 +1,20 @@
 import { createWorkflowNode } from "@/components/workflows/editor/nodes/registry/workflow-node-factory"
-import {
-  getWorkflowNodeDefinition,
-  type WorkflowCanvasNode,
-  type WorkflowNodeType,
-} from "@/components/workflows/editor/nodes/registry/workflow-node-registry"
+import { getWorkflowNodeDefinition } from "@/components/workflows/editor/nodes/registry/workflow-node-registry"
 import {
   MAX_SCALE,
   MIN_SCALE,
   clamp,
   normalizeScale,
-  type ViewportState,
 } from "@/components/workflows/editor/interactions/utils/viewport"
+import type {
+  WorkflowEdge,
+  WorkflowPortRef,
+} from "@/components/workflows/editor/model/types/workflow-edge"
+import type {
+  WorkflowCanvasNode,
+  WorkflowNodeType,
+} from "@/components/workflows/editor/model/types/workflow-node"
+import type { ViewportState } from "@/components/workflows/editor/model/types/viewport"
 import {
   WORKFLOW_DOCUMENT_VERSION,
   type SerializedWorkflowDocument,
@@ -18,6 +22,7 @@ import {
 
 export type DeserializedWorkflow = {
   nodes: WorkflowCanvasNode[]
+  edges: WorkflowEdge[]
   viewport: ViewportState
 }
 
@@ -27,6 +32,10 @@ function isRecord(value: unknown): value is Record<string, unknown> {
 
 function isWorkflowNodeType(value: unknown): value is WorkflowNodeType {
   return value === "prompt" || value === "file" || value === "export"
+}
+
+function isWorkflowPortSide(value: unknown): value is WorkflowPortRef["side"] {
+  return value === "left" || value === "right"
 }
 
 function parseViewport(value: unknown): ViewportState {
@@ -76,6 +85,46 @@ function parseNode(value: unknown, index: number): WorkflowCanvasNode | null {
   }
 }
 
+function parsePortRef(value: unknown): WorkflowPortRef | null {
+  if (
+    !isRecord(value) ||
+    typeof value.nodeId !== "string" ||
+    !isWorkflowPortSide(value.side)
+  ) {
+    return null
+  }
+
+  return {
+    nodeId: value.nodeId,
+    side: value.side,
+    key:
+      typeof value.key === "string" && value.key.trim().length > 0
+        ? value.key
+        : undefined,
+  }
+}
+
+function parseEdge(value: unknown, index: number): WorkflowEdge | null {
+  if (!isRecord(value)) {
+    return null
+  }
+
+  const source = parsePortRef(value.source)
+  const target = parsePortRef(value.target)
+  if (!source || !target) {
+    return null
+  }
+
+  return {
+    id:
+      typeof value.id === "string" && value.id.trim().length > 0
+        ? value.id
+        : `edge-${index + 1}`,
+    source,
+    target,
+  }
+}
+
 export function deserializeWorkflow(
   input: string | SerializedWorkflowDocument
 ): DeserializedWorkflow {
@@ -85,6 +134,7 @@ export function deserializeWorkflow(
   if (!isRecord(parsedInput)) {
     return {
       nodes: [],
+      edges: [],
       viewport: { x: 0, y: 0, scale: 1 },
     }
   }
@@ -100,9 +150,29 @@ export function deserializeWorkflow(
     uniqueNodeIds.add(parsedNode.id)
     return [parsedNode]
   })
+  const validNodeIds = new Set(nodes.map((node) => node.id))
+  const rawEdges = Array.isArray(parsedInput.edges) ? parsedInput.edges : []
+  const uniqueEdgeIds = new Set<string>()
+  const edges = rawEdges.flatMap((edge, index) => {
+    const parsedEdge = parseEdge(edge, index)
+    if (!parsedEdge || uniqueEdgeIds.has(parsedEdge.id)) {
+      return []
+    }
+
+    if (
+      !validNodeIds.has(parsedEdge.source.nodeId) ||
+      !validNodeIds.has(parsedEdge.target.nodeId)
+    ) {
+      return []
+    }
+
+    uniqueEdgeIds.add(parsedEdge.id)
+    return [parsedEdge]
+  })
 
   return {
     nodes,
+    edges,
     viewport: parseViewport(parsedInput.viewport),
   }
 }
@@ -112,6 +182,7 @@ export function isSerializedWorkflowDocument(value: unknown) {
     isRecord(value) &&
     value.version === WORKFLOW_DOCUMENT_VERSION &&
     Array.isArray(value.nodes) &&
+    Array.isArray(value.edges) &&
     isRecord(value.viewport)
   )
 }

@@ -2,10 +2,13 @@
 
 import * as React from "react"
 
+import type { WorkflowEditorSnapshot } from "@/components/workflows/editor/model/types/workflow-editor"
 import {
   flushWorkflowEditorPendingHistory,
   redoWorkflowEditor,
+  setWorkflowEditorEdges,
   setWorkflowEditorNodes,
+  setWorkflowEditorSelectedEdgeIds,
   setWorkflowEditorSelectedNodeIds,
   setWorkflowEditorViewport,
   type WorkflowEditorAction,
@@ -22,12 +25,13 @@ import {
   queueWorkflowEditorHistory,
   redoWorkflowEditorHistory,
   undoWorkflowEditorHistory,
-  type WorkflowEditorSnapshot,
 } from "@/components/workflows/editor/state/workflow-editor-history"
 import {
   selectWorkflowEditorCanRedo,
   selectWorkflowEditorCanUndo,
+  selectWorkflowEditorEdges,
   selectWorkflowEditorNodes,
+  selectWorkflowEditorSelectedEdgeIds,
   selectWorkflowEditorSelectedNodeIds,
   selectWorkflowEditorViewport,
 } from "@/components/workflows/editor/state/workflow-editor-selectors"
@@ -35,8 +39,10 @@ import {
 function createWorkflowEditorSnapshot(state: WorkflowEditorState) {
   return cloneWorkflowEditorSnapshot({
     nodes: state.nodes,
+    edges: state.edges,
     viewport: state.viewport,
     selectedNodeIds: state.selectedNodeIds,
+    selectedEdgeIds: state.selectedEdgeIds,
   })
 }
 
@@ -109,6 +115,19 @@ function workflowEditorReducer(
       )
     }
 
+    case "workflow-editor/set-edges": {
+      const nextEdges = resolveUpdater(state.edges, action.updater)
+
+      return applyHistoryMode(
+        state,
+        {
+          ...createWorkflowEditorSnapshot(state),
+          edges: nextEdges,
+        },
+        action.historyMode
+      )
+    }
+
     case "workflow-editor/set-viewport": {
       const nextViewport = resolveUpdater(state.viewport, action.updater)
 
@@ -128,6 +147,16 @@ function workflowEditorReducer(
         {
           ...createWorkflowEditorSnapshot(state),
           selectedNodeIds: [...action.nodeIds],
+        },
+        action.historyMode
+      )
+
+    case "workflow-editor/set-selected-edge-ids":
+      return applyHistoryMode(
+        state,
+        {
+          ...createWorkflowEditorSnapshot(state),
+          selectedEdgeIds: [...action.edgeIds],
         },
         action.historyMode
       )
@@ -178,27 +207,35 @@ function workflowEditorReducer(
 
 type UseWorkflowEditorStoreParams = {
   initialNodes: WorkflowEditorSnapshot["nodes"]
+  initialEdges?: WorkflowEditorSnapshot["edges"]
   initialViewport: WorkflowEditorSnapshot["viewport"]
   initialSelectedNodeIds?: WorkflowEditorSnapshot["selectedNodeIds"]
+  initialSelectedEdgeIds?: WorkflowEditorSnapshot["selectedEdgeIds"]
 }
 
 export function useWorkflowEditorStore({
   initialNodes,
+  initialEdges = [],
   initialViewport,
   initialSelectedNodeIds = [],
+  initialSelectedEdgeIds = [],
 }: UseWorkflowEditorStoreParams) {
   const [state, dispatch] = React.useReducer(
     workflowEditorReducer,
     {
       nodes: initialNodes,
+      edges: initialEdges,
       viewport: initialViewport,
       selectedNodeIds: initialSelectedNodeIds,
+      selectedEdgeIds: initialSelectedEdgeIds,
     },
     (initialState) =>
       createWorkflowEditorState({
         nodes: initialState.nodes,
+        edges: initialState.edges,
         viewport: initialState.viewport,
         selectedNodeIds: initialState.selectedNodeIds,
+        selectedEdgeIds: initialState.selectedEdgeIds,
       })
   )
 
@@ -208,6 +245,16 @@ export function useWorkflowEditorStore({
       historyMode: WorkflowEditorHistoryMode = "skip"
     ) => {
       dispatch(setWorkflowEditorNodes(updater, historyMode))
+    },
+    []
+  )
+
+  const setEdges = React.useCallback(
+    (
+      updater: WorkflowEditorUpdater<WorkflowEditorState["edges"]>,
+      historyMode: WorkflowEditorHistoryMode = "skip"
+    ) => {
+      dispatch(setWorkflowEditorEdges(updater, historyMode))
     },
     []
   )
@@ -229,6 +276,13 @@ export function useWorkflowEditorStore({
     []
   )
 
+  const setSelectedEdgeIds = React.useCallback(
+    (edgeIds: string[], historyMode: WorkflowEditorHistoryMode = "skip") => {
+      dispatch(setWorkflowEditorSelectedEdgeIds(edgeIds, historyMode))
+    },
+    []
+  )
+
   const flushHistory = React.useCallback(() => {
     dispatch(flushWorkflowEditorPendingHistory())
   }, [])
@@ -244,13 +298,17 @@ export function useWorkflowEditorStore({
   return {
     state,
     nodes: selectWorkflowEditorNodes(state),
+    edges: selectWorkflowEditorEdges(state),
     viewport: selectWorkflowEditorViewport(state),
     selectedNodeIds: selectWorkflowEditorSelectedNodeIds(state),
+    selectedEdgeIds: selectWorkflowEditorSelectedEdgeIds(state),
     canUndo: selectWorkflowEditorCanUndo(state),
     canRedo: selectWorkflowEditorCanRedo(state),
     setNodes,
+    setEdges,
     setViewport,
     setSelectedNodeIds,
+    setSelectedEdgeIds,
     flushHistory,
     undo,
     redo,

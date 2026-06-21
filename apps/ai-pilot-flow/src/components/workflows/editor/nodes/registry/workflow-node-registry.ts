@@ -1,21 +1,15 @@
 "use client"
 
-export type WorkflowNodeType = "prompt" | "file" | "export"
+import type {
+  WorkflowNodeData,
+  WorkflowNodeType,
+} from "@/components/workflows/editor/model/types/workflow-node"
 
-export type WorkflowNodeData = {
-  title?: string
-  content?: string
-  inputLabel?: string
-  actionLabel?: string
-}
-
-export type WorkflowCanvasNode = {
-  id: string
-  type: WorkflowNodeType
-  x: number
-  y: number
-  data?: WorkflowNodeData
-}
+export type {
+  WorkflowCanvasNode,
+  WorkflowNodeData,
+  WorkflowNodeType,
+} from "@/components/workflows/editor/model/types/workflow-node"
 
 export type WorkflowNodeDefinition = {
   type: WorkflowNodeType

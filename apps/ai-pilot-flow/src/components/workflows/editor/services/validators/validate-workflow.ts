@@ -1,5 +1,6 @@
-import type { ViewportState } from "@/components/workflows/editor/interactions/utils/viewport"
-import type { WorkflowCanvasNode } from "@/components/workflows/editor/nodes/registry/workflow-node-registry"
+import type { WorkflowEdge } from "@/components/workflows/editor/model/types/workflow-edge"
+import type { ViewportState } from "@/components/workflows/editor/model/types/viewport"
+import type { WorkflowCanvasNode } from "@/components/workflows/editor/model/types/workflow-node"
 import {
   validateNode,
   type WorkflowValidationIssue,
@@ -7,6 +8,7 @@ import {
 
 export type ValidateWorkflowInput = {
   nodes: WorkflowCanvasNode[]
+  edges?: WorkflowEdge[]
   viewport?: ViewportState
 }
 
@@ -29,10 +31,12 @@ function createIssue(
 
 export function validateWorkflow({
   nodes,
+  edges = [],
   viewport,
 }: ValidateWorkflowInput): ValidateWorkflowResult {
   const issues: WorkflowValidationIssue[] = []
   const nodeIds = new Set<string>()
+  const edgeIds = new Set<string>()
 
   for (const node of nodes) {
     if (nodeIds.has(node.id)) {
@@ -48,6 +52,41 @@ export function validateWorkflow({
 
     nodeIds.add(node.id)
     issues.push(...validateNode(node).issues)
+  }
+
+  for (const edge of edges) {
+    if (edgeIds.has(edge.id)) {
+      issues.push(
+        createIssue(
+          "error",
+          "workflow.edge-id.duplicate",
+          `Duplicate edge id detected: ${edge.id}`
+        )
+      )
+      continue
+    }
+
+    edgeIds.add(edge.id)
+
+    if (!nodeIds.has(edge.source.nodeId)) {
+      issues.push(
+        createIssue(
+          "error",
+          "workflow.edge.source.missing-node",
+          `Edge ${edge.id} references missing source node: ${edge.source.nodeId}`
+        )
+      )
+    }
+
+    if (!nodeIds.has(edge.target.nodeId)) {
+      issues.push(
+        createIssue(
+          "error",
+          "workflow.edge.target.missing-node",
+          `Edge ${edge.id} references missing target node: ${edge.target.nodeId}`
+        )
+      )
+    }
   }
 
   if (viewport) {

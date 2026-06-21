@@ -4,19 +4,24 @@ import {
   WorkflowNodeBody,
   WorkflowNodeHeader,
   WorkflowNodePort,
+  type WorkflowNodePortPointerHandler,
   WorkflowNodeShell,
 } from "@/components/workflows/editor/nodes/shell/workflow-node-shell"
 import { Input } from "@loom/ui/components/input"
 import { Upload } from "lucide-react"
 
 type WorkflowFileNodeProps = {
+  nodeId: string
   title?: string
   isSelected?: boolean
+  onPortPointerDown?: WorkflowNodePortPointerHandler
 }
 
 export function WorkflowFileNode({
+  nodeId,
   title = "File",
   isSelected = false,
+  onPortPointerDown,
 }: WorkflowFileNodeProps) {
   return (
     <WorkflowNodeShell isSelected={isSelected}>
@@ -52,7 +57,14 @@ export function WorkflowFileNode({
         </div>
       </WorkflowNodeBody>
 
-      <WorkflowNodePort side="right" label={title} labelVisibility="hover" />
+      <WorkflowNodePort
+        nodeId={nodeId}
+        portKey="output"
+        side="right"
+        label={title}
+        labelVisibility="hover"
+        onPortPointerDown={onPortPointerDown}
+      />
     </WorkflowNodeShell>
   )
 }

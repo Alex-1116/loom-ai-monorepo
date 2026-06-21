@@ -1,17 +1,16 @@
 "use client"
 
-import type { ViewportState } from "@/components/workflows/editor/interactions/utils/viewport"
-import type { WorkflowCanvasNode } from "@/components/workflows/editor/nodes/registry/workflow-node-registry"
+import type { WorkflowEdge } from "@/components/workflows/editor/model/types/workflow-edge"
+import type { ViewportState } from "@/components/workflows/editor/model/types/viewport"
+import type { WorkflowCanvasNode } from "@/components/workflows/editor/model/types/workflow-node"
+import type { WorkflowEditorSnapshot } from "@/components/workflows/editor/model/types/workflow-editor"
 import type { WorkflowEditorHistoryState } from "@/components/workflows/editor/state/workflow-editor-history"
 
 export type WorkflowEditorHistoryMode = "skip" | "deferred" | "commit"
 
 export type WorkflowEditorUpdater<T> = T | ((current: T) => T)
 
-export type WorkflowEditorState = {
-  nodes: WorkflowCanvasNode[]
-  viewport: ViewportState
-  selectedNodeIds: string[]
+export type WorkflowEditorState = WorkflowEditorSnapshot & {
   history: WorkflowEditorHistoryState
 }
 
@@ -22,6 +21,11 @@ export type WorkflowEditorAction =
       historyMode: WorkflowEditorHistoryMode
     }
   | {
+      type: "workflow-editor/set-edges"
+      updater: WorkflowEditorUpdater<WorkflowEdge[]>
+      historyMode: WorkflowEditorHistoryMode
+    }
+  | {
       type: "workflow-editor/set-viewport"
       updater: WorkflowEditorUpdater<ViewportState>
       historyMode: WorkflowEditorHistoryMode
@@ -29,6 +33,11 @@ export type WorkflowEditorAction =
   | {
       type: "workflow-editor/set-selected-node-ids"
       nodeIds: string[]
+      historyMode: WorkflowEditorHistoryMode
+    }
+  | {
+      type: "workflow-editor/set-selected-edge-ids"
+      edgeIds: string[]
       historyMode: WorkflowEditorHistoryMode
     }
   | {
@@ -52,6 +61,17 @@ export function setWorkflowEditorNodes(
   }
 }
 
+export function setWorkflowEditorEdges(
+  updater: WorkflowEditorUpdater<WorkflowEdge[]>,
+  historyMode: WorkflowEditorHistoryMode = "skip"
+): WorkflowEditorAction {
+  return {
+    type: "workflow-editor/set-edges",
+    updater,
+    historyMode,
+  }
+}
+
 export function setWorkflowEditorViewport(
   updater: WorkflowEditorUpdater<ViewportState>,
   historyMode: WorkflowEditorHistoryMode = "skip"
@@ -70,6 +90,17 @@ export function setWorkflowEditorSelectedNodeIds(
   return {
     type: "workflow-editor/set-selected-node-ids",
     nodeIds,
+    historyMode,
+  }
+}
+
+export function setWorkflowEditorSelectedEdgeIds(
+  edgeIds: string[],
+  historyMode: WorkflowEditorHistoryMode = "skip"
+): WorkflowEditorAction {
+  return {
+    type: "workflow-editor/set-selected-edge-ids",
+    edgeIds,
     historyMode,
   }
 }

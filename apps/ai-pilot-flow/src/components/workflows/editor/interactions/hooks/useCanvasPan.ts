@@ -2,11 +2,7 @@
 
 import * as React from "react"
 
-type ViewportState = {
-  x: number
-  y: number
-  scale: number
-}
+import type { ViewportState } from "@/components/workflows/editor/model/types/viewport"
 
 type UseCanvasPanParams = {
   activeTool: "select" | "hand"

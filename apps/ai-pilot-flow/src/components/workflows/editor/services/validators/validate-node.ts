@@ -1,7 +1,7 @@
 import {
   type WorkflowCanvasNode,
   type WorkflowNodeType,
-} from "@/components/workflows/editor/nodes/registry/workflow-node-registry"
+} from "@/components/workflows/editor/model/types/workflow-node"
 
 export type WorkflowValidationLevel = "error" | "warning"
 

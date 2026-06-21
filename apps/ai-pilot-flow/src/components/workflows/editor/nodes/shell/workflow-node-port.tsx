@@ -3,16 +3,26 @@
 import * as React from "react"
 
 import { cn } from "@loom/ui/lib/utils"
+
+import type { WorkflowPortRef } from "@/components/workflows/editor/model/types/workflow-edge"
 import { NodeHoverLabel } from "@/components/workflows/editor/nodes/shared/node-hover-label"
 
+export type WorkflowNodePortPointerHandler = (
+  event: React.PointerEvent<HTMLDivElement>,
+  port: WorkflowPortRef
+) => void
+
 export type WorkflowNodePortProps = React.HTMLAttributes<HTMLDivElement> & {
-  side?: "left" | "right"
+  side?: WorkflowPortRef["side"]
   label?: React.ReactNode
   labelVisibility?: "always" | "hover"
   tone?: "default" | "prompt"
   align?: "center" | "start"
   portToneClassName?: string
   labelToneClassName?: string
+  nodeId?: string
+  portKey?: string
+  onPortPointerDown?: WorkflowNodePortPointerHandler
 }
 
 export function WorkflowNodePort({
@@ -23,6 +33,9 @@ export function WorkflowNodePort({
   align = "center",
   portToneClassName = "border-white/80 bg-[#1c1d26]",
   labelToneClassName = "text-white/70",
+  nodeId,
+  portKey,
+  onPortPointerDown,
   className,
   ...props
 }: WorkflowNodePortProps) {
@@ -48,6 +61,21 @@ export function WorkflowNodePort({
         sidePositionClassName,
         className
       )}
+      data-workflow-port="true"
+      data-workflow-port-node-id={nodeId}
+      data-workflow-port-side={side}
+      data-workflow-port-key={portKey}
+      onPointerDown={(event) => {
+        if (!nodeId) {
+          return
+        }
+
+        onPortPointerDown?.(event, {
+          nodeId,
+          side,
+          key: portKey,
+        })
+      }}
       {...props}
     >
       {side === "left" && label ? (

@@ -41,3 +41,4 @@ export function WorkflowNodeShell({
 export { WorkflowNodeHeader } from "./workflow-node-header"
 export { WorkflowNodeBody } from "./workflow-node-body"
 export { WorkflowNodePort } from "./workflow-node-port"
+export type { WorkflowNodePortPointerHandler } from "./workflow-node-port"

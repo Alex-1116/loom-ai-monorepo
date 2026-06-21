@@ -8,7 +8,7 @@ import { Button } from "@loom/ui/components/button"
 import { cn } from "@loom/ui/lib/utils"
 
 import { useCanvasBlockGestures } from "@/components/workflows/editor/interactions/hooks/useCanvasBlockGestures"
-import type { WorkflowCanvasNode } from "@/components/workflows/editor/nodes/registry/workflow-node-registry"
+import type { WorkflowCanvasNode } from "@/components/workflows/editor/model/types/workflow-node"
 
 type WorkflowOutlinePanelProps = {
   nodes: WorkflowCanvasNode[]

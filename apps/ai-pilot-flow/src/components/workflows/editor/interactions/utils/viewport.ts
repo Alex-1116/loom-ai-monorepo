@@ -1,12 +1,7 @@
 "use client"
 
+import type { ViewportState } from "@/components/workflows/editor/model/types/viewport"
 import type { Point } from "./pointer"
-
-export type ViewportState = {
-  x: number
-  y: number
-  scale: number
-}
 
 export const MIN_SCALE = 0.01
 export const MAX_SCALE = 2

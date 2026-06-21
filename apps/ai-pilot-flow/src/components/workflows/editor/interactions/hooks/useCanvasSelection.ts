@@ -47,6 +47,7 @@ type UseCanvasSelectionParams<Node extends CanvasNodePosition> = {
   nodeSizesRef: React.RefObject<Record<string, CanvasNodeSize>>
   selectedNodeIds: string[]
   setSelectedNodeIds: (nodeIds: string[]) => void
+  clearSecondarySelection?: () => void
 }
 
 const MIN_SELECTION_DRAG_DISTANCE = 4
@@ -88,6 +89,7 @@ export function useCanvasSelection<Node extends CanvasNodePosition>({
   nodeSizesRef,
   selectedNodeIds,
   setSelectedNodeIds,
+  clearSecondarySelection,
 }: UseCanvasSelectionParams<Node>) {
   const selectionStateRef = React.useRef<SelectionState>(null)
   const [selectionBox, setSelectionBox] = React.useState<SelectionBox>(null)
@@ -196,6 +198,7 @@ export function useCanvasSelection<Node extends CanvasNodePosition>({
       ) {
         if (!selectionState.additive) {
           setSelectedNodeIds([])
+          clearSecondarySelection?.()
         }
 
         selectionStateRef.current = null
@@ -249,12 +252,14 @@ export function useCanvasSelection<Node extends CanvasNodePosition>({
           : selection
 
       if (selectionState.additive) {
+        clearSecondarySelection?.()
         setSelectedNodeIds(
           Array.from(
             new Set([...selectionState.initialSelectedNodeIds, ...selectedIds])
           )
         )
       } else {
+        clearSecondarySelection?.()
         setSelectedNodeIds(selectedIds)
       }
 
@@ -264,7 +269,14 @@ export function useCanvasSelection<Node extends CanvasNodePosition>({
       setSelectionBox(null)
       return true
     },
-    [nodeSizesRef, nodesRef, setSelectedNodeIds, surfaceRef, viewport]
+    [
+      clearSecondarySelection,
+      nodeSizesRef,
+      nodesRef,
+      setSelectedNodeIds,
+      surfaceRef,
+      viewport,
+    ]
   )
 
   return {

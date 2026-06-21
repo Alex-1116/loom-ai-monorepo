@@ -4,22 +4,27 @@ import {
   WorkflowNodeBody,
   WorkflowNodeHeader,
   WorkflowNodePort,
+  type WorkflowNodePortPointerHandler,
   WorkflowNodeShell,
 } from "@/components/workflows/editor/nodes/shell/workflow-node-shell"
 import { Button } from "@loom/ui/components/button"
 
 type WorkflowExportNodeProps = {
+  nodeId: string
   title?: string
   inputLabel?: string
   actionLabel?: string
   isSelected?: boolean
+  onPortPointerDown?: WorkflowNodePortPointerHandler
 }
 
 export function WorkflowExportNode({
+  nodeId,
   title = "Export",
   inputLabel = "Input",
   actionLabel = "Export",
   isSelected = false,
+  onPortPointerDown,
 }: WorkflowExportNodeProps) {
   return (
     <WorkflowNodeShell isSelected={isSelected}>
@@ -37,9 +42,12 @@ export function WorkflowExportNode({
       </WorkflowNodeBody>
 
       <WorkflowNodePort
+        nodeId={nodeId}
+        portKey="input"
         side="left"
         label={inputLabel}
         labelVisibility="hover"
+        onPortPointerDown={onPortPointerDown}
       />
     </WorkflowNodeShell>
   )

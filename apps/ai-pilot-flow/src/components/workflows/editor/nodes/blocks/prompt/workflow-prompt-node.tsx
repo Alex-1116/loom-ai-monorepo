@@ -4,23 +4,28 @@ import {
   WorkflowNodeBody,
   WorkflowNodeHeader,
   WorkflowNodePort,
+  type WorkflowNodePortPointerHandler,
   WorkflowNodeShell,
 } from "@/components/workflows/editor/nodes/shell/workflow-node-shell"
 import { Button } from "@loom/ui/components/button"
 
 type WorkflowPromptNodeProps = {
+  nodeId: string
   title?: string
   content?: string
   isSelected?: boolean
+  onPortPointerDown?: WorkflowNodePortPointerHandler
 }
 
 const defaultPromptContent =
   'Hipster Sisyphus, lime overall suit, pushing a huge round rock up a hill. The rock is sprayed with the text "default prompt", bright grey background extreme side long shot, cinematic, fashion style, side view'
 
 export function WorkflowPromptNode({
+  nodeId,
   title = "Prompt",
   content = defaultPromptContent,
   isSelected = false,
+  onPortPointerDown,
 }: WorkflowPromptNodeProps) {
   return (
     <WorkflowNodeShell isSelected={isSelected}>
@@ -42,11 +47,14 @@ export function WorkflowPromptNode({
       </WorkflowNodeBody>
 
       <WorkflowNodePort
+        nodeId={nodeId}
+        portKey="output"
         side="right"
         label={title}
         labelVisibility="hover"
         portToneClassName="border-[#d88cff] bg-[#1c1d26]"
         labelToneClassName="text-[#d88cff]/70"
+        onPortPointerDown={onPortPointerDown}
       />
     </WorkflowNodeShell>
   )

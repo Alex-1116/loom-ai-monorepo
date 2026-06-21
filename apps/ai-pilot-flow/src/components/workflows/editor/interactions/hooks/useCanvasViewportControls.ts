@@ -2,7 +2,7 @@
 
 import * as React from "react"
 
-import { type ViewportState } from "@/components/workflows/editor/interactions/utils/viewport"
+import type { ViewportState } from "@/components/workflows/editor/model/types/viewport"
 
 type UseCanvasViewportControlsParams = {
   setViewport: (updater: React.SetStateAction<ViewportState>) => void

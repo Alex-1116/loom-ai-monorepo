@@ -1,10 +1,10 @@
 "use client"
 
-import {
-  getWorkflowNodeDefinition,
-  type WorkflowCanvasNode,
-  type WorkflowNodeType,
-} from "@/components/workflows/editor/nodes/registry/workflow-node-registry"
+import { getWorkflowNodeDefinition } from "@/components/workflows/editor/nodes/registry/workflow-node-registry"
+import type {
+  WorkflowCanvasNode,
+  WorkflowNodeType,
+} from "@/components/workflows/editor/model/types/workflow-node"
 
 type CreateWorkflowNodeParams = {
   type: WorkflowNodeType

@@ -1,4 +1,5 @@
 export { WorkflowCanvasViewport } from "@/components/workflows/editor/canvas/canvas-viewport"
+export { WorkflowCanvasEdgesLayer } from "@/components/workflows/editor/canvas/canvas-edges-layer"
 export { WorkflowCanvasSelectionLayer } from "@/components/workflows/editor/canvas/canvas-selection-layer"
 export { WorkflowNodeInspectorPanel } from "@/components/workflows/editor/chrome/panels/node-inspector-panel"
 export { WorkflowOutlinePanel } from "@/components/workflows/editor/chrome/panels/workflow-outline-panel"
@@ -14,11 +15,18 @@ export {
 export {
   getWorkflowNodeDefinition,
   workflowNodeMenuItems,
-  type WorkflowCanvasNode,
-  type WorkflowNodeData,
-  type WorkflowNodeDefinition,
-  type WorkflowNodeType,
 } from "@/components/workflows/editor/nodes/registry/workflow-node-registry"
+export type {
+  WorkflowCanvasNode,
+  WorkflowNodeData,
+  WorkflowNodeType,
+} from "@/components/workflows/editor/model/types/workflow-node"
+export type {
+  WorkflowEdge,
+  WorkflowPortRef,
+  WorkflowPortSide,
+} from "@/components/workflows/editor/model/types/workflow-edge"
+export type { WorkflowNodeDefinition } from "@/components/workflows/editor/nodes/registry/workflow-node-registry"
 
 export {
   WORKFLOW_DOCUMENT_VERSION,
@@ -50,4 +58,9 @@ export {
   type AutoLayoutOptions,
 } from "@/components/workflows/editor/services/layout/auto-layout"
 
-export type { ViewportState } from "@/components/workflows/editor/interactions/utils/viewport"
+export type { ViewportState } from "@/components/workflows/editor/model/types/viewport"
+export type {
+  WorkflowDocument,
+  WorkflowEditorSelection,
+  WorkflowEditorSnapshot,
+} from "@/components/workflows/editor/model/types/workflow-editor"
