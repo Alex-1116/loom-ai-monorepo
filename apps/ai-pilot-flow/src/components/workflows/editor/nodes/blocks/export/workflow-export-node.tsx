@@ -7,6 +7,8 @@ import {
   type WorkflowNodePortPointerHandler,
   WorkflowNodeShell,
 } from "@/components/workflows/editor/nodes/shell/workflow-node-shell"
+import { WORKFLOW_NODE_DEFAULTS } from "@/components/workflows/editor/model/constants/node-defaults"
+import { getRequiredWorkflowNodePort } from "@/components/workflows/editor/nodes/registry/workflow-node-registry"
 import { Button } from "@loom/ui/components/button"
 
 type WorkflowExportNodeProps = {
@@ -20,12 +22,14 @@ type WorkflowExportNodeProps = {
 
 export function WorkflowExportNode({
   nodeId,
-  title = "Export",
-  inputLabel = "Input",
-  actionLabel = "Export",
+  title = WORKFLOW_NODE_DEFAULTS.export.title,
+  inputLabel = WORKFLOW_NODE_DEFAULTS.export.inputLabel,
+  actionLabel = WORKFLOW_NODE_DEFAULTS.export.actionLabel,
   isSelected = false,
   onPortPointerDown,
 }: WorkflowExportNodeProps) {
+  const port = getRequiredWorkflowNodePort("export", "input")
+
   return (
     <WorkflowNodeShell isSelected={isSelected}>
       <WorkflowNodeHeader title={title} />
@@ -43,10 +47,12 @@ export function WorkflowExportNode({
 
       <WorkflowNodePort
         nodeId={nodeId}
-        portKey="input"
-        side="left"
-        label={inputLabel}
-        labelVisibility="hover"
+        portKey={port.key}
+        side={port.side}
+        label={inputLabel || port.label}
+        labelVisibility={port.labelVisibility}
+        portToneClassName={port.portToneClassName}
+        labelToneClassName={port.labelToneClassName}
         onPortPointerDown={onPortPointerDown}
       />
     </WorkflowNodeShell>

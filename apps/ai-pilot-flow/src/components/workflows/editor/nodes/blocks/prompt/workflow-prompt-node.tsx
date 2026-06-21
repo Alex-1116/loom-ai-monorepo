@@ -7,6 +7,11 @@ import {
   type WorkflowNodePortPointerHandler,
   WorkflowNodeShell,
 } from "@/components/workflows/editor/nodes/shell/workflow-node-shell"
+import {
+  DEFAULT_PROMPT_NODE_CONTENT,
+  WORKFLOW_NODE_DEFAULTS,
+} from "@/components/workflows/editor/model/constants/node-defaults"
+import { getRequiredWorkflowNodePort } from "@/components/workflows/editor/nodes/registry/workflow-node-registry"
 import { Button } from "@loom/ui/components/button"
 
 type WorkflowPromptNodeProps = {
@@ -17,16 +22,15 @@ type WorkflowPromptNodeProps = {
   onPortPointerDown?: WorkflowNodePortPointerHandler
 }
 
-const defaultPromptContent =
-  'Hipster Sisyphus, lime overall suit, pushing a huge round rock up a hill. The rock is sprayed with the text "default prompt", bright grey background extreme side long shot, cinematic, fashion style, side view'
-
 export function WorkflowPromptNode({
   nodeId,
-  title = "Prompt",
-  content = defaultPromptContent,
+  title = WORKFLOW_NODE_DEFAULTS.prompt.title,
+  content = DEFAULT_PROMPT_NODE_CONTENT,
   isSelected = false,
   onPortPointerDown,
 }: WorkflowPromptNodeProps) {
+  const port = getRequiredWorkflowNodePort("prompt", "output")
+
   return (
     <WorkflowNodeShell isSelected={isSelected}>
       <WorkflowNodeHeader title={title} />
@@ -48,12 +52,12 @@ export function WorkflowPromptNode({
 
       <WorkflowNodePort
         nodeId={nodeId}
-        portKey="output"
-        side="right"
-        label={title}
-        labelVisibility="hover"
-        portToneClassName="border-[#d88cff] bg-[#1c1d26]"
-        labelToneClassName="text-[#d88cff]/70"
+        portKey={port.key}
+        side={port.side}
+        label={title || port.label}
+        labelVisibility={port.labelVisibility}
+        portToneClassName={port.portToneClassName}
+        labelToneClassName={port.labelToneClassName}
         onPortPointerDown={onPortPointerDown}
       />
     </WorkflowNodeShell>

@@ -14,6 +14,8 @@ export {
 } from "@/components/workflows/editor/nodes/registry/workflow-node-factory"
 export {
   getWorkflowNodeDefinition,
+  getWorkflowNodePort,
+  getRequiredWorkflowNodePort,
   workflowNodeMenuItems,
 } from "@/components/workflows/editor/nodes/registry/workflow-node-registry"
 export type {
@@ -64,3 +66,26 @@ export type {
   WorkflowEditorSelection,
   WorkflowEditorSnapshot,
 } from "@/components/workflows/editor/model/types/workflow-editor"
+export {
+  workflowSchema,
+  getWorkflowNodeConfig,
+  getWorkflowNodeSchema,
+  getWorkflowNodeSpec,
+  type WorkflowSchema,
+} from "@/components/workflows/editor/model/schema/workflow-schema"
+export type {
+  WorkflowNodeConfig,
+  WorkflowNodeFieldSchema,
+  WorkflowNodePortSchema,
+  WorkflowNodeSchema,
+  WorkflowNodeSpec,
+  WorkflowNodeValidationRule,
+} from "@/components/workflows/editor/model/schema/node-schema"
+export {
+  WORKFLOW_EDITOR_LAYOUT_DEFAULTS,
+  WORKFLOW_EDITOR_SCALE_LIMITS,
+} from "@/components/workflows/editor/model/constants/editor-constants"
+export {
+  DEFAULT_PROMPT_NODE_CONTENT,
+  WORKFLOW_NODE_DEFAULTS,
+} from "@/components/workflows/editor/model/constants/node-defaults"

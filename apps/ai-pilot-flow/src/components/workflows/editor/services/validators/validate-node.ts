@@ -1,7 +1,9 @@
-import {
-  type WorkflowCanvasNode,
-  type WorkflowNodeType,
-} from "@/components/workflows/editor/model/types/workflow-node"
+import { getWorkflowNodeSchema } from "@/components/workflows/editor/model/schema/workflow-schema"
+import type {
+  WorkflowNodeFieldSchema,
+  WorkflowNodeValidationRule,
+} from "@/components/workflows/editor/model/schema/node-schema"
+import { type WorkflowCanvasNode } from "@/components/workflows/editor/model/types/workflow-node"
 
 export type WorkflowValidationLevel = "error" | "warning"
 
@@ -31,90 +33,34 @@ function createIssue(
   }
 }
 
-function validatePromptNode(node: WorkflowCanvasNode) {
-  const issues: WorkflowValidationIssue[] = []
-
-  if (!node.data?.title?.trim()) {
-    issues.push(
-      createIssue(
-        "warning",
-        "node.prompt.title.missing",
-        "Prompt node title is empty.",
-        node.id
-      )
-    )
+function isRequiredRuleViolated(
+  node: WorkflowCanvasNode,
+  fieldSchema: WorkflowNodeFieldSchema,
+  rule: WorkflowNodeValidationRule
+) {
+  if (rule.kind !== "required") {
+    return false
   }
 
-  if (!node.data?.content?.trim()) {
-    issues.push(
-      createIssue(
-        "warning",
-        "node.prompt.content.missing",
-        "Prompt node content is empty.",
-        node.id
-      )
-    )
-  }
-
-  return issues
+  const value = node.data?.[fieldSchema.key]
+  return typeof value !== "string" || value.trim().length === 0
 }
 
-function validateFileNode(node: WorkflowCanvasNode) {
+function validateNodeBySchema(node: WorkflowCanvasNode) {
+  const schema = getWorkflowNodeSchema(node.type)
   const issues: WorkflowValidationIssue[] = []
 
-  if (!node.data?.title?.trim()) {
-    issues.push(
-      createIssue(
-        "warning",
-        "node.file.title.missing",
-        "File node title is empty.",
-        node.id
-      )
-    )
-  }
+  schema.fields.forEach((fieldSchema) => {
+    fieldSchema.rules?.forEach((rule) => {
+      if (!isRequiredRuleViolated(node, fieldSchema, rule)) {
+        return
+      }
+
+      issues.push(createIssue(rule.level, rule.code, rule.message, node.id))
+    })
+  })
 
   return issues
-}
-
-function validateExportNode(node: WorkflowCanvasNode) {
-  const issues: WorkflowValidationIssue[] = []
-
-  if (!node.data?.title?.trim()) {
-    issues.push(
-      createIssue(
-        "warning",
-        "node.export.title.missing",
-        "Export node title is empty.",
-        node.id
-      )
-    )
-  }
-
-  if (!node.data?.actionLabel?.trim()) {
-    issues.push(
-      createIssue(
-        "warning",
-        "node.export.action-label.missing",
-        "Export node action label is empty.",
-        node.id
-      )
-    )
-  }
-
-  return issues
-}
-
-function validateNodeByType(node: WorkflowCanvasNode, type: WorkflowNodeType) {
-  switch (type) {
-    case "prompt":
-      return validatePromptNode(node)
-    case "file":
-      return validateFileNode(node)
-    case "export":
-      return validateExportNode(node)
-    default:
-      return []
-  }
 }
 
 export function validateNode(node: WorkflowCanvasNode): ValidateNodeResult {
@@ -135,7 +81,7 @@ export function validateNode(node: WorkflowCanvasNode): ValidateNodeResult {
     )
   }
 
-  issues.push(...validateNodeByType(node, node.type))
+  issues.push(...validateNodeBySchema(node))
 
   return {
     isValid: issues.every((issue) => issue.level !== "error"),

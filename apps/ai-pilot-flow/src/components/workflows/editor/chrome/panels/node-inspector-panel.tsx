@@ -7,6 +7,8 @@ import { Textarea } from "@loom/ui/components/textarea"
 import { cn } from "@loom/ui/lib/utils"
 
 import { useCanvasBlockGestures } from "@/components/workflows/editor/interactions/hooks/useCanvasBlockGestures"
+import { getWorkflowNodeSchema } from "@/components/workflows/editor/model/schema/workflow-schema"
+import type { WorkflowNodeFieldKey } from "@/components/workflows/editor/model/schema/node-schema"
 import type { WorkflowCanvasNode } from "@/components/workflows/editor/model/types/workflow-node"
 import { validateNode } from "@/components/workflows/editor/services/validators/validate-node"
 
@@ -53,9 +55,21 @@ export function WorkflowNodeInspectorPanel({
   onCommitChanges,
 }: WorkflowNodeInspectorPanelProps) {
   const panelRef = useCanvasBlockGestures<HTMLDivElement>()
+  const nodeSchema = React.useMemo(
+    () => (selectedNode ? getWorkflowNodeSchema(selectedNode.type) : null),
+    [selectedNode]
+  )
   const validationIssues = React.useMemo(
     () => (selectedNode ? validateNode(selectedNode).issues : []),
     [selectedNode]
+  )
+  const handleFieldChange = React.useCallback(
+    (nodeId: string, fieldKey: WorkflowNodeFieldKey, value: string) => {
+      onPatchNode(nodeId, {
+        [fieldKey]: value,
+      })
+    },
+    [onPatchNode]
   )
 
   return (
@@ -118,67 +132,39 @@ export function WorkflowNodeInspectorPanel({
           </Section>
 
           <Section title="Content">
-            <Field label="Title">
-              <Input
-                value={selectedNode.data?.title ?? ""}
-                onChange={(event) =>
-                  onPatchNode(selectedNode.id, {
-                    title: event.target.value,
-                  })
-                }
-                onBlur={onCommitChanges}
-                className="border-white/10 bg-white/4 text-white placeholder:text-white/30"
-                placeholder="Node title"
-              />
-            </Field>
-
-            {selectedNode.type === "prompt" ? (
-              <Field label="Prompt">
-                <Textarea
-                  value={selectedNode.data?.content ?? ""}
-                  onChange={(event) =>
-                    onPatchNode(selectedNode.id, {
-                      content: event.target.value,
-                    })
-                  }
-                  onBlur={onCommitChanges}
-                  className="min-h-36 border-white/10 bg-white/4 text-white placeholder:text-white/30"
-                  placeholder="Describe what this prompt node should do"
-                />
+            {nodeSchema?.fields.map((field) => (
+              <Field key={field.key} label={field.label}>
+                {field.input === "textarea" ? (
+                  <Textarea
+                    value={selectedNode.data?.[field.key] ?? ""}
+                    onChange={(event) =>
+                      handleFieldChange(
+                        selectedNode.id,
+                        field.key,
+                        event.target.value
+                      )
+                    }
+                    onBlur={onCommitChanges}
+                    className="min-h-36 border-white/10 bg-white/4 text-white placeholder:text-white/30"
+                    placeholder={field.placeholder}
+                  />
+                ) : (
+                  <Input
+                    value={selectedNode.data?.[field.key] ?? ""}
+                    onChange={(event) =>
+                      handleFieldChange(
+                        selectedNode.id,
+                        field.key,
+                        event.target.value
+                      )
+                    }
+                    onBlur={onCommitChanges}
+                    className="border-white/10 bg-white/4 text-white placeholder:text-white/30"
+                    placeholder={field.placeholder}
+                  />
+                )}
               </Field>
-            ) : null}
-
-            {selectedNode.type === "export" ? (
-              <>
-                <Field label="Input Label">
-                  <Input
-                    value={selectedNode.data?.inputLabel ?? ""}
-                    onChange={(event) =>
-                      onPatchNode(selectedNode.id, {
-                        inputLabel: event.target.value,
-                      })
-                    }
-                    onBlur={onCommitChanges}
-                    className="border-white/10 bg-white/4 text-white placeholder:text-white/30"
-                    placeholder="Input label"
-                  />
-                </Field>
-
-                <Field label="Action Label">
-                  <Input
-                    value={selectedNode.data?.actionLabel ?? ""}
-                    onChange={(event) =>
-                      onPatchNode(selectedNode.id, {
-                        actionLabel: event.target.value,
-                      })
-                    }
-                    onBlur={onCommitChanges}
-                    className="border-white/10 bg-white/4 text-white placeholder:text-white/30"
-                    placeholder="Action label"
-                  />
-                </Field>
-              </>
-            ) : null}
+            ))}
           </Section>
 
           <Section title="Validation">

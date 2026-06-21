@@ -1,5 +1,13 @@
 "use client"
 
+import {
+  getWorkflowNodeSpec,
+  workflowSchema,
+} from "@/components/workflows/editor/model/schema/workflow-schema"
+import type {
+  WorkflowNodePortSchema,
+  WorkflowNodeSchema,
+} from "@/components/workflows/editor/model/schema/node-schema"
 import type {
   WorkflowNodeData,
   WorkflowNodeType,
@@ -15,34 +23,20 @@ export type WorkflowNodeDefinition = {
   type: WorkflowNodeType
   menuLabel: string
   createData: () => WorkflowNodeData
+  schema: WorkflowNodeSchema
+  ports: WorkflowNodePortSchema[]
 }
 
-// registry 只描述系统里“有哪些节点”和“每种节点的默认数据是什么”。
-const workflowNodeDefinitions: readonly WorkflowNodeDefinition[] = [
-  {
-    type: "prompt",
-    menuLabel: "Prompt",
+const workflowNodeDefinitions: readonly WorkflowNodeDefinition[] =
+  workflowSchema.nodes.map(({ config, schema }) => ({
+    type: config.type,
+    menuLabel: config.menuLabel,
     createData: () => ({
-      title: "Prompt",
+      ...config.defaults,
     }),
-  },
-  {
-    type: "file",
-    menuLabel: "Import",
-    createData: () => ({
-      title: "File",
-    }),
-  },
-  {
-    type: "export",
-    menuLabel: "Export",
-    createData: () => ({
-      title: "Export",
-      inputLabel: "Input",
-      actionLabel: "Export",
-    }),
-  },
-]
+    schema,
+    ports: config.ports ?? [],
+  }))
 
 const workflowNodeRegistry = new Map<WorkflowNodeType, WorkflowNodeDefinition>(
   workflowNodeDefinitions.map((definition) => [definition.type, definition])
@@ -57,10 +51,39 @@ export const workflowNodeMenuItems = workflowNodeDefinitions.map(
 
 export function getWorkflowNodeDefinition(type: WorkflowNodeType) {
   const definition = workflowNodeRegistry.get(type)
-
-  if (!definition) {
-    throw new Error(`Unknown workflow node type: ${type}`)
+  if (definition) {
+    return definition
   }
 
-  return definition
+  const { config, schema } = getWorkflowNodeSpec(type)
+  return {
+    type: config.type,
+    menuLabel: config.menuLabel,
+    createData: () => ({
+      ...config.defaults,
+    }),
+    schema,
+    ports: config.ports ?? [],
+  }
+}
+
+export function getWorkflowNodePort(
+  type: WorkflowNodeType,
+  portKey: string
+): WorkflowNodePortSchema | undefined {
+  return getWorkflowNodeDefinition(type).ports.find(
+    (port) => port.key === portKey
+  )
+}
+
+export function getRequiredWorkflowNodePort(
+  type: WorkflowNodeType,
+  portKey: string
+): WorkflowNodePortSchema {
+  const port = getWorkflowNodePort(type, portKey)
+  if (port) {
+    return port
+  }
+
+  throw new Error(`Missing required workflow node port: ${type}.${portKey}`)
 }
