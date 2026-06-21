@@ -30,4 +30,9 @@ export const WORKFLOW_NODE_DEFAULTS: Record<
     title: "Import LoRA",
     outputLabel: "LoRA URL",
   },
+  "import-multiple-loras": {
+    title: "Import Multiple LoRAs",
+    outputLabel: "LoRA URL",
+    secondaryOutputLabel: "Weight",
+  },
 }

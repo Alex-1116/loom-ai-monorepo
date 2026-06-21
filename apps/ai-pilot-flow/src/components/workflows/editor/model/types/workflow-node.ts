@@ -4,12 +4,14 @@ export type WorkflowNodeType =
   | "preview"
   | "export"
   | "import-lora"
+  | "import-multiple-loras"
 
 export type WorkflowNodeData = {
   title?: string
   content?: string
   inputLabel?: string
   outputLabel?: string
+  secondaryOutputLabel?: string
   actionLabel?: string
 }
 

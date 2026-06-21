@@ -5,6 +5,8 @@ import { fileNodeConfig } from "@/components/workflows/editor/nodes/blocks/file/
 import { fileNodeSchema } from "@/components/workflows/editor/nodes/blocks/file/file-node.schema"
 import { importLoraNodeConfig } from "@/components/workflows/editor/nodes/blocks/import-lora/import-lora-node.config"
 import { importLoraNodeSchema } from "@/components/workflows/editor/nodes/blocks/import-lora/import-lora-node.schema"
+import { importMultipleLorasNodeConfig } from "@/components/workflows/editor/nodes/blocks/import-multiple-loras/import-multiple-loras-node.config"
+import { importMultipleLorasNodeSchema } from "@/components/workflows/editor/nodes/blocks/import-multiple-loras/import-multiple-loras-node.schema"
 import { previewNodeConfig } from "@/components/workflows/editor/nodes/blocks/preview/preview-node.config"
 import { previewNodeSchema } from "@/components/workflows/editor/nodes/blocks/preview/preview-node.schema"
 import { promptNodeConfig } from "@/components/workflows/editor/nodes/blocks/prompt/prompt-node.config"
@@ -41,6 +43,10 @@ export const workflowSchema: WorkflowSchema = {
     {
       config: importLoraNodeConfig,
       schema: importLoraNodeSchema,
+    },
+    {
+      config: importMultipleLorasNodeConfig,
+      schema: importMultipleLorasNodeSchema,
     },
   ],
 }

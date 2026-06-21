@@ -27,6 +27,7 @@ function toSharedWorkflowNodeData(
     content: data.content,
     inputLabel: data.inputLabel,
     outputLabel: data.outputLabel,
+    secondaryOutputLabel: data.secondaryOutputLabel,
     actionLabel: data.actionLabel,
   }
 }

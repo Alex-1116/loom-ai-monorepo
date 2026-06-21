@@ -103,6 +103,25 @@ function createBuiltInWorkflowNodeHandlers(): Record<
         },
       }
     },
+    "import-multiple-loras"({ node }) {
+      return {
+        output: {
+          kind: "import-multiple-loras",
+          nodeId: node.id,
+          title: node.data?.title ?? "Import Multiple LoRAs",
+          outputLabel: node.data?.outputLabel ?? "LoRA URL",
+          secondaryOutputLabel: node.data?.secondaryOutputLabel ?? "Weight",
+          url: `mock://loras/${node.id}`,
+          weight: 0,
+          loras: [
+            {
+              url: `mock://loras/${node.id}/default`,
+              weight: 0,
+            },
+          ],
+        },
+      }
+    },
     preview({ node, graph, context }) {
       const inputs = getWorkflowNodeInputs(node, graph, context)
 

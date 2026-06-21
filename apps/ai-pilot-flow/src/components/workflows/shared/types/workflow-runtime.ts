@@ -12,12 +12,14 @@ export type SharedWorkflowNodeType =
   | "preview"
   | "export"
   | "import-lora"
+  | "import-multiple-loras"
 
 export type SharedWorkflowNodeData = {
   title?: string
   content?: string
   inputLabel?: string
   outputLabel?: string
+  secondaryOutputLabel?: string
   actionLabel?: string
 }
 
