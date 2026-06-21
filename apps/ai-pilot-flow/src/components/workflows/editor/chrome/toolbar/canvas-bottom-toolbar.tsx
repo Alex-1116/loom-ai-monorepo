@@ -6,6 +6,7 @@ import {
   Hand,
   LayoutGrid,
   MousePointer2,
+  Play,
   Redo2,
   RotateCcw,
   Undo2,
@@ -76,8 +77,11 @@ type WorkflowCanvasBottomToolbarProps = {
   onImportJson?: () => void
   onExportJson?: () => void
   onAutoLayout?: () => void
+  onRunPreview?: () => void
   canUndo?: boolean
   canRedo?: boolean
+  canRunPreview?: boolean
+  isRunningPreview?: boolean
 }
 
 export function WorkflowCanvasBottomToolbar({
@@ -94,8 +98,11 @@ export function WorkflowCanvasBottomToolbar({
   onImportJson,
   onExportJson,
   onAutoLayout,
+  onRunPreview,
   canUndo = false,
   canRedo = false,
+  canRunPreview = true,
+  isRunningPreview = false,
 }: WorkflowCanvasBottomToolbarProps) {
   const toolbarRef = useCanvasBlockGestures<HTMLDivElement>()
   const dropdownContentRef = useCanvasBlockGestures<HTMLDivElement>()
@@ -183,6 +190,19 @@ export function WorkflowCanvasBottomToolbar({
         className="rounded-lg text-white/65 shadow-none hover:bg-white/6 hover:text-white"
       >
         <Download className="size-4" strokeWidth={2.2} />
+      </Button>
+
+      <Button
+        type="button"
+        size="icon-sm"
+        variant="ghost"
+        disabled={!canRunPreview}
+        aria-label={isRunningPreview ? "运行中" : "运行预览"}
+        title={isRunningPreview ? "运行中" : "运行预览"}
+        onClick={onRunPreview}
+        className="rounded-lg text-white/65 shadow-none hover:bg-white/6 hover:text-white disabled:pointer-events-none disabled:opacity-40"
+      >
+        <Play className="size-4" strokeWidth={2.2} />
       </Button>
 
       <Button

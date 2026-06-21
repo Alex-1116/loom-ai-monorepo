@@ -12,6 +12,7 @@ import {
   WORKFLOW_NODE_DEFAULTS,
 } from "@/components/workflows/editor/model/constants/node-defaults"
 import { getRequiredWorkflowNodePort } from "@/components/workflows/editor/nodes/registry/workflow-node-registry"
+import type { WorkflowExecutionStatus } from "@/components/workflows/shared/types/workflow-runtime"
 import { Button } from "@loom/ui/components/button"
 
 type WorkflowPromptNodeProps = {
@@ -19,6 +20,7 @@ type WorkflowPromptNodeProps = {
   title?: string
   content?: string
   isSelected?: boolean
+  executionStatus?: WorkflowExecutionStatus
   onPortPointerDown?: WorkflowNodePortPointerHandler
 }
 
@@ -27,12 +29,16 @@ export function WorkflowPromptNode({
   title = WORKFLOW_NODE_DEFAULTS.prompt.title,
   content = DEFAULT_PROMPT_NODE_CONTENT,
   isSelected = false,
+  executionStatus,
   onPortPointerDown,
 }: WorkflowPromptNodeProps) {
   const port = getRequiredWorkflowNodePort("prompt", "output")
 
   return (
-    <WorkflowNodeShell isSelected={isSelected}>
+    <WorkflowNodeShell
+      isSelected={isSelected}
+      executionStatus={executionStatus}
+    >
       <WorkflowNodeHeader title={title} />
 
       <WorkflowNodeBody className="flex flex-col items-start gap-4">

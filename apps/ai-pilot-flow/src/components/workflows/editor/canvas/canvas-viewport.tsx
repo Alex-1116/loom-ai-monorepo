@@ -16,6 +16,7 @@ import { WorkflowCanvasSelectionLayer } from "@/components/workflows/editor/canv
 import { WorkflowCanvasLeftToolbar } from "@/components/workflows/editor/chrome/toolbar/canvas-left-toolbar"
 import { WorkflowNodeInspectorPanel } from "@/components/workflows/editor/chrome/panels/node-inspector-panel"
 import { WorkflowOutlinePanel } from "@/components/workflows/editor/chrome/panels/workflow-outline-panel"
+import { WorkflowRunPreviewPanel } from "@/components/workflows/editor/chrome/panels/workflow-run-preview-panel"
 import { WorkflowEmptyState } from "@/components/workflows/editor/chrome/overlays/empty-state"
 import { WorkflowZoomIndicator } from "@/components/workflows/editor/chrome/overlays/zoom-indicator"
 import { type WorkflowCanvasNode } from "@/components/workflows/editor/model/types/workflow-node"
@@ -45,6 +46,11 @@ import { useWorkflowEditorStore } from "@/components/workflows/editor/state/work
 import { useCanvasSelection } from "@/components/workflows/editor/interactions/hooks/useCanvasSelection"
 import { useCanvasSelectionDrag } from "@/components/workflows/editor/interactions/hooks/useCanvasSelectionDrag"
 import { useCanvasEdgeConnection } from "@/components/workflows/editor/interactions/hooks/useCanvasEdgeConnection"
+import { runWorkflowDocument } from "@/components/workflows/runtime"
+import type {
+  WorkflowExecutionStatus,
+  WorkflowRunResult,
+} from "@/components/workflows/shared"
 
 type WorkflowCanvasNodeSize = {
   width: number
@@ -77,6 +83,15 @@ export function WorkflowCanvasViewport() {
   const nodeSizesRef = React.useRef<Record<string, WorkflowCanvasNodeSize>>({})
   const [activeTool, setActiveTool] =
     React.useState<WorkflowCanvasTool>("select")
+  const [isRunningPreview, setIsRunningPreview] = React.useState(false)
+  const [runPreviewResult, setRunPreviewResult] =
+    React.useState<WorkflowRunResult | null>(null)
+  const [runPreviewError, setRunPreviewError] = React.useState<string | null>(
+    null
+  )
+  const [nodeExecutionStatuses, setNodeExecutionStatuses] = React.useState<
+    Record<string, WorkflowExecutionStatus>
+  >({})
   const {
     nodes,
     edges,
@@ -435,6 +450,41 @@ export function WorkflowCanvasViewport() {
     URL.revokeObjectURL(objectUrl)
   }, [edges, nodes, viewport])
 
+  const handleRunPreview = React.useCallback(async () => {
+    if (nodes.length === 0 || isRunningPreview) {
+      return
+    }
+
+    setIsRunningPreview(true)
+    setRunPreviewResult(null)
+    setRunPreviewError(null)
+    setNodeExecutionStatuses({})
+
+    try {
+      const result = await runWorkflowDocument({
+        document: {
+          nodes,
+          edges,
+        },
+        onNodeStateChange: (nodeState) => {
+          setNodeExecutionStatuses((current) => ({
+            ...current,
+            [nodeState.nodeId]: nodeState.status,
+          }))
+        },
+      })
+
+      setRunPreviewResult(result)
+    } catch (error) {
+      const message =
+        error instanceof Error ? error.message : "运行预览时发生未知错误。"
+      setRunPreviewResult(null)
+      setRunPreviewError(message)
+    } finally {
+      setIsRunningPreview(false)
+    }
+  }, [edges, isRunningPreview, nodes])
+
   const handleTriggerImport = React.useCallback(() => {
     if (!importInputRef.current) {
       return
@@ -648,6 +698,7 @@ export function WorkflowCanvasViewport() {
             onToolChange={setActiveTool}
             onImportJson={handleTriggerImport}
             onExportJson={handleExportJson}
+            onRunPreview={handleRunPreview}
             onAutoLayout={handleAutoLayout}
             onZoomIn={handleZoomIn}
             onZoomOut={handleZoomOut}
@@ -664,6 +715,25 @@ export function WorkflowCanvasViewport() {
             }}
             canUndo={canUndo}
             canRedo={canRedo}
+            canRunPreview={nodes.length > 0}
+            isRunningPreview={isRunningPreview}
+          />
+        </div>
+
+        <div
+          className="pointer-events-none absolute inset-0 z-20 p-4"
+          data-workflow-overlay
+        >
+          <WorkflowRunPreviewPanel
+            isRunning={isRunningPreview}
+            result={runPreviewResult}
+            errorMessage={runPreviewError}
+            onClose={() => {
+              setIsRunningPreview(false)
+              setRunPreviewResult(null)
+              setRunPreviewError(null)
+              setNodeExecutionStatuses({})
+            }}
           />
         </div>
 
@@ -761,6 +831,7 @@ export function WorkflowCanvasViewport() {
                     <WorkflowPromptNode
                       nodeId={node.id}
                       isSelected={selectedNodeIdSet.has(node.id)}
+                      executionStatus={nodeExecutionStatuses[node.id]}
                       title={node.data?.title}
                       content={node.data?.content}
                       onPortPointerDown={handlePortPointerDown}
@@ -769,6 +840,7 @@ export function WorkflowCanvasViewport() {
                     <WorkflowExportNode
                       nodeId={node.id}
                       isSelected={selectedNodeIdSet.has(node.id)}
+                      executionStatus={nodeExecutionStatuses[node.id]}
                       title={node.data?.title}
                       inputLabel={node.data?.inputLabel}
                       actionLabel={node.data?.actionLabel}
@@ -778,6 +850,7 @@ export function WorkflowCanvasViewport() {
                     <WorkflowFileNode
                       nodeId={node.id}
                       isSelected={selectedNodeIdSet.has(node.id)}
+                      executionStatus={nodeExecutionStatuses[node.id]}
                       title={node.data?.title}
                       onPortPointerDown={handlePortPointerDown}
                     />

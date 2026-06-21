@@ -9,6 +9,7 @@ import {
 } from "@/components/workflows/editor/nodes/shell/workflow-node-shell"
 import { WORKFLOW_NODE_DEFAULTS } from "@/components/workflows/editor/model/constants/node-defaults"
 import { getRequiredWorkflowNodePort } from "@/components/workflows/editor/nodes/registry/workflow-node-registry"
+import type { WorkflowExecutionStatus } from "@/components/workflows/shared/types/workflow-runtime"
 import { Input } from "@loom/ui/components/input"
 import { Upload } from "lucide-react"
 
@@ -16,6 +17,7 @@ type WorkflowFileNodeProps = {
   nodeId: string
   title?: string
   isSelected?: boolean
+  executionStatus?: WorkflowExecutionStatus
   onPortPointerDown?: WorkflowNodePortPointerHandler
 }
 
@@ -23,12 +25,16 @@ export function WorkflowFileNode({
   nodeId,
   title = WORKFLOW_NODE_DEFAULTS.file.title,
   isSelected = false,
+  executionStatus,
   onPortPointerDown,
 }: WorkflowFileNodeProps) {
   const port = getRequiredWorkflowNodePort("file", "output")
 
   return (
-    <WorkflowNodeShell isSelected={isSelected}>
+    <WorkflowNodeShell
+      isSelected={isSelected}
+      executionStatus={executionStatus}
+    >
       <WorkflowNodeHeader title={title} />
 
       <WorkflowNodeBody>

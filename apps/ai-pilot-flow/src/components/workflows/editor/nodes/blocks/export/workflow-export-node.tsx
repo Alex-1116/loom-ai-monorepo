@@ -9,6 +9,7 @@ import {
 } from "@/components/workflows/editor/nodes/shell/workflow-node-shell"
 import { WORKFLOW_NODE_DEFAULTS } from "@/components/workflows/editor/model/constants/node-defaults"
 import { getRequiredWorkflowNodePort } from "@/components/workflows/editor/nodes/registry/workflow-node-registry"
+import type { WorkflowExecutionStatus } from "@/components/workflows/shared/types/workflow-runtime"
 import { Button } from "@loom/ui/components/button"
 
 type WorkflowExportNodeProps = {
@@ -17,6 +18,7 @@ type WorkflowExportNodeProps = {
   inputLabel?: string
   actionLabel?: string
   isSelected?: boolean
+  executionStatus?: WorkflowExecutionStatus
   onPortPointerDown?: WorkflowNodePortPointerHandler
 }
 
@@ -26,12 +28,16 @@ export function WorkflowExportNode({
   inputLabel = WORKFLOW_NODE_DEFAULTS.export.inputLabel,
   actionLabel = WORKFLOW_NODE_DEFAULTS.export.actionLabel,
   isSelected = false,
+  executionStatus,
   onPortPointerDown,
 }: WorkflowExportNodeProps) {
   const port = getRequiredWorkflowNodePort("export", "input")
 
   return (
-    <WorkflowNodeShell isSelected={isSelected}>
+    <WorkflowNodeShell
+      isSelected={isSelected}
+      executionStatus={executionStatus}
+    >
       <WorkflowNodeHeader title={title} />
 
       <WorkflowNodeBody>
