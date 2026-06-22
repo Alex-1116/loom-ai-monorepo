@@ -31,7 +31,7 @@ export function WorkflowNodeShell({
         "group relative flex flex-col items-start gap-4 rounded-2xl p-4",
         widthClassName,
         shellToneClassName,
-        isSelected && "ring-1 ring-white/14",
+        isSelected && "ring-1 ring-white/70",
         isDragging && "shadow-[0_26px_72px_rgba(0,0,0,0.52)]",
         executionStatus === "running" &&
           "border-sky-400/45 bg-sky-400/[0.06] shadow-[0_20px_60px_rgba(14,165,233,0.18)]",

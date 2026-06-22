@@ -40,7 +40,7 @@ export function WorkflowImportLoraNode({
       <WorkflowNodeHeader title={title} />
 
       <WorkflowNodeBody>
-        <div className="flex h-[240px] w-full items-center justify-center rounded-[14px] border border-dashed border-white/10 bg-[#20222d]">
+        <div className="flex h-[100px] w-full items-center justify-center rounded-md border border-dashed border-white/10 bg-[#20222d]">
           <div className="flex flex-col items-center gap-3 p-4 text-center">
             <div className="flex size-9 items-center justify-center rounded-full border border-white/12 bg-white/4">
               <Upload className="size-4 text-white/80" />

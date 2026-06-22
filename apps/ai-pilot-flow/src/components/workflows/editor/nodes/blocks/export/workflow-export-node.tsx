@@ -44,8 +44,8 @@ export function WorkflowExportNode({
         {/* export 节点当前只保留一个主动作按钮，输入口由左侧 port 表达。 */}
         <Button
           type="button"
-          variant="outline"
-          className="w-full rounded-md px-2 py-1 text-sm font-medium text-white/70 shadow-none hover:bg-white/6 hover:text-white"
+          variant="ghost"
+          className="w-full rounded-md border border-white/6 bg-[#23242d] px-3 py-2 text-sm font-medium text-white/72 shadow-none hover:border-white/10 hover:bg-[#2a2c36] hover:text-white"
         >
           {actionLabel}
         </Button>
