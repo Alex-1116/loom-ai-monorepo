@@ -20,6 +20,11 @@ const fontMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "AI Pilot Flow",
   description: "AIGC workflow project scaffold.",
+  icons: {
+    icon: "/favicon.svg",
+    shortcut: "/favicon.svg",
+    apple: "/favicon.svg",
+  },
 }
 
 export default function RootLayout({
