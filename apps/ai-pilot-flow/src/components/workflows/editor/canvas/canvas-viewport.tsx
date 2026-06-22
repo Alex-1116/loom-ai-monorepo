@@ -689,24 +689,21 @@ export function WorkflowCanvasViewport() {
           />
         </div>
 
-        <div
-          className={cn(
-            "absolute top-4 bottom-4 left-20 z-20 hidden origin-top-left transition-all duration-200 ease-out xl:block",
-            isOutlineVisible
-              ? "translate-x-0 translate-y-0 scale-100 opacity-100"
-              : "pointer-events-none -translate-y-2 scale-95 opacity-0"
-          )}
-          data-workflow-overlay
-        >
-          <WorkflowOutlinePanel
-            nodes={nodes}
-            selectedNodeIds={selectedNodeIds}
-            onSelectNode={(nodeId) => {
-              setSelectedEdgeIds([])
-              setSelectedNodeIds([nodeId])
-            }}
-          />
-        </div>
+        {isOutlineVisible ? (
+          <div
+            className="absolute top-4 bottom-4 left-20 z-20 hidden origin-top-left animate-in duration-200 ease-out zoom-in-95 fade-in xl:block"
+            data-workflow-overlay
+          >
+            <WorkflowOutlinePanel
+              nodes={nodes}
+              selectedNodeIds={selectedNodeIds}
+              onSelectNode={(nodeId) => {
+                setSelectedEdgeIds([])
+                setSelectedNodeIds([nodeId])
+              }}
+            />
+          </div>
+        ) : null}
 
         <div
           className="absolute bottom-4 left-1/2 z-20 -translate-x-1/2"
@@ -757,22 +754,19 @@ export function WorkflowCanvasViewport() {
           />
         </div>
 
-        <div
-          className={cn(
-            "absolute top-4 right-4 bottom-4 z-20 hidden transition-all duration-200 ease-out xl:block",
-            selectedNodeIds.length > 0
-              ? "translate-x-0 opacity-100"
-              : "pointer-events-none translate-x-[calc(100%+1rem)] opacity-0"
-          )}
-          data-workflow-overlay
-        >
-          <WorkflowNodeInspectorPanel
-            selectedCount={selectedNodeIds.length}
-            selectedNode={selectedNode}
-            onPatchNode={handlePatchNode}
-            onCommitChanges={flushHistory}
-          />
-        </div>
+        {selectedNodeIds.length > 0 ? (
+          <div
+            className="absolute top-4 right-4 bottom-4 z-20 hidden animate-in duration-200 ease-out fade-in slide-in-from-right-4 xl:block"
+            data-workflow-overlay
+          >
+            <WorkflowNodeInspectorPanel
+              selectedCount={selectedNodeIds.length}
+              selectedNode={selectedNode}
+              onPatchNode={handlePatchNode}
+              onCommitChanges={flushHistory}
+            />
+          </div>
+        ) : null}
 
         <WorkflowEmptyState
           visible={nodes.length === 0}
