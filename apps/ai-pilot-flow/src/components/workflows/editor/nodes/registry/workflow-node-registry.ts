@@ -9,6 +9,7 @@ import type {
   WorkflowNodeSchema,
 } from "@/components/workflows/editor/model/schema/node-schema"
 import type {
+  WorkflowCanvasNode,
   WorkflowNodeData,
   WorkflowNodeType,
 } from "@/components/workflows/editor/model/types/workflow-node"
@@ -27,13 +28,19 @@ export type WorkflowNodeDefinition = {
   ports: WorkflowNodePortSchema[]
 }
 
+function cloneWorkflowNodeData(data: WorkflowNodeData): WorkflowNodeData {
+  return {
+    ...data,
+    inputPorts: data.inputPorts?.map((port) => ({ ...port })),
+    outputPorts: data.outputPorts?.map((port) => ({ ...port })),
+  }
+}
+
 const workflowNodeDefinitions: readonly WorkflowNodeDefinition[] =
   workflowSchema.nodes.map(({ config, schema }) => ({
     type: config.type,
     menuLabel: config.menuLabel,
-    createData: () => ({
-      ...config.defaults,
-    }),
+    createData: () => cloneWorkflowNodeData(config.defaults),
     schema,
     ports: config.ports ?? [],
   }))
@@ -59,12 +66,18 @@ export function getWorkflowNodeDefinition(type: WorkflowNodeType) {
   return {
     type: config.type,
     menuLabel: config.menuLabel,
-    createData: () => ({
-      ...config.defaults,
-    }),
+    createData: () => cloneWorkflowNodeData(config.defaults),
     schema,
     ports: config.ports ?? [],
   }
+}
+
+export function getWorkflowNodePortsForNode(node: WorkflowCanvasNode) {
+  if (node.type === "image-model") {
+    return [...(node.data?.inputPorts ?? []), ...(node.data?.outputPorts ?? [])]
+  }
+
+  return getWorkflowNodeDefinition(node.type).ports
 }
 
 export function getWorkflowNodePort(

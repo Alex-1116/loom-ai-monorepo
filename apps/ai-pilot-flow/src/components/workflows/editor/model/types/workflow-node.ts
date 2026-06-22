@@ -1,3 +1,5 @@
+import type { WorkflowPortRef } from "@/components/workflows/editor/model/types/workflow-edge"
+
 export type WorkflowNodeType =
   | "prompt"
   | "file"
@@ -5,6 +7,16 @@ export type WorkflowNodeType =
   | "export"
   | "import-lora"
   | "import-multiple-loras"
+  | "image-model"
+
+export type WorkflowNodePortData = {
+  key: string
+  label: string
+  side: WorkflowPortRef["side"]
+  labelVisibility?: "always" | "hover"
+  portToneClassName?: string
+  labelToneClassName?: string
+}
 
 export type WorkflowNodeData = {
   title?: string
@@ -13,6 +25,13 @@ export type WorkflowNodeData = {
   outputLabel?: string
   secondaryOutputLabel?: string
   actionLabel?: string
+  modelKey?: string
+  inputPorts?: WorkflowNodePortData[]
+  outputPorts?: WorkflowNodePortData[]
+  addInputLabel?: string
+  runLabel?: string
+  showAddInputAction?: boolean
+  showRunAction?: boolean
 }
 
 export type WorkflowCanvasNode = {

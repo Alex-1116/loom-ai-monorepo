@@ -17,7 +17,7 @@ const shellToneClassName =
 
 export function WorkflowNodeShell({
   className,
-  widthClassName = "w-[352px]",
+  widthClassName = "w-[372px]",
   isSelected = false,
   isDragging = false,
   executionStatus,
@@ -63,5 +63,6 @@ export function WorkflowNodeShell({
 
 export { WorkflowNodeHeader } from "./workflow-node-header"
 export { WorkflowNodeBody } from "./workflow-node-body"
+export { WorkflowNodeFooter } from "./workflow-node-footer"
 export { WorkflowNodePort } from "./workflow-node-port"
 export type { WorkflowNodePortPointerHandler } from "./workflow-node-port"

@@ -109,6 +109,22 @@ function createWorkflowNodeOutput(
   }
 }
 
+function getImageModelOutputPorts(node: SharedWorkflowNode) {
+  const outputPorts = node.data?.outputPorts?.filter(
+    (port) => port.side === "right"
+  )
+
+  return outputPorts && outputPorts.length > 0
+    ? outputPorts
+    : [
+        {
+          key: "result",
+          label: "Result",
+          side: "right" as const,
+        },
+      ]
+}
+
 function createBuiltInWorkflowNodeHandlers(): Record<
   SharedWorkflowNodeType,
   WorkflowNodeHandler
@@ -150,6 +166,38 @@ function createBuiltInWorkflowNodeHandlers(): Record<
         outputs: createWorkflowNodeOutput(output, {
           output,
         }),
+      }
+    },
+    "image-model"({ node, graph, context }) {
+      const inputs = getWorkflowNodeInputs(node, graph, context)
+      const outputPorts = getImageModelOutputPorts(node)
+      const output = {
+        kind: "image-model",
+        nodeId: node.id,
+        title: node.data?.title ?? "Image Model",
+        modelKey: node.data?.modelKey ?? "image-model",
+        inputs: inputs.inputsByTargetPort,
+        connections: inputs.connections,
+        result: `mock://image-model/${node.id}`,
+      }
+      const portOutputs = outputPorts.reduce<WorkflowRuntimePortOutputs>(
+        (result, port) => {
+          result[port.key] = {
+            kind: "image-model-result",
+            nodeId: node.id,
+            modelKey: node.data?.modelKey ?? "image-model",
+            portKey: port.key,
+            value: output.result,
+            inputs: inputs.inputsByTargetPort,
+          }
+          return result
+        },
+        {}
+      )
+
+      return {
+        output,
+        outputs: createWorkflowNodeOutput(output, portOutputs),
       }
     },
     "import-lora"({ node }) {

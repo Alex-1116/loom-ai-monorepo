@@ -35,4 +35,40 @@ export const WORKFLOW_NODE_DEFAULTS: Record<
     outputLabel: "LoRA URL",
     secondaryOutputLabel: "Weight",
   },
+  "image-model": {
+    title: "Flux 2 Pro",
+    modelKey: "flux-2-pro",
+    inputPorts: [
+      {
+        key: "prompt",
+        label: "Prompt *",
+        side: "left",
+        labelVisibility: "hover",
+        portToneClassName: "border-[#d78cff] bg-[#1c1d26]",
+        labelToneClassName: "text-[#d78cff]",
+      },
+      {
+        key: "image-1",
+        label: "Image 1",
+        side: "left",
+        labelVisibility: "hover",
+        portToneClassName: "border-[#6fe7d1] bg-[#1c1d26]",
+        labelToneClassName: "text-[#6fe7d1]",
+      },
+    ],
+    outputPorts: [
+      {
+        key: "result",
+        label: "Result",
+        side: "right",
+        labelVisibility: "hover",
+        portToneClassName: "border-[#6fe7d1] bg-[#1c1d26]",
+        labelToneClassName: "text-[#6fe7d1]",
+      },
+    ],
+    addInputLabel: "Add another image input",
+    runLabel: "Run Model",
+    showAddInputAction: true,
+    showRunAction: true,
+  },
 }

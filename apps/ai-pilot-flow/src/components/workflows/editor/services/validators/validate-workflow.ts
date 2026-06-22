@@ -1,7 +1,7 @@
 import type { WorkflowEdge } from "@/components/workflows/editor/model/types/workflow-edge"
 import type { ViewportState } from "@/components/workflows/editor/model/types/viewport"
 import type { WorkflowCanvasNode } from "@/components/workflows/editor/model/types/workflow-node"
-import { getWorkflowNodeDefinition } from "@/components/workflows/editor/nodes/registry/workflow-node-registry"
+import { getWorkflowNodePortsForNode } from "@/components/workflows/editor/nodes/registry/workflow-node-registry"
 import {
   validateNode,
   type WorkflowValidationIssue,
@@ -41,15 +41,11 @@ function resolveEdgePort(
   anchor: "source" | "target"
 ) {
   const portRef = edge[anchor]
-  const definition = getWorkflowNodeDefinition(node.type)
-  const sidePorts = definition.ports.filter(
-    (port) => port.side === portRef.side
-  )
+  const nodePorts = getWorkflowNodePortsForNode(node)
+  const sidePorts = nodePorts.filter((port) => port.side === portRef.side)
 
   if (portRef.key) {
-    const port = definition.ports.find(
-      (candidate) => candidate.key === portRef.key
-    )
+    const port = nodePorts.find((candidate) => candidate.key === portRef.key)
     if (!port) {
       return {
         port: null,

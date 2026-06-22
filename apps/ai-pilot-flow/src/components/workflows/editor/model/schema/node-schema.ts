@@ -6,7 +6,13 @@ import type {
 
 export type WorkflowSchemaValidationLevel = "error" | "warning"
 
-export type WorkflowNodeFieldKey = keyof WorkflowNodeData
+export type WorkflowNodeFieldKey = {
+  [Key in keyof WorkflowNodeData]-?: WorkflowNodeData[Key] extends
+    | string
+    | undefined
+    ? Key
+    : never
+}[keyof WorkflowNodeData]
 
 export type WorkflowNodeValidationRule = {
   kind: "required"

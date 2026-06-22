@@ -13,6 +13,16 @@ export type SharedWorkflowNodeType =
   | "export"
   | "import-lora"
   | "import-multiple-loras"
+  | "image-model"
+
+export type SharedWorkflowNodePortData = {
+  key: string
+  label: string
+  side: SharedWorkflowPortSide
+  labelVisibility?: "always" | "hover"
+  portToneClassName?: string
+  labelToneClassName?: string
+}
 
 export type SharedWorkflowNodeData = {
   title?: string
@@ -21,6 +31,13 @@ export type SharedWorkflowNodeData = {
   outputLabel?: string
   secondaryOutputLabel?: string
   actionLabel?: string
+  modelKey?: string
+  inputPorts?: SharedWorkflowNodePortData[]
+  outputPorts?: SharedWorkflowNodePortData[]
+  addInputLabel?: string
+  runLabel?: string
+  showAddInputAction?: boolean
+  showRunAction?: boolean
 }
 
 export type SharedWorkflowNode = {

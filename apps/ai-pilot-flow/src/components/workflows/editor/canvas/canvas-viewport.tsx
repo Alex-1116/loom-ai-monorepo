@@ -31,6 +31,7 @@ import {
 } from "@/components/workflows/editor/nodes/registry/workflow-node-factory"
 import { WorkflowPromptNode } from "@/components/workflows/editor/nodes/blocks/prompt/workflow-prompt-node"
 import { WorkflowFileNode } from "@/components/workflows/editor/nodes/blocks/file/workflow-file-node"
+import { WorkflowImageModelNode } from "@/components/workflows/editor/nodes/blocks/image-model/workflow-image-model-node"
 import { WorkflowPreviewNode } from "@/components/workflows/editor/nodes/blocks/preview/workflow-preview-node"
 import { WorkflowExportNode } from "@/components/workflows/editor/nodes/blocks/export/workflow-export-node"
 import { WorkflowImportLoraNode } from "@/components/workflows/editor/nodes/blocks/import-lora/workflow-import-lora-node"
@@ -893,6 +894,23 @@ export function WorkflowCanvasViewport() {
                       executionStatus={nodeExecutionStatuses[node.id]}
                       title={node.data?.title}
                       onPortPointerDown={handlePortPointerDown}
+                    />
+                  ) : node.type === "image-model" ? (
+                    <WorkflowImageModelNode
+                      nodeId={node.id}
+                      isSelected={selectedNodeIdSet.has(node.id)}
+                      executionStatus={nodeExecutionStatuses[node.id]}
+                      title={node.data?.title}
+                      inputPorts={node.data?.inputPorts}
+                      outputPorts={node.data?.outputPorts}
+                      addInputLabel={node.data?.addInputLabel}
+                      runLabel={node.data?.runLabel}
+                      showAddInputAction={node.data?.showAddInputAction}
+                      showRunAction={node.data?.showRunAction}
+                      onPortPointerDown={handlePortPointerDown}
+                      onRunClick={() => {
+                        void handleRunPreview()
+                      }}
                     />
                   ) : node.type === "preview" ? (
                     <WorkflowPreviewNode

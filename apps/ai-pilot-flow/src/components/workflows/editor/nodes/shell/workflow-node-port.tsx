@@ -16,7 +16,6 @@ export type WorkflowNodePortProps = React.HTMLAttributes<HTMLDivElement> & {
   side?: WorkflowPortRef["side"]
   label?: React.ReactNode
   labelVisibility?: "always" | "hover"
-  tone?: "default" | "prompt"
   align?: "center" | "start"
   portToneClassName?: string
   labelToneClassName?: string
@@ -29,7 +28,6 @@ export function WorkflowNodePort({
   side = "right",
   label,
   labelVisibility = "hover",
-  tone = "default",
   align = "center",
   portToneClassName = "border-white/80 bg-[#1c1d26]",
   labelToneClassName = "text-white/70",
