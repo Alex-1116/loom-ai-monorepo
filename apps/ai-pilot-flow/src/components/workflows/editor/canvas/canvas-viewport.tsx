@@ -68,6 +68,13 @@ function formatZoom(scale: number) {
   return `${Math.round(scale * 100)}%`
 }
 
+function formatWorkflowValidationErrors(errorMessages: string[]) {
+  return [
+    "运行前校验未通过：",
+    ...errorMessages.map((message) => `- ${message}`),
+  ].join("\n")
+}
+
 function isEditableTarget(target: EventTarget | null) {
   if (!(target instanceof HTMLElement)) {
     return false
@@ -460,12 +467,26 @@ export function WorkflowCanvasViewport() {
       return
     }
 
+    const validation = validateWorkflow({
+      nodes,
+      edges,
+      viewport,
+    })
+    const validationErrors = validation.issues
+      .filter((issue) => issue.level === "error")
+      .map((issue) => issue.message)
+
     setIsRunningPreview(true)
     setRunPreviewResult(null)
     setRunPreviewError(null)
     setNodeExecutionStatuses({})
 
     try {
+      if (validationErrors.length > 0) {
+        setRunPreviewError(formatWorkflowValidationErrors(validationErrors))
+        return
+      }
+
       const result = await runWorkflowDocument({
         document: {
           nodes,
@@ -488,7 +509,7 @@ export function WorkflowCanvasViewport() {
     } finally {
       setIsRunningPreview(false)
     }
-  }, [edges, isRunningPreview, nodes])
+  }, [edges, isRunningPreview, nodes, viewport])
 
   const handleTriggerImport = React.useCallback(() => {
     if (!importInputRef.current) {

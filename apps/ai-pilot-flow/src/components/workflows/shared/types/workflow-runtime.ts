@@ -53,12 +53,19 @@ export type WorkflowExecutionStatus =
 
 export type WorkflowRuntimeVariables = Record<string, WorkflowRuntimeValue>
 
-export type WorkflowRuntimeOutputs = Record<string, WorkflowRuntimeValue>
+export type WorkflowRuntimePortOutputs = Record<string, WorkflowRuntimeValue>
+
+export type WorkflowRuntimeNodeOutput = {
+  default?: WorkflowRuntimeValue
+  ports?: WorkflowRuntimePortOutputs
+}
+
+export type WorkflowRuntimeOutputs = Record<string, WorkflowRuntimeNodeOutput>
 
 export type WorkflowNodeExecutionState = {
   nodeId: string
   status: WorkflowExecutionStatus
-  output?: WorkflowRuntimeValue
+  output?: WorkflowRuntimeNodeOutput
   error?: string
 }
 

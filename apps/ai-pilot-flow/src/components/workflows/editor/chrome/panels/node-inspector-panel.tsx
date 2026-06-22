@@ -103,7 +103,7 @@ export function WorkflowNodeInspectorPanel({
       ) : null}
 
       {selectedNode ? (
-        <div className="flex flex-1 flex-col gap-5 overflow-y-auto">
+        <div className="-m-1 flex flex-1 flex-col gap-5 overflow-y-auto p-1">
           <Section title="Meta">
             <div className="grid grid-cols-2 gap-2 rounded-xl border border-white/8 bg-white/4 p-3 text-xs text-white/65">
               <div className="space-y-1">

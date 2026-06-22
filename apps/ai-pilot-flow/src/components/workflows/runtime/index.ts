@@ -1,6 +1,8 @@
 export {
   createWorkflowRuntimeContext,
+  getWorkflowRuntimeNodeOutput,
   getWorkflowRuntimeOutput,
+  setWorkflowRuntimeNodeOutput,
   setWorkflowRuntimeOutput,
   type WorkflowRuntimeContext,
 } from "@/components/workflows/runtime/context/workflow-runtime-context"

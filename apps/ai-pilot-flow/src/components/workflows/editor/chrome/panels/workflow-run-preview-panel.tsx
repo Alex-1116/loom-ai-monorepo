@@ -21,6 +21,30 @@ function formatRuntimeValue(value: unknown) {
   return JSON.stringify(value, null, 2)
 }
 
+function getPanelSubtitle({
+  isRunning,
+  result,
+  errorMessage,
+}: {
+  isRunning: boolean
+  result: WorkflowRunResult | null
+  errorMessage?: string | null
+}) {
+  if (isRunning) {
+    return "正在执行当前工作流..."
+  }
+
+  if (result) {
+    return `最近一次运行状态：${result.status}`
+  }
+
+  if (errorMessage?.startsWith("运行前校验未通过")) {
+    return "最近一次运行在开始前被校验阻断"
+  }
+
+  return "最近一次运行发生错误"
+}
+
 export function WorkflowRunPreviewPanel({
   isRunning,
   result,
@@ -50,11 +74,11 @@ export function WorkflowRunPreviewPanel({
             <p className="text-sm font-semibold text-white">Run Preview</p>
           </div>
           <p className="text-xs break-words text-white/45">
-            {isRunning
-              ? "正在执行当前工作流..."
-              : result
-                ? `最近一次运行状态：${result.status}`
-                : "最近一次运行发生错误"}
+            {getPanelSubtitle({
+              isRunning,
+              result,
+              errorMessage,
+            })}
           </p>
         </div>
 

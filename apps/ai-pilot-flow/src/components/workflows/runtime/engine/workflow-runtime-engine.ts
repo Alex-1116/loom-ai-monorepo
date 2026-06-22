@@ -1,7 +1,7 @@
 import type { WorkflowDocument } from "@/components/workflows/editor/model/types/workflow-editor"
 import {
   createWorkflowRuntimeContext,
-  setWorkflowRuntimeOutput,
+  setWorkflowRuntimeNodeOutput,
   type WorkflowRuntimeContext,
 } from "@/components/workflows/runtime/context/workflow-runtime-context"
 import {
@@ -12,6 +12,8 @@ import { createWorkflowExecutionPlan } from "@/components/workflows/runtime/sche
 import { createSharedWorkflowGraph } from "@/components/workflows/shared/utils/create-shared-workflow-graph"
 import type {
   SharedWorkflowGraph,
+  WorkflowRuntimeNodeOutput,
+  WorkflowRuntimeValue,
   WorkflowExecutionStatus,
   WorkflowNodeExecutionState,
   WorkflowRunResult,
@@ -48,6 +50,29 @@ function createWorkflowNodeExecutionState(
   }
 }
 
+function normalizeWorkflowNodeOutput({
+  output,
+  outputs,
+}: {
+  output?: WorkflowRuntimeValue
+  outputs?: WorkflowRuntimeNodeOutput
+}): WorkflowRuntimeNodeOutput | null {
+  const normalizedOutput: WorkflowRuntimeNodeOutput = {
+    default: outputs?.default ?? output,
+    ports: outputs?.ports ? { ...outputs.ports } : undefined,
+  }
+
+  if (
+    normalizedOutput.default === undefined &&
+    (!normalizedOutput.ports ||
+      Object.keys(normalizedOutput.ports).length === 0)
+  ) {
+    return null
+  }
+
+  return normalizedOutput
+}
+
 export async function runWorkflow({
   graph,
   context,
@@ -67,17 +92,18 @@ export async function runWorkflow({
         graph,
         context: runtimeContext,
       })
+      const normalizedOutput = normalizeWorkflowNodeOutput(result)
 
-      if (result.output !== undefined) {
-        runtimeContext = setWorkflowRuntimeOutput(
+      if (normalizedOutput) {
+        runtimeContext = setWorkflowRuntimeNodeOutput(
           runtimeContext,
           node.id,
-          result.output
+          normalizedOutput
         )
       }
 
       const nodeState = createWorkflowNodeExecutionState(node.id, "succeeded", {
-        output: result.output,
+        output: normalizedOutput ?? undefined,
       })
       nodeStates.push(nodeState)
       onNodeStateChange?.(nodeState)
