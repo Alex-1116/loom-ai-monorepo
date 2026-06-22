@@ -10,7 +10,7 @@ export const previewNodeConfig: WorkflowNodeConfig = {
       key: "input",
       side: "left",
       label: "File",
-      labelVisibility: "always",
+      labelVisibility: "hover",
     },
   ],
 }
