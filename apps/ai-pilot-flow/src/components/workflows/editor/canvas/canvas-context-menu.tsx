@@ -33,12 +33,39 @@ const menuItems: readonly MenuItem[] = [
   { label: "Custom models", hasChildren: true },
 ] as const
 
-const MENU_WIDTH = 388
-const MENU_HEIGHT = 620
+const MENU_FALLBACK_WIDTH = 200
+const MENU_FALLBACK_HEIGHT = 620
 const MENU_MARGIN = 16
 
 function clampPosition(value: number, min: number, max: number) {
   return Math.min(Math.max(value, min), max)
+}
+
+function getClampedMenuPosition({
+  clientX,
+  clientY,
+  surfaceRect,
+  menuWidth,
+  menuHeight,
+}: {
+  clientX: number
+  clientY: number
+  surfaceRect: DOMRect
+  menuWidth: number
+  menuHeight: number
+}) {
+  return {
+    x: clampPosition(
+      clientX - surfaceRect.left,
+      MENU_MARGIN,
+      Math.max(MENU_MARGIN, surfaceRect.width - menuWidth - MENU_MARGIN)
+    ),
+    y: clampPosition(
+      clientY - surfaceRect.top,
+      MENU_MARGIN,
+      Math.max(MENU_MARGIN, surfaceRect.height - menuHeight - MENU_MARGIN)
+    ),
+  }
 }
 
 export function WorkflowCanvasContextMenu({
@@ -82,23 +109,46 @@ export function WorkflowCanvasContextMenu({
     }
 
     const rect = surface.getBoundingClientRect()
-    const nextX = clampPosition(
-      clientX - rect.left,
-      MENU_MARGIN,
-      Math.max(MENU_MARGIN, rect.width - MENU_WIDTH - MENU_MARGIN)
-    )
-    const nextY = clampPosition(
-      clientY - rect.top,
-      MENU_MARGIN,
-      Math.max(MENU_MARGIN, rect.height - MENU_HEIGHT - MENU_MARGIN)
-    )
+    const nextPosition = getClampedMenuPosition({
+      clientX,
+      clientY,
+      surfaceRect: rect,
+      menuWidth: menuRef.current?.offsetWidth ?? MENU_FALLBACK_WIDTH,
+      menuHeight: menuRef.current?.offsetHeight ?? MENU_FALLBACK_HEIGHT,
+    })
 
     // 菜单面板会被限制在容器内，但节点创建仍然使用用户真实右键点击的位置。
-    setPosition({ x: nextX, y: nextY })
+    setPosition(nextPosition)
     setTriggerPoint({ clientX, clientY })
     setIsOpen(true)
     setSearch("")
   }, [])
+
+  React.useLayoutEffect(() => {
+    if (!isOpen) {
+      return
+    }
+
+    const surface = surfaceRef.current
+    const menu = menuRef.current
+    if (!surface || !menu) {
+      return
+    }
+
+    const nextPosition = getClampedMenuPosition({
+      clientX: triggerPoint.clientX,
+      clientY: triggerPoint.clientY,
+      surfaceRect: surface.getBoundingClientRect(),
+      menuWidth: menu.offsetWidth,
+      menuHeight: menu.offsetHeight,
+    })
+
+    setPosition((current) =>
+      current.x === nextPosition.x && current.y === nextPosition.y
+        ? current
+        : nextPosition
+    )
+  }, [filteredItems.length, isOpen, triggerPoint.clientX, triggerPoint.clientY])
 
   React.useEffect(() => {
     if (!isOpen) {
