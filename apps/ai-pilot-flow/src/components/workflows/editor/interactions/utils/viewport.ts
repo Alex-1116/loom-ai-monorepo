@@ -1,10 +1,11 @@
 "use client"
 
+import { WORKFLOW_EDITOR_SCALE_LIMITS } from "@/components/workflows/editor/model/constants/editor-constants"
 import type { ViewportState } from "@/components/workflows/editor/model/types/viewport"
 import type { Point } from "./pointer"
 
-export const MIN_SCALE = 0.01
-export const MAX_SCALE = 2
+export const MIN_SCALE = WORKFLOW_EDITOR_SCALE_LIMITS.min
+export const MAX_SCALE = WORKFLOW_EDITOR_SCALE_LIMITS.max
 const ZOOM_STEP = 0.1
 
 export function clamp(value: number, min: number, max: number) {

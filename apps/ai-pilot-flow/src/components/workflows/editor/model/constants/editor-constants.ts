@@ -1,5 +1,5 @@
 export const WORKFLOW_EDITOR_SCALE_LIMITS = {
-  min: 0.4,
+  min: 0.01,
   max: 2,
 } as const
 

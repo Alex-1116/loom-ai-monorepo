@@ -329,8 +329,16 @@ export function useCanvasZoom({
         return
       }
 
-      const direction = event.deltaY < 0 ? "in" : "out"
-      const nextScale = getNextZoomStep(viewportRef.current.scale, direction)
+      // 普通滚轮缩放用固定步进，灵敏度过高。
+      // const direction = event.deltaY < 0 ? "in" : "out"
+      // const nextScale = getNextZoomStep(viewportRef.current.scale, direction)
+      // 触控板/鼠标滚轮缩放用连续比例，而不是固定步进，避免灵敏度过高。
+      const wheelZoomFactor = Math.exp(-event.deltaY * 0.0035)
+      const nextScale = clamp(
+        normalizeScale(viewportRef.current.scale * wheelZoomFactor),
+        MIN_SCALE,
+        MAX_SCALE
+      )
 
       zoomToPoint(nextScale, point)
     },
