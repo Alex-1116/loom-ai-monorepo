@@ -9,6 +9,10 @@ import { cn } from "@loom/ui/lib/utils"
 
 import { useCanvasBlockGestures } from "@/components/workflows/editor/interactions/hooks/useCanvasBlockGestures"
 import {
+  THREE_D_MODEL_MENU_CATEGORIES,
+  createThreeDModelNodeData,
+} from "@/components/workflows/editor/model/constants/3d-model-presets"
+import {
   IMAGE_MODEL_MENU_CATEGORIES,
   createImageModelNodeData,
 } from "@/components/workflows/editor/model/constants/image-model-presets"
@@ -116,10 +120,29 @@ const videoModelMenuItems: readonly MenuItem[] =
     })),
   }))
 
+const threeDModelMenuItems: readonly MenuItem[] =
+  THREE_D_MODEL_MENU_CATEGORIES.map((category) => ({
+    id: category.id,
+    label: category.label,
+    children: category.presets.map((preset) => ({
+      id: preset.id,
+      label: preset.label,
+      nodeType: "3d-model" as const,
+      nodeData: createThreeDModelNodeData({
+        title: preset.label,
+        modelKey: preset.modelKey,
+        mode: category.id,
+      }),
+    })),
+  }))
+
 const menuItems: readonly MenuItem[] = [
   ...workflowNodeMenuItems
     .filter(
-      (item) => item.type !== "image-model" && item.type !== "video-model"
+      (item) =>
+        item.type !== "image-model" &&
+        item.type !== "video-model" &&
+        item.type !== "3d-model"
     )
     .map((item) => ({
       id: item.type,
@@ -159,7 +182,7 @@ const menuItems: readonly MenuItem[] = [
   {
     id: "3d-models",
     label: "3D models",
-    children: [],
+    children: threeDModelMenuItems,
   },
   {
     id: "custom-models",

@@ -9,6 +9,7 @@ export type WorkflowNodeType =
   | "import-multiple-loras"
   | "image-model"
   | "video-model"
+  | "3d-model"
 
 export type WorkflowNodePortData = {
   key: string

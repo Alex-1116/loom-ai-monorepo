@@ -73,7 +73,11 @@ export function getWorkflowNodeDefinition(type: WorkflowNodeType) {
 }
 
 export function getWorkflowNodePortsForNode(node: WorkflowCanvasNode) {
-  if (node.type === "image-model" || node.type === "video-model") {
+  if (
+    node.type === "image-model" ||
+    node.type === "video-model" ||
+    node.type === "3d-model"
+  ) {
     return [...(node.data?.inputPorts ?? []), ...(node.data?.outputPorts ?? [])]
   }
 

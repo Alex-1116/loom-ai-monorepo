@@ -232,6 +232,38 @@ function createBuiltInWorkflowNodeHandlers(): Record<
         outputs: createWorkflowNodeOutput(output, portOutputs),
       }
     },
+    "3d-model"({ node, graph, context }) {
+      const inputs = getWorkflowNodeInputs(node, graph, context)
+      const outputPorts = getGeneratedModelOutputPorts(node)
+      const output = {
+        kind: "3d-model",
+        nodeId: node.id,
+        title: node.data?.title ?? "3D Model",
+        modelKey: node.data?.modelKey ?? "3d-model",
+        inputs: inputs.inputsByTargetPort,
+        connections: inputs.connections,
+        result: `mock://3d-model/${node.id}`,
+      }
+      const portOutputs = outputPorts.reduce<WorkflowRuntimePortOutputs>(
+        (result, port) => {
+          result[port.key] = {
+            kind: "3d-model-result",
+            nodeId: node.id,
+            modelKey: node.data?.modelKey ?? "3d-model",
+            portKey: port.key,
+            value: output.result,
+            inputs: inputs.inputsByTargetPort,
+          }
+          return result
+        },
+        {}
+      )
+
+      return {
+        output,
+        outputs: createWorkflowNodeOutput(output, portOutputs),
+      }
+    },
     "import-lora"({ node }) {
       const output = {
         kind: "import-lora",

@@ -1,4 +1,6 @@
 import type { WorkflowNodeType } from "@/components/workflows/editor/model/types/workflow-node"
+import { threeDModelNodeConfig } from "@/components/workflows/editor/nodes/blocks/3d-model/3d-model-node.config"
+import { threeDModelNodeSchema } from "@/components/workflows/editor/nodes/blocks/3d-model/3d-model-node.schema"
 import { exportNodeConfig } from "@/components/workflows/editor/nodes/blocks/export/export-node.config"
 import { exportNodeSchema } from "@/components/workflows/editor/nodes/blocks/export/export-node.schema"
 import { fileNodeConfig } from "@/components/workflows/editor/nodes/blocks/file/file-node.config"
@@ -43,6 +45,10 @@ export const workflowSchema: WorkflowSchema = {
     {
       config: videoModelNodeConfig,
       schema: videoModelNodeSchema,
+    },
+    {
+      config: threeDModelNodeConfig,
+      schema: threeDModelNodeSchema,
     },
     {
       config: exportNodeConfig,
