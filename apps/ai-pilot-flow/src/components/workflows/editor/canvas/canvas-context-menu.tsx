@@ -9,33 +9,148 @@ import { cn } from "@loom/ui/lib/utils"
 
 import { useCanvasBlockGestures } from "@/components/workflows/editor/interactions/hooks/useCanvasBlockGestures"
 import {
+  IMAGE_MODEL_MENU_CATEGORIES,
+  createImageModelNodeData,
+} from "@/components/workflows/editor/model/constants/image-model-presets"
+import type { WorkflowNodeData } from "@/components/workflows/editor/model/types/workflow-node"
+import {
   workflowNodeMenuItems,
   type WorkflowNodeType,
 } from "@/components/workflows/editor/nodes/registry/workflow-node-registry"
 
-type MenuItem = {
+type MenuActionItem = {
+  id: string
   label: string
-  hasChildren?: boolean
-  nodeType?: WorkflowNodeType
+  nodeType: WorkflowNodeType
+  nodeData?: Partial<WorkflowNodeData>
 }
 
+type MenuBranchItem = {
+  id: string
+  label: string
+  children: readonly MenuItem[]
+}
+
+type MenuItem = MenuActionItem | MenuBranchItem
+
+type SearchMenuItem = MenuActionItem & {
+  breadcrumb: string[]
+}
+
+function isMenuBranchItem(item: MenuItem): item is MenuBranchItem {
+  return "children" in item
+}
+
+function flattenSearchItems(
+  items: readonly MenuItem[],
+  breadcrumb: string[] = []
+): SearchMenuItem[] {
+  return items.flatMap((item) => {
+    if (isMenuBranchItem(item)) {
+      return flattenSearchItems(item.children, [...breadcrumb, item.label])
+    }
+
+    return [
+      {
+        ...item,
+        breadcrumb,
+      },
+    ]
+  })
+}
+
+function findBranchChildren(
+  items: readonly MenuItem[],
+  path: readonly string[]
+): readonly MenuItem[] {
+  let currentItems = items
+
+  for (const itemId of path) {
+    const nextBranch = currentItems.find(
+      (item): item is MenuBranchItem =>
+        isMenuBranchItem(item) && item.id === itemId
+    )
+    if (!nextBranch) {
+      return []
+    }
+
+    currentItems = nextBranch.children
+  }
+
+  return currentItems
+}
+
+const imageModelMenuItems: readonly MenuItem[] =
+  IMAGE_MODEL_MENU_CATEGORIES.map((category) => ({
+    id: category.id,
+    label: category.label,
+    children: category.presets.map((preset) => ({
+      id: preset.id,
+      label: preset.label,
+      nodeType: "image-model" as const,
+      nodeData: createImageModelNodeData({
+        title: preset.label,
+        modelKey: preset.modelKey,
+        mode: category.id,
+      }),
+    })),
+  }))
+
 const menuItems: readonly MenuItem[] = [
-  ...workflowNodeMenuItems.map((item) => ({
-    label: item.label,
-    nodeType: item.type,
-  })),
-  { label: "Import Model" },
-  { label: "Runway Gen-4.5" },
-  { label: "Tools", hasChildren: true },
-  { label: "Image models", hasChildren: true },
-  { label: "Video models", hasChildren: true },
-  { label: "3D models", hasChildren: true },
-  { label: "Custom models", hasChildren: true },
+  ...workflowNodeMenuItems
+    .filter((item) => item.type !== "image-model")
+    .map((item) => ({
+      id: item.type,
+      label: item.label,
+      nodeType: item.type,
+    })),
+  {
+    id: "runway-gen-4-5",
+    label: "Runway Gen-4.5",
+    nodeType: "image-model",
+    nodeData: createImageModelNodeData({
+      title: "Runway Gen-4.5",
+      modelKey: "runway-gen-4-5",
+      mode: "generate-from-text",
+    }),
+  },
+  {
+    id: "saved",
+    label: "Saved",
+    children: [],
+  },
+  {
+    id: "tools",
+    label: "Tools",
+    children: [],
+  },
+  {
+    id: "image-models",
+    label: "Image models",
+    children: imageModelMenuItems,
+  },
+  {
+    id: "video-models",
+    label: "Video models",
+    children: [],
+  },
+  {
+    id: "3d-models",
+    label: "3D models",
+    children: [],
+  },
+  {
+    id: "custom-models",
+    label: "Custom models",
+    children: [],
+  },
 ] as const
 
 const MENU_FALLBACK_WIDTH = 200
 const MENU_FALLBACK_HEIGHT = 620
 const MENU_MARGIN = 16
+const MENU_PANEL_GAP = 8
+const allSearchItems = flattenSearchItems(menuItems)
 
 function clampPosition(value: number, min: number, max: number) {
   return Math.min(Math.max(value, min), max)
@@ -76,6 +191,7 @@ export function WorkflowCanvasContextMenu({
   className?: string
   onSelectItem?: (payload: {
     type: WorkflowNodeType
+    data?: Partial<WorkflowNodeData>
     clientX: number
     clientY: number
   }) => void
@@ -85,7 +201,11 @@ export function WorkflowCanvasContextMenu({
   const gestureBlockRef = useCanvasBlockGestures<HTMLDivElement>()
   const [isOpen, setIsOpen] = React.useState(false)
   const [search, setSearch] = React.useState("")
+  const [activePath, setActivePath] = React.useState<string[]>([])
+  const [submenuTops, setSubmenuTops] = React.useState<number[]>([])
   const [position, setPosition] = React.useState({ x: 24, y: 24 })
+  const [panelMaxHeight, setPanelMaxHeight] =
+    React.useState(MENU_FALLBACK_HEIGHT)
   const [triggerPoint, setTriggerPoint] = React.useState({
     clientX: 0,
     clientY: 0,
@@ -94,35 +214,104 @@ export function WorkflowCanvasContextMenu({
   const filteredItems = React.useMemo(() => {
     const keyword = search.trim().toLowerCase()
     if (!keyword) {
-      return menuItems
+      return allSearchItems
     }
 
-    return menuItems.filter((item) =>
-      item.label.toLowerCase().includes(keyword)
+    return allSearchItems.filter(
+      (item) =>
+        item.label.toLowerCase().includes(keyword) ||
+        item.breadcrumb.some((part) => part.toLowerCase().includes(keyword))
     )
   }, [search])
 
-  const openMenu = React.useCallback((clientX: number, clientY: number) => {
-    const surface = surfaceRef.current
-    if (!surface) {
-      return
+  const visiblePanels = React.useMemo(() => {
+    if (search.trim()) {
+      return []
     }
 
-    const rect = surface.getBoundingClientRect()
-    const nextPosition = getClampedMenuPosition({
-      clientX,
-      clientY,
-      surfaceRect: rect,
-      menuWidth: menuRef.current?.offsetWidth ?? MENU_FALLBACK_WIDTH,
-      menuHeight: menuRef.current?.offsetHeight ?? MENU_FALLBACK_HEIGHT,
-    })
+    return Array.from({ length: activePath.length + 1 }, (_, index) =>
+      findBranchChildren(menuItems, activePath.slice(0, index))
+    ).filter((items) => items.length > 0)
+  }, [activePath, search])
 
-    // 菜单面板会被限制在容器内，但节点创建仍然使用用户真实右键点击的位置。
-    setPosition(nextPosition)
-    setTriggerPoint({ clientX, clientY })
-    setIsOpen(true)
-    setSearch("")
-  }, [])
+  const isSearching = search.trim().length > 0
+  const panelCount = isSearching ? 1 : Math.max(1, visiblePanels.length)
+  const menuWidth =
+    MENU_FALLBACK_WIDTH * panelCount + MENU_PANEL_GAP * (panelCount - 1)
+
+  const getRelativePanelTop = React.useCallback(
+    (element: HTMLElement, nextPanelItems: readonly MenuItem[]) => {
+      const menuRect = menuRef.current?.getBoundingClientRect()
+      const surfaceRect = surfaceRef.current?.getBoundingClientRect()
+      const itemRect = element.getBoundingClientRect()
+
+      if (!menuRect || !surfaceRect) {
+        return 0
+      }
+
+      const ITEM_HEIGHT = 28
+      const PADDING = 10
+      const MAX_HEIGHT = Math.max(0, surfaceRect.height - MENU_MARGIN * 2)
+
+      const estimatedHeight = Math.min(
+        MAX_HEIGHT,
+        PADDING + nextPanelItems.length * ITEM_HEIGHT
+      )
+
+      let topOffset = itemRect.top - menuRect.top
+      const absoluteTop = menuRect.top + topOffset
+      const absoluteBottom = absoluteTop + estimatedHeight
+      const maxAllowedBottom = surfaceRect.bottom - MENU_MARGIN
+
+      if (absoluteBottom > maxAllowedBottom) {
+        topOffset -= absoluteBottom - maxAllowedBottom
+      }
+
+      const minAllowedTop = surfaceRect.top + MENU_MARGIN
+      if (menuRect.top + topOffset < minAllowedTop) {
+        topOffset = minAllowedTop - menuRect.top
+      }
+
+      return topOffset
+    },
+    []
+  )
+
+  const openMenu = React.useCallback(
+    (clientX: number, clientY: number) => {
+      const surface = surfaceRef.current
+      if (!surface) {
+        return
+      }
+
+      const rect = surface.getBoundingClientRect()
+      const nextPanelMaxHeight = Math.max(0, rect.height - MENU_MARGIN * 2)
+      setPanelMaxHeight(nextPanelMaxHeight)
+
+      // 如果菜单还未渲染，则预估一个初始高度。最大不超过画布高度。
+      const estimatedMenuHeight = Math.min(
+        nextPanelMaxHeight,
+        MENU_FALLBACK_HEIGHT
+      )
+
+      const nextPosition = getClampedMenuPosition({
+        clientX,
+        clientY,
+        surfaceRect: rect,
+        menuWidth: menuRef.current?.offsetWidth ?? menuWidth,
+        menuHeight: menuRef.current?.offsetHeight ?? estimatedMenuHeight,
+      })
+
+      // 菜单面板会被限制在容器内，但节点创建仍然使用用户真实右键点击的位置。
+      setPosition(nextPosition)
+      setTriggerPoint({ clientX, clientY })
+      setIsOpen(true)
+      setSearch("")
+      setActivePath([])
+      setSubmenuTops([])
+    },
+    [menuWidth]
+  )
 
   React.useLayoutEffect(() => {
     if (!isOpen) {
@@ -142,13 +331,23 @@ export function WorkflowCanvasContextMenu({
       menuWidth: menu.offsetWidth,
       menuHeight: menu.offsetHeight,
     })
+    setPanelMaxHeight(
+      Math.max(0, surface.getBoundingClientRect().height - MENU_MARGIN * 2)
+    )
 
     setPosition((current) =>
       current.x === nextPosition.x && current.y === nextPosition.y
         ? current
         : nextPosition
     )
-  }, [filteredItems.length, isOpen, triggerPoint.clientX, triggerPoint.clientY])
+  }, [
+    filteredItems.length,
+    isOpen,
+    menuWidth,
+    triggerPoint.clientX,
+    triggerPoint.clientY,
+    visiblePanels.length,
+  ])
 
   React.useEffect(() => {
     if (!isOpen) {
@@ -178,6 +377,19 @@ export function WorkflowCanvasContextMenu({
     }
   }, [isOpen])
 
+  const handleSelectAction = React.useCallback(
+    (item: MenuActionItem) => {
+      onSelectItem?.({
+        type: item.nodeType,
+        data: item.nodeData,
+        clientX: triggerPoint.clientX,
+        clientY: triggerPoint.clientY,
+      })
+      setIsOpen(false)
+    },
+    [onSelectItem, triggerPoint.clientX, triggerPoint.clientY]
+  )
+
   return (
     <div
       ref={surfaceRef}
@@ -199,56 +411,166 @@ export function WorkflowCanvasContextMenu({
             menuRef.current = node
             gestureBlockRef(node)
           }}
-          className="absolute z-30 flex w-[200px] flex-col gap-1.5 rounded-xl border border-white/10 bg-[#1c1d26]/98 p-1.5 text-white shadow-[0_18px_48px_rgba(0,0,0,0.55)] backdrop-blur-xl"
-          style={{ left: position.x, top: position.y }}
+          className="absolute z-30 text-white"
+          style={{ left: position.x, top: position.y, width: `${menuWidth}px` }}
         >
-          <div className="relative">
-            <Search className="pointer-events-none absolute top-1/2 left-4 size-4 -translate-y-1/2 text-white/60" />
-            <Input
-              value={search}
-              onChange={(event) => setSearch(event.target.value)}
-              placeholder="Search"
-              className="h-8 rounded-2xl border-white/25 bg-white/4 pr-4 pl-11 text-base text-white placeholder:text-white/45 focus-visible:border-white/35 focus-visible:ring-white/10"
-            />
-          </div>
-
-          <div className="max-h-[500px] overflow-y-auto">
-            {filteredItems.map((item) => (
-              <Button
-                key={item.label}
-                type="button"
-                variant="ghost"
-                size="sm"
-                className={cn(
-                  "w-full justify-start gap-3 rounded-md text-left text-xs font-medium text-white/95 shadow-none hover:bg-white/6 hover:text-white focus-visible:ring-white/10",
-                  item.hasChildren && "pr-3"
-                )}
-                onClick={() => {
-                  if (!item.nodeType) {
-                    return
-                  }
-
-                  onSelectItem?.({
-                    type: item.nodeType,
-                    clientX: triggerPoint.clientX,
-                    clientY: triggerPoint.clientY,
-                  })
-                  setIsOpen(false)
+          <div className="relative flex w-[200px] flex-col gap-1 rounded-xl border border-white/10 bg-[#1c1d26]/98 p-1.5 shadow-[0_18px_48px_rgba(0,0,0,0.55)] backdrop-blur-xl">
+            <div className="relative">
+              <Search className="pointer-events-none absolute top-1/2 left-4 size-4 -translate-y-1/2 text-white/60" />
+              <Input
+                value={search}
+                onChange={(event) => {
+                  setSearch(event.target.value)
+                  setActivePath([])
+                  setSubmenuTops([])
                 }}
-              >
-                <span className="flex-1">{item.label}</span>
-                {item.hasChildren ? (
-                  <ChevronRight className="size-4 text-white/70" />
-                ) : null}
-              </Button>
-            ))}
+                placeholder="Search"
+                className="h-7 rounded-xl border-white/25 bg-white/4 pr-3 pl-10 text-sm text-white placeholder:text-white/45 focus-visible:border-white/35 focus-visible:ring-white/10"
+              />
+            </div>
 
-            {filteredItems.length === 0 ? (
-              <div className="px-4 py-6 text-sm text-white/50">
-                未找到匹配项
-              </div>
-            ) : null}
+            <div
+              className="overflow-y-auto"
+              style={{ maxHeight: `${panelMaxHeight}px` }}
+            >
+              {isSearching
+                ? filteredItems.map((item) => (
+                    <Button
+                      key={`${item.breadcrumb.join("/")}:${item.id}`}
+                      type="button"
+                      variant="ghost"
+                      size="sm"
+                      className="h-7 w-full justify-start gap-2 rounded-md px-2.5 text-left text-[11px] font-medium text-white/95 shadow-none hover:bg-white/6 hover:text-white focus-visible:ring-white/10"
+                      onClick={() => {
+                        handleSelectAction(item)
+                      }}
+                    >
+                      <span className="flex-1 truncate">{item.label}</span>
+                      <span className="truncate text-[10px] text-white/40">
+                        {item.breadcrumb.join(" / ")}
+                      </span>
+                    </Button>
+                  ))
+                : menuItems.map((item) => {
+                    const hasChildren = isMenuBranchItem(item)
+
+                    return (
+                      <Button
+                        key={item.id}
+                        type="button"
+                        variant="ghost"
+                        size="sm"
+                        className={cn(
+                          "h-7 w-full justify-start gap-2 rounded-md px-2.5 text-left text-[11px] font-medium text-white/95 shadow-none hover:bg-white/6 hover:text-white focus-visible:ring-white/10",
+                          hasChildren && "pr-3"
+                        )}
+                        onPointerEnter={(event) => {
+                          if (!hasChildren) {
+                            return
+                          }
+
+                          setSubmenuTops([
+                            getRelativePanelTop(
+                              event.currentTarget,
+                              item.children
+                            ),
+                          ])
+                          setActivePath([item.id])
+                        }}
+                        onClick={() => {
+                          if (isMenuBranchItem(item)) {
+                            setActivePath([item.id])
+                            return
+                          }
+
+                          handleSelectAction(item)
+                        }}
+                      >
+                        <span className="flex-1 truncate">{item.label}</span>
+                        {hasChildren ? (
+                          <ChevronRight className="size-4 text-white/70" />
+                        ) : null}
+                      </Button>
+                    )
+                  })}
+
+              {(isSearching && filteredItems.length === 0) ||
+              (!isSearching && menuItems.length === 0) ? (
+                <div className="px-4 py-6 text-sm text-white/50">
+                  未找到匹配项
+                </div>
+              ) : null}
+            </div>
           </div>
+
+          {!isSearching
+            ? visiblePanels.slice(1).map((panelItems, panelIndex) => (
+                <div
+                  key={`panel-${panelIndex + 1}`}
+                  className="absolute flex w-[200px] flex-col gap-1 rounded-xl border border-white/10 bg-[#1c1d26]/98 p-1.5 shadow-[0_18px_48px_rgba(0,0,0,0.55)] backdrop-blur-xl"
+                  style={{
+                    left: `${(panelIndex + 1) * (MENU_FALLBACK_WIDTH + MENU_PANEL_GAP)}px`,
+                    top: `${submenuTops[panelIndex] ?? 0}px`,
+                  }}
+                >
+                  <div
+                    className="overflow-y-auto"
+                    style={{ maxHeight: `${panelMaxHeight}px` }}
+                  >
+                    {panelItems.map((item) => {
+                      const hasChildren = isMenuBranchItem(item)
+
+                      return (
+                        <Button
+                          key={item.id}
+                          type="button"
+                          variant="ghost"
+                          size="sm"
+                          className={cn(
+                            "h-7 w-full justify-start gap-2 rounded-md px-2.5 text-left text-[11px] font-medium text-white/95 shadow-none hover:bg-white/6 hover:text-white focus-visible:ring-white/10",
+                            hasChildren && "pr-3"
+                          )}
+                          onPointerEnter={(event) => {
+                            if (!hasChildren) {
+                              return
+                            }
+
+                            const nextTop = getRelativePanelTop(
+                              event.currentTarget,
+                              item.children
+                            )
+                            setActivePath((current) => [
+                              ...current.slice(0, panelIndex + 1),
+                              item.id,
+                            ])
+                            setSubmenuTops((current) => [
+                              ...current.slice(0, panelIndex + 1),
+                              nextTop,
+                            ])
+                          }}
+                          onClick={() => {
+                            if (isMenuBranchItem(item)) {
+                              setActivePath((current) => [
+                                ...current.slice(0, panelIndex + 1),
+                                item.id,
+                              ])
+                              return
+                            }
+
+                            handleSelectAction(item)
+                          }}
+                        >
+                          <span className="flex-1 truncate">{item.label}</span>
+                          {hasChildren ? (
+                            <ChevronRight className="size-4 text-white/70" />
+                          ) : null}
+                        </Button>
+                      )
+                    })}
+                  </div>
+                </div>
+              ))
+            : null}
         </div>
       ) : null}
     </div>

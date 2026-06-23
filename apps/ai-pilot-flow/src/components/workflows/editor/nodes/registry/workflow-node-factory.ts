@@ -3,6 +3,7 @@
 import { getWorkflowNodeDefinition } from "@/components/workflows/editor/nodes/registry/workflow-node-registry"
 import type {
   WorkflowCanvasNode,
+  WorkflowNodeData,
   WorkflowNodeType,
 } from "@/components/workflows/editor/model/types/workflow-node"
 
@@ -11,6 +12,7 @@ type CreateWorkflowNodeParams = {
   x: number
   y: number
   id?: string
+  data?: Partial<WorkflowNodeData>
 }
 
 function createWorkflowNodeId(type: WorkflowNodeType) {
@@ -22,6 +24,7 @@ export function createWorkflowNode({
   x,
   y,
   id,
+  data,
 }: CreateWorkflowNodeParams): WorkflowCanvasNode {
   const definition = getWorkflowNodeDefinition(type)
 
@@ -31,7 +34,10 @@ export function createWorkflowNode({
     type,
     x,
     y,
-    data: definition.createData(),
+    data: {
+      ...definition.createData(),
+      ...data,
+    },
   }
 }
 

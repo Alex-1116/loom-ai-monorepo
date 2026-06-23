@@ -346,6 +346,7 @@ export function WorkflowCanvasViewport() {
   const handleCreateNodeFromMenu = React.useCallback(
     (payload: {
       type: WorkflowCanvasNode["type"]
+      data?: Partial<NonNullable<WorkflowCanvasNode["data"]>>
       clientX: number
       clientY: number
     }) => {
@@ -368,6 +369,7 @@ export function WorkflowCanvasViewport() {
           type: payload.type,
           x,
           y,
+          data: payload.data,
         }),
       ])
       clearGuides()
