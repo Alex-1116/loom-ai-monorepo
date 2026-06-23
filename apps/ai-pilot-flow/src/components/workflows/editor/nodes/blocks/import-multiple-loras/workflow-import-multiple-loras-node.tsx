@@ -114,7 +114,7 @@ export function WorkflowImportMultipleLorasNode({
               step={0.01}
               className="flex-1 [&_[data-slot=slider-range]]:bg-white [&_[data-slot=slider-thumb]]:border-white/70 [&_[data-slot=slider-track]]:bg-white/12"
             />
-            <div className="flex h-6 w-16 shrink-0 items-center justify-center rounded-sm border border-white/10 bg-[#23242d] px-3 text-sm text-white/82">
+            <div className="flex h-7 w-16 shrink-0 items-center justify-center rounded-sm border border-white/10 bg-[#23242d] px-3 text-sm text-white/82">
               {weightValue}
             </div>
           </div>

@@ -105,7 +105,8 @@ export function WorkflowThreeDModelNode({
             <Button
               type="button"
               variant="ghost"
-              className="h-auto w-auto rounded-md px-2 py-1 text-sm font-medium text-white/70 shadow-none hover:bg-white/6 hover:text-white"
+              size="sm"
+              className="rounded-sm text-sm font-medium text-white/70 shadow-none hover:bg-white/6 hover:text-white"
               onPointerDown={(event) => {
                 event.stopPropagation()
               }}
@@ -124,8 +125,9 @@ export function WorkflowThreeDModelNode({
             <Button
               type="button"
               variant="ghost"
+              size="sm"
               className={cn(
-                "rounded-md border border-white/6 bg-[#23242d] px-3 py-2 text-sm font-medium text-white/72 shadow-none hover:border-white/10 hover:bg-[#2a2c36] hover:text-white",
+                "rounded-sm border border-white/6 bg-[#23242d] text-sm font-medium text-white/72 shadow-none hover:border-white/10 hover:bg-[#2a2c36] hover:text-white",
                 isRunning &&
                   "border-sky-400/20 bg-sky-400/10 text-sky-100 hover:border-sky-400/30 hover:bg-sky-400/12"
               )}

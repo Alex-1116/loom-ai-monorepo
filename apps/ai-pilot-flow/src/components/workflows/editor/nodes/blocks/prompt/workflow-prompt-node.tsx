@@ -50,7 +50,8 @@ export function WorkflowPromptNode({
         <Button
           type="button"
           variant="ghost"
-          className="h-auto w-auto rounded-md px-2 py-1 text-sm font-medium text-white/70 shadow-none hover:bg-white/6 hover:text-white"
+          size="sm"
+          className="rounded-sm text-sm font-medium text-white/70 shadow-none hover:bg-white/6 hover:text-white"
         >
           + Add variable
         </Button>
