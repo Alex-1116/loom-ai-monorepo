@@ -125,6 +125,22 @@ function getGeneratedModelOutputPorts(node: SharedWorkflowNode) {
       ]
 }
 
+function getGeneratedToolOutputPorts(node: SharedWorkflowNode) {
+  const outputPorts = node.data?.outputPorts?.filter(
+    (port) => port.side === "right"
+  )
+
+  return outputPorts && outputPorts.length > 0
+    ? outputPorts
+    : [
+        {
+          key: "result",
+          label: "Result",
+          side: "right" as const,
+        },
+      ]
+}
+
 function createBuiltInWorkflowNodeHandlers(): Record<
   SharedWorkflowNodeType,
   WorkflowNodeHandler
@@ -252,6 +268,46 @@ function createBuiltInWorkflowNodeHandlers(): Record<
             modelKey: node.data?.modelKey ?? "3d-model",
             portKey: port.key,
             value: output.result,
+            inputs: inputs.inputsByTargetPort,
+          }
+          return result
+        },
+        {}
+      )
+
+      return {
+        output,
+        outputs: createWorkflowNodeOutput(output, portOutputs),
+      }
+    },
+    tool({ node, graph, context }) {
+      const inputs = getWorkflowNodeInputs(node, graph, context)
+      const outputPorts = getGeneratedToolOutputPorts(node)
+      const toolKey = node.data?.toolKey ?? "tool"
+      const toolCategory = node.data?.toolCategory ?? "Tool"
+      const output = {
+        kind: "tool",
+        nodeId: node.id,
+        title: node.data?.title ?? "Tool",
+        toolKey,
+        toolCategory,
+        inputs: inputs.inputsByTargetPort,
+        connections: inputs.connections,
+        result: `mock://tool/${toolKey}/${node.id}`,
+      }
+      const portOutputs = outputPorts.reduce<WorkflowRuntimePortOutputs>(
+        (result, port) => {
+          result[port.key] = {
+            kind: "tool-result",
+            nodeId: node.id,
+            toolKey,
+            toolCategory,
+            portKey: port.key,
+            label: port.label,
+            value:
+              port.key === "result"
+                ? output.result
+                : `mock://tool/${toolKey}/${node.id}/${port.key}`,
             inputs: inputs.inputsByTargetPort,
           }
           return result

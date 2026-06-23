@@ -16,6 +16,7 @@ export type SharedWorkflowNodeType =
   | "image-model"
   | "video-model"
   | "3d-model"
+  | "tool"
 
 export type SharedWorkflowNodePortData = {
   key: string
@@ -34,6 +35,8 @@ export type SharedWorkflowNodeData = {
   secondaryOutputLabel?: string
   actionLabel?: string
   modelKey?: string
+  toolKey?: string
+  toolCategory?: string
   inputPorts?: SharedWorkflowNodePortData[]
   outputPorts?: SharedWorkflowNodePortData[]
   addInputLabel?: string

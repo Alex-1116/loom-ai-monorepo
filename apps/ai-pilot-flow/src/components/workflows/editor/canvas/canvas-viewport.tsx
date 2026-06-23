@@ -34,6 +34,7 @@ import { WorkflowFileNode } from "@/components/workflows/editor/nodes/blocks/fil
 import { WorkflowImageModelNode } from "@/components/workflows/editor/nodes/blocks/image-model/workflow-image-model-node"
 import { WorkflowVideoModelNode } from "@/components/workflows/editor/nodes/blocks/video-model/workflow-video-model-node"
 import { WorkflowThreeDModelNode } from "@/components/workflows/editor/nodes/blocks/3d-model/workflow-3d-model-node"
+import { WorkflowToolNode } from "@/components/workflows/editor/nodes/blocks/tool/workflow-tool-node"
 import { WorkflowPreviewNode } from "@/components/workflows/editor/nodes/blocks/preview/workflow-preview-node"
 import { WorkflowExportNode } from "@/components/workflows/editor/nodes/blocks/export/workflow-export-node"
 import { WorkflowImportLoraNode } from "@/components/workflows/editor/nodes/blocks/import-lora/workflow-import-lora-node"
@@ -939,6 +940,24 @@ export function WorkflowCanvasViewport() {
                       isSelected={selectedNodeIdSet.has(node.id)}
                       executionStatus={nodeExecutionStatuses[node.id]}
                       title={node.data?.title}
+                      inputPorts={node.data?.inputPorts}
+                      outputPorts={node.data?.outputPorts}
+                      addInputLabel={node.data?.addInputLabel}
+                      runLabel={node.data?.runLabel}
+                      showAddInputAction={node.data?.showAddInputAction}
+                      showRunAction={node.data?.showRunAction}
+                      onPortPointerDown={handlePortPointerDown}
+                      onRunClick={() => {
+                        void handleRunPreview()
+                      }}
+                    />
+                  ) : node.type === "tool" ? (
+                    <WorkflowToolNode
+                      nodeId={node.id}
+                      isSelected={selectedNodeIdSet.has(node.id)}
+                      executionStatus={nodeExecutionStatuses[node.id]}
+                      title={node.data?.title}
+                      toolCategory={node.data?.toolCategory}
                       inputPorts={node.data?.inputPorts}
                       outputPorts={node.data?.outputPorts}
                       addInputLabel={node.data?.addInputLabel}

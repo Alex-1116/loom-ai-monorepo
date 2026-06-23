@@ -143,4 +143,32 @@ export const WORKFLOW_NODE_DEFAULTS: Record<
     showAddInputAction: true,
     showRunAction: true,
   },
+  tool: {
+    title: "Rotate and flip",
+    toolKey: "rotate-and-flip",
+    toolCategory: "Editing",
+    inputPorts: [
+      {
+        key: "image-1",
+        label: "Image 1",
+        side: "left",
+        labelVisibility: "hover",
+        portToneClassName: "border-[#6fe7d1] bg-[#1c1d26]",
+        labelToneClassName: "text-[#6fe7d1]",
+      },
+    ],
+    outputPorts: [
+      {
+        key: "image",
+        label: "Image",
+        side: "right",
+        labelVisibility: "hover",
+        portToneClassName: "border-[#6fe7d1] bg-[#1c1d26]",
+        labelToneClassName: "text-[#6fe7d1]",
+      },
+    ],
+    runLabel: "Run Tool",
+    showAddInputAction: false,
+    showRunAction: true,
+  },
 }

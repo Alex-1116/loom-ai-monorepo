@@ -10,6 +10,7 @@ export type WorkflowNodeType =
   | "image-model"
   | "video-model"
   | "3d-model"
+  | "tool"
 
 export type WorkflowNodePortData = {
   key: string
@@ -28,6 +29,8 @@ export type WorkflowNodeData = {
   secondaryOutputLabel?: string
   actionLabel?: string
   modelKey?: string
+  toolKey?: string
+  toolCategory?: string
   inputPorts?: WorkflowNodePortData[]
   outputPorts?: WorkflowNodePortData[]
   addInputLabel?: string

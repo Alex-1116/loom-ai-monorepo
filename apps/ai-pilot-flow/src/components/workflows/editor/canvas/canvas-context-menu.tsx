@@ -17,6 +17,10 @@ import {
   createImageModelNodeData,
 } from "@/components/workflows/editor/model/constants/image-model-presets"
 import {
+  TOOL_MENU_CATEGORIES,
+  createToolNodeData,
+} from "@/components/workflows/editor/model/constants/tool-presets"
+import {
   VIDEO_MODEL_MENU_CATEGORIES,
   createVideoModelNodeData,
 } from "@/components/workflows/editor/model/constants/video-model-presets"
@@ -136,13 +140,37 @@ const threeDModelMenuItems: readonly MenuItem[] =
     })),
   }))
 
+const toolMenuItems: readonly MenuItem[] = TOOL_MENU_CATEGORIES.map(
+  (category) => ({
+    id: category.id,
+    label: category.label,
+    children: category.presets.map((preset) => ({
+      id: preset.id,
+      label: preset.label,
+      nodeType: "tool" as const,
+      nodeData: createToolNodeData({
+        title: preset.label,
+        toolKey: preset.toolKey,
+        category: category.label,
+        inputPorts: preset.inputPorts,
+        outputPorts: preset.outputPorts,
+        addInputLabel: preset.addInputLabel,
+        runLabel: preset.runLabel,
+        showAddInputAction: preset.showAddInputAction,
+        showRunAction: preset.showRunAction,
+      }),
+    })),
+  })
+)
+
 const menuItems: readonly MenuItem[] = [
   ...workflowNodeMenuItems
     .filter(
       (item) =>
         item.type !== "image-model" &&
         item.type !== "video-model" &&
-        item.type !== "3d-model"
+        item.type !== "3d-model" &&
+        item.type !== "tool"
     )
     .map((item) => ({
       id: item.type,
@@ -167,7 +195,7 @@ const menuItems: readonly MenuItem[] = [
   {
     id: "tools",
     label: "Tools",
-    children: [],
+    children: toolMenuItems,
   },
   {
     id: "image-models",

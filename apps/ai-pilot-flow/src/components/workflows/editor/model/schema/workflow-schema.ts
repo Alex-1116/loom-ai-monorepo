@@ -17,6 +17,8 @@ import { previewNodeConfig } from "@/components/workflows/editor/nodes/blocks/pr
 import { previewNodeSchema } from "@/components/workflows/editor/nodes/blocks/preview/preview-node.schema"
 import { promptNodeConfig } from "@/components/workflows/editor/nodes/blocks/prompt/prompt-node.config"
 import { promptNodeSchema } from "@/components/workflows/editor/nodes/blocks/prompt/prompt-node.schema"
+import { toolNodeConfig } from "@/components/workflows/editor/nodes/blocks/tool/tool-node.config"
+import { toolNodeSchema } from "@/components/workflows/editor/nodes/blocks/tool/tool-node.schema"
 
 import type {
   WorkflowNodeConfig,
@@ -49,6 +51,10 @@ export const workflowSchema: WorkflowSchema = {
     {
       config: threeDModelNodeConfig,
       schema: threeDModelNodeSchema,
+    },
+    {
+      config: toolNodeConfig,
+      schema: toolNodeSchema,
     },
     {
       config: exportNodeConfig,

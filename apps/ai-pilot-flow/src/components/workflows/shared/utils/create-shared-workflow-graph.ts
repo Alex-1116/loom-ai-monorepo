@@ -2,6 +2,7 @@ import type { WorkflowDocument } from "@/components/workflows/editor/model/types
 import type {
   WorkflowCanvasNode,
   WorkflowNodeData,
+  WorkflowNodePortData,
 } from "@/components/workflows/editor/model/types/workflow-node"
 import type {
   WorkflowEdge,
@@ -12,8 +13,22 @@ import type {
   SharedWorkflowGraph,
   SharedWorkflowNode,
   SharedWorkflowNodeData,
+  SharedWorkflowNodePortData,
   SharedWorkflowPortRef,
 } from "@/components/workflows/shared/types/workflow-runtime"
+
+function toSharedWorkflowPortData(
+  port: WorkflowNodePortData
+): SharedWorkflowNodePortData {
+  return {
+    key: port.key,
+    label: port.label,
+    side: port.side,
+    labelVisibility: port.labelVisibility,
+    portToneClassName: port.portToneClassName,
+    labelToneClassName: port.labelToneClassName,
+  }
+}
 
 function toSharedWorkflowNodeData(
   data?: WorkflowNodeData
@@ -29,6 +44,15 @@ function toSharedWorkflowNodeData(
     outputLabel: data.outputLabel,
     secondaryOutputLabel: data.secondaryOutputLabel,
     actionLabel: data.actionLabel,
+    modelKey: data.modelKey,
+    toolKey: data.toolKey,
+    toolCategory: data.toolCategory,
+    inputPorts: data.inputPorts?.map(toSharedWorkflowPortData),
+    outputPorts: data.outputPorts?.map(toSharedWorkflowPortData),
+    addInputLabel: data.addInputLabel,
+    runLabel: data.runLabel,
+    showAddInputAction: data.showAddInputAction,
+    showRunAction: data.showRunAction,
   }
 }
 
