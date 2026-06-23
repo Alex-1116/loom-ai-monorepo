@@ -109,7 +109,7 @@ function createWorkflowNodeOutput(
   }
 }
 
-function getImageModelOutputPorts(node: SharedWorkflowNode) {
+function getGeneratedModelOutputPorts(node: SharedWorkflowNode) {
   const outputPorts = node.data?.outputPorts?.filter(
     (port) => port.side === "right"
   )
@@ -170,7 +170,7 @@ function createBuiltInWorkflowNodeHandlers(): Record<
     },
     "image-model"({ node, graph, context }) {
       const inputs = getWorkflowNodeInputs(node, graph, context)
-      const outputPorts = getImageModelOutputPorts(node)
+      const outputPorts = getGeneratedModelOutputPorts(node)
       const output = {
         kind: "image-model",
         nodeId: node.id,
@@ -186,6 +186,38 @@ function createBuiltInWorkflowNodeHandlers(): Record<
             kind: "image-model-result",
             nodeId: node.id,
             modelKey: node.data?.modelKey ?? "image-model",
+            portKey: port.key,
+            value: output.result,
+            inputs: inputs.inputsByTargetPort,
+          }
+          return result
+        },
+        {}
+      )
+
+      return {
+        output,
+        outputs: createWorkflowNodeOutput(output, portOutputs),
+      }
+    },
+    "video-model"({ node, graph, context }) {
+      const inputs = getWorkflowNodeInputs(node, graph, context)
+      const outputPorts = getGeneratedModelOutputPorts(node)
+      const output = {
+        kind: "video-model",
+        nodeId: node.id,
+        title: node.data?.title ?? "Video Model",
+        modelKey: node.data?.modelKey ?? "video-model",
+        inputs: inputs.inputsByTargetPort,
+        connections: inputs.connections,
+        result: `mock://video-model/${node.id}`,
+      }
+      const portOutputs = outputPorts.reduce<WorkflowRuntimePortOutputs>(
+        (result, port) => {
+          result[port.key] = {
+            kind: "video-model-result",
+            nodeId: node.id,
+            modelKey: node.data?.modelKey ?? "video-model",
             portKey: port.key,
             value: output.result,
             inputs: inputs.inputsByTargetPort,

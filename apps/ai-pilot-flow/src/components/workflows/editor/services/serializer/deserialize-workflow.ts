@@ -35,6 +35,7 @@ function isWorkflowNodeType(value: unknown): value is WorkflowNodeType {
     value === "prompt" ||
     value === "file" ||
     value === "image-model" ||
+    value === "video-model" ||
     value === "preview" ||
     value === "export" ||
     value === "import-lora" ||

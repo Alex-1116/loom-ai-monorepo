@@ -71,4 +71,40 @@ export const WORKFLOW_NODE_DEFAULTS: Record<
     showAddInputAction: true,
     showRunAction: true,
   },
+  "video-model": {
+    title: "Kling 3.0 Turbo",
+    modelKey: "kling-3-0-turbo",
+    inputPorts: [
+      {
+        key: "prompt",
+        label: "Prompt *",
+        side: "left",
+        labelVisibility: "hover",
+        portToneClassName: "border-[#d78cff] bg-[#1c1d26]",
+        labelToneClassName: "text-[#d78cff]",
+      },
+      {
+        key: "image-1",
+        label: "Image 1",
+        side: "left",
+        labelVisibility: "hover",
+        portToneClassName: "border-[#6fe7d1] bg-[#1c1d26]",
+        labelToneClassName: "text-[#6fe7d1]",
+      },
+    ],
+    outputPorts: [
+      {
+        key: "result",
+        label: "Result",
+        side: "right",
+        labelVisibility: "hover",
+        portToneClassName: "border-[#6fe7d1] bg-[#1c1d26]",
+        labelToneClassName: "text-[#6fe7d1]",
+      },
+    ],
+    addInputLabel: "Add another input",
+    runLabel: "Run Model",
+    showAddInputAction: true,
+    showRunAction: true,
+  },
 }

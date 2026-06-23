@@ -14,6 +14,7 @@ export type SharedWorkflowNodeType =
   | "import-lora"
   | "import-multiple-loras"
   | "image-model"
+  | "video-model"
 
 export type SharedWorkflowNodePortData = {
   key: string

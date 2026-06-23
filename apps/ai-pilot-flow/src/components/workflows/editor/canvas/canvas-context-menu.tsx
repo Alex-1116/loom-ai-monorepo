@@ -12,6 +12,10 @@ import {
   IMAGE_MODEL_MENU_CATEGORIES,
   createImageModelNodeData,
 } from "@/components/workflows/editor/model/constants/image-model-presets"
+import {
+  VIDEO_MODEL_MENU_CATEGORIES,
+  createVideoModelNodeData,
+} from "@/components/workflows/editor/model/constants/video-model-presets"
 import type { WorkflowNodeData } from "@/components/workflows/editor/model/types/workflow-node"
 import {
   workflowNodeMenuItems,
@@ -96,9 +100,27 @@ const imageModelMenuItems: readonly MenuItem[] =
     })),
   }))
 
+const videoModelMenuItems: readonly MenuItem[] =
+  VIDEO_MODEL_MENU_CATEGORIES.map((category) => ({
+    id: category.id,
+    label: category.label,
+    children: category.presets.map((preset) => ({
+      id: preset.id,
+      label: preset.label,
+      nodeType: "video-model" as const,
+      nodeData: createVideoModelNodeData({
+        title: preset.label,
+        modelKey: preset.modelKey,
+        mode: category.id,
+      }),
+    })),
+  }))
+
 const menuItems: readonly MenuItem[] = [
   ...workflowNodeMenuItems
-    .filter((item) => item.type !== "image-model")
+    .filter(
+      (item) => item.type !== "image-model" && item.type !== "video-model"
+    )
     .map((item) => ({
       id: item.type,
       label: item.label,
@@ -132,7 +154,7 @@ const menuItems: readonly MenuItem[] = [
   {
     id: "video-models",
     label: "Video models",
-    children: [],
+    children: videoModelMenuItems,
   },
   {
     id: "3d-models",
