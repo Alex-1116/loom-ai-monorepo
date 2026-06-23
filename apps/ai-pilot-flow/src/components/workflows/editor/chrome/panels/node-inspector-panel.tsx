@@ -7,7 +7,7 @@ import { Textarea } from "@loom/ui/components/textarea"
 import { cn } from "@loom/ui/lib/utils"
 
 import { useCanvasBlockGestures } from "@/components/workflows/editor/interactions/hooks/useCanvasBlockGestures"
-import { getWorkflowNodeSchema } from "@/components/workflows/editor/model/schema/workflow-schema"
+import { getWorkflowNodeSchemaForNode } from "@/components/workflows/editor/model/schema/workflow-schema"
 import type { WorkflowNodeFieldKey } from "@/components/workflows/editor/model/schema/node-schema"
 import type { WorkflowCanvasNode } from "@/components/workflows/editor/model/types/workflow-node"
 import { validateNode } from "@/components/workflows/editor/services/validators/validate-node"
@@ -56,7 +56,7 @@ export function WorkflowNodeInspectorPanel({
 }: WorkflowNodeInspectorPanelProps) {
   const panelRef = useCanvasBlockGestures<HTMLDivElement>()
   const nodeSchema = React.useMemo(
-    () => (selectedNode ? getWorkflowNodeSchema(selectedNode.type) : null),
+    () => (selectedNode ? getWorkflowNodeSchemaForNode(selectedNode) : null),
     [selectedNode]
   )
   const validationIssues = React.useMemo(

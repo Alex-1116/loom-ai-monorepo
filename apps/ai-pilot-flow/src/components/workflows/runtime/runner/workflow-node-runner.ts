@@ -1,3 +1,8 @@
+import {
+  getToolDefinition,
+  getToolRuntimeOutputPorts,
+  normalizeToolRuntimeResult,
+} from "@/components/workflows/editor/model/constants/tool-definitions"
 import type { WorkflowRuntimeContext } from "@/components/workflows/runtime/context/workflow-runtime-context"
 import { getWorkflowRuntimeOutput } from "@/components/workflows/runtime/context/workflow-runtime-context"
 import type {
@@ -110,22 +115,6 @@ function createWorkflowNodeOutput(
 }
 
 function getGeneratedModelOutputPorts(node: SharedWorkflowNode) {
-  const outputPorts = node.data?.outputPorts?.filter(
-    (port) => port.side === "right"
-  )
-
-  return outputPorts && outputPorts.length > 0
-    ? outputPorts
-    : [
-        {
-          key: "result",
-          label: "Result",
-          side: "right" as const,
-        },
-      ]
-}
-
-function getGeneratedToolOutputPorts(node: SharedWorkflowNode) {
   const outputPorts = node.data?.outputPorts?.filter(
     (port) => port.side === "right"
   )
@@ -282,43 +271,31 @@ function createBuiltInWorkflowNodeHandlers(): Record<
     },
     tool({ node, graph, context }) {
       const inputs = getWorkflowNodeInputs(node, graph, context)
-      const outputPorts = getGeneratedToolOutputPorts(node)
-      const toolKey = node.data?.toolKey ?? "tool"
-      const toolCategory = node.data?.toolCategory ?? "Tool"
-      const output = {
-        kind: "tool",
-        nodeId: node.id,
-        title: node.data?.title ?? "Tool",
-        toolKey,
-        toolCategory,
-        inputs: inputs.inputsByTargetPort,
-        connections: inputs.connections,
-        result: `mock://tool/${toolKey}/${node.id}`,
-      }
-      const portOutputs = outputPorts.reduce<WorkflowRuntimePortOutputs>(
-        (result, port) => {
-          result[port.key] = {
-            kind: "tool-result",
-            nodeId: node.id,
-            toolKey,
-            toolCategory,
-            portKey: port.key,
-            label: port.label,
-            value:
-              port.key === "result"
-                ? output.result
-                : `mock://tool/${toolKey}/${node.id}/${port.key}`,
-            inputs: inputs.inputsByTargetPort,
-          }
-          return result
-        },
-        {}
-      )
+      const outputPorts = getToolRuntimeOutputPorts(node)
+      const definition = getToolDefinition(node.data?.toolKey)
+      const result = definition?.runtime?.run({
+        node,
+        graph,
+        context,
+        inputs,
+        outputPorts,
+      })
 
-      return {
-        output,
-        outputs: createWorkflowNodeOutput(output, portOutputs),
-      }
+      return definition
+        ? normalizeToolRuntimeResult(
+            result,
+            {
+              node,
+              graph,
+              context,
+              inputs,
+              outputPorts,
+            },
+            definition
+          )
+        : {
+            output: node.data ?? null,
+          }
     },
     "import-lora"({ node }) {
       const output = {

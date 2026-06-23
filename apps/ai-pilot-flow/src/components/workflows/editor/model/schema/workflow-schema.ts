@@ -1,4 +1,6 @@
+import { getToolDefinition } from "@/components/workflows/editor/model/constants/tool-definitions"
 import type { WorkflowNodeType } from "@/components/workflows/editor/model/types/workflow-node"
+import type { WorkflowCanvasNode } from "@/components/workflows/editor/model/types/workflow-node"
 import { threeDModelNodeConfig } from "@/components/workflows/editor/nodes/blocks/3d-model/3d-model-node.config"
 import { threeDModelNodeSchema } from "@/components/workflows/editor/nodes/blocks/3d-model/3d-model-node.schema"
 import { exportNodeConfig } from "@/components/workflows/editor/nodes/blocks/export/export-node.config"
@@ -99,4 +101,20 @@ export function getWorkflowNodeSchema(
   type: WorkflowNodeType
 ): WorkflowNodeSchema {
   return getWorkflowNodeSpec(type).schema
+}
+
+export function getWorkflowNodeSchemaForNode(
+  node: Pick<WorkflowCanvasNode, "type" | "data">
+): WorkflowNodeSchema {
+  if (node.type === "tool") {
+    const toolSchema = getToolDefinition(node.data?.toolKey)?.schema
+    if (toolSchema) {
+      return {
+        type: "tool",
+        fields: toolSchema.fields,
+      }
+    }
+  }
+
+  return getWorkflowNodeSchema(node.type)
 }

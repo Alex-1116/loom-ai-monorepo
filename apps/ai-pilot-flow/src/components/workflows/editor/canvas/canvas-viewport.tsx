@@ -956,6 +956,7 @@ export function WorkflowCanvasViewport() {
                       nodeId={node.id}
                       isSelected={selectedNodeIdSet.has(node.id)}
                       executionStatus={nodeExecutionStatuses[node.id]}
+                      toolKey={node.data?.toolKey}
                       title={node.data?.title}
                       toolCategory={node.data?.toolCategory}
                       inputPorts={node.data?.inputPorts}

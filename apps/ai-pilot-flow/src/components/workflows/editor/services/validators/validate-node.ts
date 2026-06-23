@@ -1,4 +1,4 @@
-import { getWorkflowNodeSchema } from "@/components/workflows/editor/model/schema/workflow-schema"
+import { getWorkflowNodeSchemaForNode } from "@/components/workflows/editor/model/schema/workflow-schema"
 import type {
   WorkflowNodeFieldSchema,
   WorkflowNodeValidationRule,
@@ -47,7 +47,7 @@ function isRequiredRuleViolated(
 }
 
 function validateNodeBySchema(node: WorkflowCanvasNode) {
-  const schema = getWorkflowNodeSchema(node.type)
+  const schema = getWorkflowNodeSchemaForNode(node)
   const issues: WorkflowValidationIssue[] = []
 
   schema.fields.forEach((fieldSchema) => {

@@ -1,0 +1,1053 @@
+import * as React from "react"
+
+import type { WorkflowNodeFieldSchema } from "@/components/workflows/editor/model/schema/node-schema"
+import type {
+  WorkflowNodeData,
+  WorkflowNodePortData,
+} from "@/components/workflows/editor/model/types/workflow-node"
+import type { WorkflowRuntimeContext } from "@/components/workflows/runtime/context/workflow-runtime-context"
+import type { WorkflowNodeRunResult } from "@/components/workflows/runtime/runner/workflow-node-runner"
+import type {
+  SharedWorkflowGraph,
+  SharedWorkflowNode,
+  SharedWorkflowNodePortData,
+  WorkflowExecutionStatus,
+  WorkflowRuntimeValue,
+} from "@/components/workflows/shared/types/workflow-runtime"
+import {
+  renderCompositorBody,
+  renderCompositorFooter,
+  renderColorCorrectionBody,
+  renderColorCorrectionFooter,
+  renderColorPaletteBody,
+  renderLevelsBody,
+  renderLevelsFooter,
+  renderRotateAndFlipBody,
+  renderRotateAndFlipFooter,
+} from "@/components/workflows/editor/nodes/blocks/tool/tool-shapes"
+
+export type ToolSchema = {
+  fields: WorkflowNodeFieldSchema[]
+}
+
+export type ToolRendererProps = {
+  nodeId: string
+  tool: ToolDefinition
+  title?: string
+  toolCategory?: string
+  inputPorts: WorkflowNodePortData[]
+  outputPorts: WorkflowNodePortData[]
+  addInputLabel?: string
+  runLabel?: string
+  showAddInputAction?: boolean
+  showRunAction?: boolean
+  isSelected?: boolean
+  executionStatus?: WorkflowExecutionStatus
+  isRunning: boolean
+  onAddInputClick?: () => void
+  onRunClick?: () => void
+}
+
+export type ToolRuntimeInputs = {
+  upstreamNodeIds: string[]
+  upstreamOutputs: WorkflowRuntimeValue[]
+  inputsByTargetPort: Record<string, WorkflowRuntimeValue[]>
+  connections: Array<{
+    edgeId: string
+    sourceNodeId: string
+    sourcePortKey?: string
+    targetPortKey?: string
+    value: WorkflowRuntimeValue
+  }>
+}
+
+export type ToolRuntimeRunContext = {
+  node: SharedWorkflowNode
+  graph: SharedWorkflowGraph
+  context: WorkflowRuntimeContext
+  inputs: ToolRuntimeInputs
+  outputPorts: SharedWorkflowNodePortData[]
+}
+
+export type ToolDefinition = {
+  key: string
+  group: string
+  label: string
+  menu: {
+    category: string
+    searchableText?: string
+  }
+  schema?: ToolSchema
+  createData: () => WorkflowNodeData
+  renderer: {
+    width?: string
+    renderBody: (props: ToolRendererProps) => React.ReactNode
+    renderFooter?: (props: ToolRendererProps) => React.ReactNode
+    getPortOffset?: (index: number) => number
+  }
+  runtime?: {
+    run: (context: ToolRuntimeRunContext) => unknown
+  }
+}
+
+export type ToolMenuCategory = {
+  id: string
+  label: string
+  definitions: readonly ToolDefinition[]
+}
+
+const DEFAULT_TOOL_WIDTH = "w-[372px]"
+
+const DEFAULT_TOOL_SCHEMA: ToolSchema = {
+  fields: [
+    {
+      key: "title",
+      label: "Title",
+      input: "text",
+      placeholder: "Tool title",
+      rules: [
+        {
+          kind: "required",
+          level: "warning",
+          code: "node.tool.title.missing",
+          message: "Tool node title is empty.",
+        },
+      ],
+    },
+    {
+      key: "toolKey",
+      label: "Tool Key",
+      input: "text",
+      placeholder: "rotate-and-flip",
+    },
+    {
+      key: "toolCategory",
+      label: "Category",
+      input: "text",
+      placeholder: "Editing",
+    },
+    {
+      key: "runLabel",
+      label: "Run Label",
+      input: "text",
+      placeholder: "Run Tool",
+    },
+    {
+      key: "addInputLabel",
+      label: "Add Input Label",
+      input: "text",
+      placeholder: "Add input",
+    },
+  ],
+}
+
+const PROMPT_INPUT_PORT: WorkflowNodePortData = {
+  key: "prompt",
+  label: "Prompt",
+  side: "left",
+  labelVisibility: "hover",
+  portToneClassName: "border-[#d78cff] bg-[#1c1d26]",
+  labelToneClassName: "text-[#d78cff]",
+}
+
+const TEXT_INPUT_PORT: WorkflowNodePortData = {
+  key: "text",
+  label: "Text",
+  side: "left",
+  labelVisibility: "hover",
+  portToneClassName: "border-[#d78cff] bg-[#1c1d26]",
+  labelToneClassName: "text-[#d78cff]",
+}
+
+const IMAGE_INPUT_PORT: WorkflowNodePortData = {
+  key: "image-1",
+  label: "Image 1",
+  side: "left",
+  labelVisibility: "hover",
+  portToneClassName: "border-[#6fe7d1] bg-[#1c1d26]",
+  labelToneClassName: "text-[#6fe7d1]",
+}
+
+const IMAGE_INPUT_PORT_2: WorkflowNodePortData = {
+  key: "image-2",
+  label: "Image 2",
+  side: "left",
+  labelVisibility: "hover",
+  portToneClassName: "border-[#6fe7d1] bg-[#1c1d26]",
+  labelToneClassName: "text-[#6fe7d1]",
+}
+
+const VIDEO_INPUT_PORT: WorkflowNodePortData = {
+  key: "video-1",
+  label: "Video 1",
+  side: "left",
+  labelVisibility: "hover",
+  portToneClassName: "border-[#7dd3fc] bg-[#1c1d26]",
+  labelToneClassName: "text-[#7dd3fc]",
+}
+
+const VIDEO_INPUT_PORT_2: WorkflowNodePortData = {
+  key: "video-2",
+  label: "Video 2",
+  side: "left",
+  labelVisibility: "hover",
+  portToneClassName: "border-[#7dd3fc] bg-[#1c1d26]",
+  labelToneClassName: "text-[#7dd3fc]",
+}
+
+const AUDIO_INPUT_PORT: WorkflowNodePortData = {
+  key: "audio",
+  label: "Audio",
+  side: "left",
+  labelVisibility: "hover",
+  portToneClassName: "border-[#f9a8d4] bg-[#1c1d26]",
+  labelToneClassName: "text-[#f9a8d4]",
+}
+
+const MASK_INPUT_PORT: WorkflowNodePortData = {
+  key: "mask",
+  label: "Mask",
+  side: "left",
+  labelVisibility: "hover",
+  portToneClassName: "border-[#f5c56b] bg-[#1c1d26]",
+  labelToneClassName: "text-[#f5c56b]",
+}
+
+const LIST_INPUT_PORT: WorkflowNodePortData = {
+  key: "items",
+  label: "Items",
+  side: "left",
+  labelVisibility: "hover",
+  portToneClassName: "border-[#c4b5fd] bg-[#1c1d26]",
+  labelToneClassName: "text-[#c4b5fd]",
+}
+
+const VALUE_INPUT_PORT: WorkflowNodePortData = {
+  key: "input",
+  label: "Input",
+  side: "left",
+  labelVisibility: "hover",
+  portToneClassName: "border-white/30 bg-[#1c1d26]",
+  labelToneClassName: "text-white/70",
+}
+
+const VALUE_INPUT_PORT_2: WorkflowNodePortData = {
+  key: "input-2",
+  label: "Input 2",
+  side: "left",
+  labelVisibility: "hover",
+  portToneClassName: "border-white/30 bg-[#1c1d26]",
+  labelToneClassName: "text-white/70",
+}
+
+const RESULT_OUTPUT_PORT: WorkflowNodePortData = {
+  key: "result",
+  label: "Result",
+  side: "right",
+  labelVisibility: "hover",
+  portToneClassName: "border-[#6fe7d1] bg-[#1c1d26]",
+  labelToneClassName: "text-[#6fe7d1]",
+}
+
+const IMAGE_OUTPUT_PORT: WorkflowNodePortData = {
+  key: "image",
+  label: "Image",
+  side: "right",
+  labelVisibility: "hover",
+  portToneClassName: "border-[#6fe7d1] bg-[#1c1d26]",
+  labelToneClassName: "text-[#6fe7d1]",
+}
+
+const VIDEO_OUTPUT_PORT: WorkflowNodePortData = {
+  key: "video",
+  label: "Video",
+  side: "right",
+  labelVisibility: "hover",
+  portToneClassName: "border-[#7dd3fc] bg-[#1c1d26]",
+  labelToneClassName: "text-[#7dd3fc]",
+}
+
+const TEXT_OUTPUT_PORT: WorkflowNodePortData = {
+  key: "text",
+  label: "Text",
+  side: "right",
+  labelVisibility: "hover",
+  portToneClassName: "border-[#d78cff] bg-[#1c1d26]",
+  labelToneClassName: "text-[#d78cff]",
+}
+
+const MASK_OUTPUT_PORT: WorkflowNodePortData = {
+  key: "mask",
+  label: "Mask",
+  side: "right",
+  labelVisibility: "hover",
+  portToneClassName: "border-[#f5c56b] bg-[#1c1d26]",
+  labelToneClassName: "text-[#f5c56b]",
+}
+
+const VALUE_OUTPUT_PORT: WorkflowNodePortData = {
+  key: "value",
+  label: "Value",
+  side: "right",
+  labelVisibility: "hover",
+  portToneClassName: "border-white/30 bg-[#1c1d26]",
+  labelToneClassName: "text-white/70",
+}
+
+const INDEX_OUTPUT_PORT: WorkflowNodePortData = {
+  key: "index",
+  label: "Index",
+  side: "right",
+  labelVisibility: "hover",
+  portToneClassName: "border-[#c4b5fd] bg-[#1c1d26]",
+  labelToneClassName: "text-[#c4b5fd]",
+}
+
+const ROUTE_TRUE_OUTPUT_PORT: WorkflowNodePortData = {
+  key: "route-a",
+  label: "Route A",
+  side: "right",
+  labelVisibility: "hover",
+  portToneClassName: "border-[#6fe7d1] bg-[#1c1d26]",
+  labelToneClassName: "text-[#6fe7d1]",
+}
+
+const ROUTE_FALSE_OUTPUT_PORT: WorkflowNodePortData = {
+  key: "route-b",
+  label: "Route B",
+  side: "right",
+  labelVisibility: "hover",
+  portToneClassName: "border-[#f5c56b] bg-[#1c1d26]",
+  labelToneClassName: "text-[#f5c56b]",
+}
+
+function clonePort(port: WorkflowNodePortData): WorkflowNodePortData {
+  return { ...port }
+}
+
+function defaultGetPortOffset(index: number) {
+  return 72 + index * 80
+}
+
+function getSharedToolOutputPorts(node: SharedWorkflowNode) {
+  const outputPorts = node.data?.outputPorts?.filter(
+    (port) => port.side === "right"
+  )
+
+  return outputPorts && outputPorts.length > 0
+    ? outputPorts
+    : [
+        {
+          key: "result",
+          label: "Result",
+          side: "right" as const,
+        },
+      ]
+}
+
+function createDefaultToolRenderer(category: string) {
+  return function renderBody(props: ToolRendererProps) {
+    return (
+      <div
+        className={`relative flex min-h-36 w-full flex-col justify-between overflow-hidden rounded-md border border-white/6 bg-[#1f212b] p-4 ${
+          props.isRunning
+            ? "border-sky-400/25 shadow-[inset_0_0_0_1px_rgba(56,189,248,0.14)]"
+            : ""
+        }`}
+      >
+        <div className="flex items-start justify-between gap-3">
+          <div className="space-y-2">
+            <div className="text-[10px] font-semibold tracking-[0.18em] text-white/45 uppercase">
+              {props.toolCategory || category}
+            </div>
+            <div className="text-sm font-medium text-white/92">
+              {props.title || props.tool.label}
+            </div>
+          </div>
+          <div className="rounded-md border border-white/8 bg-white/4 px-2 py-1 text-[10px] font-semibold tracking-[0.16em] text-white/65 uppercase">
+            Tool
+          </div>
+        </div>
+
+        <div className="mt-6 flex items-center justify-between text-[11px] text-white/45">
+          <span>{props.inputPorts.length} inputs</span>
+          <span>{props.outputPorts.length} outputs</span>
+        </div>
+
+        {props.isRunning ? (
+          <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(56,189,248,0.1),transparent_60%)]" />
+        ) : null}
+      </div>
+    )
+  }
+}
+
+function createDefaultToolRuntimeResult({
+  node,
+  inputs,
+  outputPorts,
+  toolKey,
+  toolCategory,
+}: {
+  node: SharedWorkflowNode
+  inputs: ToolRuntimeInputs
+  outputPorts: SharedWorkflowNodePortData[]
+  toolKey: string
+  toolCategory: string
+}): WorkflowNodeRunResult {
+  const output = {
+    kind: "tool",
+    nodeId: node.id,
+    title: node.data?.title ?? "Tool",
+    toolKey,
+    toolCategory,
+    inputs: inputs.inputsByTargetPort,
+    connections: inputs.connections,
+    result: `mock://tool/${toolKey}/${node.id}`,
+  }
+
+  const outputs = outputPorts.reduce<Record<string, unknown>>(
+    (result, port) => {
+      result[port.key] = {
+        kind: "tool-result",
+        nodeId: node.id,
+        toolKey,
+        toolCategory,
+        portKey: port.key,
+        label: port.label,
+        value:
+          port.key === "result"
+            ? output.result
+            : `mock://tool/${toolKey}/${node.id}/${port.key}`,
+        inputs: inputs.inputsByTargetPort,
+      }
+      return result
+    },
+    {}
+  )
+
+  return {
+    output,
+    outputs: {
+      default: output,
+      ports: outputs,
+    },
+  }
+}
+
+function createStandardToolDefinition({
+  key,
+  group,
+  label,
+  category,
+  searchableText,
+  inputPorts = [],
+  outputPorts = [],
+  addInputLabel,
+  runLabel = "Run Tool",
+  showAddInputAction = false,
+  showRunAction = true,
+  schema = DEFAULT_TOOL_SCHEMA,
+  width = DEFAULT_TOOL_WIDTH,
+  getPortOffset = defaultGetPortOffset,
+  renderBody,
+  renderFooter,
+}: {
+  key: string
+  group: string
+  label: string
+  category: string
+  searchableText?: string
+  inputPorts?: readonly WorkflowNodePortData[]
+  outputPorts?: readonly WorkflowNodePortData[]
+  addInputLabel?: string
+  runLabel?: string
+  showAddInputAction?: boolean
+  showRunAction?: boolean
+  schema?: ToolSchema
+  width?: string
+  getPortOffset?: (index: number) => number
+  renderBody?: (props: ToolRendererProps) => React.ReactNode
+  renderFooter?: (props: ToolRendererProps) => React.ReactNode
+}): ToolDefinition {
+  return {
+    key,
+    group,
+    label,
+    menu: {
+      category,
+      searchableText,
+    },
+    schema,
+    createData: () => ({
+      title: label,
+      toolKey: key,
+      toolCategory: category,
+      inputPorts: inputPorts.map(clonePort),
+      outputPorts: outputPorts.map(clonePort),
+      addInputLabel,
+      runLabel,
+      showAddInputAction,
+      showRunAction,
+    }),
+    renderer: {
+      width,
+      renderBody: renderBody ?? createDefaultToolRenderer(category),
+      renderFooter,
+      getPortOffset,
+    },
+    runtime: {
+      run({ node, inputs, outputPorts }) {
+        return createDefaultToolRuntimeResult({
+          node,
+          inputs,
+          outputPorts,
+          toolKey: key,
+          toolCategory: category,
+        })
+      },
+    },
+  }
+}
+
+export const TOOL_DEFINITIONS: readonly ToolDefinition[] = [
+  createStandardToolDefinition({
+    key: "rotate-and-flip",
+    group: "editing",
+    label: "Rotate and flip",
+    category: "Editing",
+    inputPorts: [{ ...IMAGE_INPUT_PORT, label: "Input*" }],
+    outputPorts: [{ ...RESULT_OUTPUT_PORT, label: "Result" }],
+    getPortOffset: () => 104,
+    renderBody: renderRotateAndFlipBody,
+    renderFooter: renderRotateAndFlipFooter,
+  }),
+  createStandardToolDefinition({
+    key: "color-palette",
+    group: "editing",
+    label: "Color palette",
+    category: "Editing",
+    inputPorts: [],
+    outputPorts: [
+      { ...IMAGE_OUTPUT_PORT, label: "Image" },
+      { ...TEXT_OUTPUT_PORT, label: "Text" },
+    ],
+    getPortOffset: (index) => 104 + index * 76,
+    renderBody: renderColorPaletteBody,
+    renderFooter: () => <></>,
+    showRunAction: false,
+  }),
+  createStandardToolDefinition({
+    key: "color-correction",
+    group: "editing",
+    label: "Color correction",
+    category: "Editing",
+    inputPorts: [{ ...IMAGE_INPUT_PORT, label: "File*" }],
+    outputPorts: [{ ...RESULT_OUTPUT_PORT, label: "Result" }],
+    getPortOffset: () => 104,
+    renderBody: renderColorCorrectionBody,
+    renderFooter: renderColorCorrectionFooter,
+    showRunAction: false,
+  }),
+  createStandardToolDefinition({
+    key: "levels",
+    group: "editing",
+    label: "Levels",
+    category: "Editing",
+    inputPorts: [{ ...IMAGE_INPUT_PORT, label: "Input*" }],
+    outputPorts: [{ ...IMAGE_OUTPUT_PORT, label: "Output" }],
+    getPortOffset: () => 104,
+    renderBody: renderLevelsBody,
+    renderFooter: renderLevelsFooter,
+    showRunAction: false,
+  }),
+  createStandardToolDefinition({
+    key: "compositor",
+    group: "editing",
+    label: "Compositor",
+    category: "Editing",
+    inputPorts: [
+      { ...IMAGE_INPUT_PORT, label: "Background" },
+      { ...IMAGE_INPUT_PORT_2, label: "Layer 1" },
+    ],
+    outputPorts: [{ ...IMAGE_OUTPUT_PORT, label: "Output" }],
+    getPortOffset: (index) => 104 + index * 68,
+    renderBody: renderCompositorBody,
+    renderFooter: renderCompositorFooter,
+    showRunAction: false,
+    showAddInputAction: false,
+  }),
+  createStandardToolDefinition({
+    key: "painter",
+    group: "editing",
+    label: "Painter",
+    category: "Editing",
+    inputPorts: [IMAGE_INPUT_PORT],
+    outputPorts: [IMAGE_OUTPUT_PORT],
+  }),
+  createStandardToolDefinition({
+    key: "crop",
+    group: "editing",
+    label: "Crop",
+    category: "Editing",
+    inputPorts: [IMAGE_INPUT_PORT],
+    outputPorts: [IMAGE_OUTPUT_PORT],
+  }),
+  createStandardToolDefinition({
+    key: "resize",
+    group: "editing",
+    label: "Resize",
+    category: "Editing",
+    inputPorts: [IMAGE_INPUT_PORT],
+    outputPorts: [IMAGE_OUTPUT_PORT],
+  }),
+  createStandardToolDefinition({
+    key: "blur",
+    group: "editing",
+    label: "Blur",
+    category: "Editing",
+    inputPorts: [IMAGE_INPUT_PORT],
+    outputPorts: [IMAGE_OUTPUT_PORT],
+  }),
+  createStandardToolDefinition({
+    key: "invert",
+    group: "editing",
+    label: "Invert",
+    category: "Editing",
+    inputPorts: [IMAGE_INPUT_PORT],
+    outputPorts: [IMAGE_OUTPUT_PORT],
+  }),
+  createStandardToolDefinition({
+    key: "channels",
+    group: "editing",
+    label: "Channels",
+    category: "Editing",
+    inputPorts: [IMAGE_INPUT_PORT],
+    outputPorts: [IMAGE_OUTPUT_PORT],
+  }),
+  createStandardToolDefinition({
+    key: "extract-video-frame",
+    group: "editing",
+    label: "Extract Video Frame",
+    category: "Editing",
+    searchableText: "video frame image",
+    inputPorts: [VIDEO_INPUT_PORT],
+    outputPorts: [IMAGE_OUTPUT_PORT],
+  }),
+  createStandardToolDefinition({
+    key: "video-concatenator",
+    group: "editing",
+    label: "Video Concatenator",
+    category: "Editing",
+    searchableText: "merge combine video",
+    inputPorts: [VIDEO_INPUT_PORT, VIDEO_INPUT_PORT_2],
+    outputPorts: [VIDEO_OUTPUT_PORT],
+    addInputLabel: "Add video input",
+    showAddInputAction: true,
+  }),
+  createStandardToolDefinition({
+    key: "video-to-gif",
+    group: "editing",
+    label: "Video to GIF",
+    category: "Editing",
+    searchableText: "gif convert video",
+    inputPorts: [VIDEO_INPUT_PORT],
+    outputPorts: [RESULT_OUTPUT_PORT],
+  }),
+  createStandardToolDefinition({
+    key: "mask-extractor",
+    group: "matte",
+    label: "Mask Extractor",
+    category: "Matte",
+    inputPorts: [IMAGE_INPUT_PORT],
+    outputPorts: [MASK_OUTPUT_PORT],
+  }),
+  createStandardToolDefinition({
+    key: "mask-by-text",
+    group: "matte",
+    label: "Mask by Text",
+    category: "Matte",
+    searchableText: "segment text prompt mask",
+    inputPorts: [PROMPT_INPUT_PORT, IMAGE_INPUT_PORT],
+    outputPorts: [MASK_OUTPUT_PORT],
+  }),
+  createStandardToolDefinition({
+    key: "matte-grow-shrink",
+    group: "matte",
+    label: "Matte Grow / Shrink",
+    category: "Matte",
+    inputPorts: [MASK_INPUT_PORT],
+    outputPorts: [MASK_OUTPUT_PORT],
+  }),
+  createStandardToolDefinition({
+    key: "merge-alpha",
+    group: "matte",
+    label: "Merge Alpha",
+    category: "Matte",
+    inputPorts: [IMAGE_INPUT_PORT, MASK_INPUT_PORT],
+    outputPorts: [IMAGE_OUTPUT_PORT],
+  }),
+  createStandardToolDefinition({
+    key: "video-matte",
+    group: "matte",
+    label: "Video Matte",
+    category: "Matte",
+    inputPorts: [VIDEO_INPUT_PORT],
+    outputPorts: [MASK_OUTPUT_PORT],
+  }),
+  createStandardToolDefinition({
+    key: "video-mask-by-text",
+    group: "matte",
+    label: "Video Mask by Text",
+    category: "Matte",
+    searchableText: "video segment prompt mask",
+    inputPorts: [PROMPT_INPUT_PORT, VIDEO_INPUT_PORT],
+    outputPorts: [MASK_OUTPUT_PORT],
+  }),
+  createStandardToolDefinition({
+    key: "prompt-tool",
+    group: "text-tools",
+    label: "Prompt",
+    category: "Text tools",
+    searchableText: "text prompt composer",
+    outputPorts: [TEXT_OUTPUT_PORT],
+    runLabel: "Compose",
+  }),
+  createStandardToolDefinition({
+    key: "prompt-concatenator",
+    group: "text-tools",
+    label: "Prompt Concatenator",
+    category: "Text tools",
+    searchableText: "merge prompt text",
+    inputPorts: [
+      TEXT_INPUT_PORT,
+      { ...TEXT_INPUT_PORT, key: "text-2", label: "Text 2" },
+    ],
+    outputPorts: [TEXT_OUTPUT_PORT],
+    addInputLabel: "Add text input",
+    showAddInputAction: true,
+  }),
+  createStandardToolDefinition({
+    key: "prompt-enhancer",
+    group: "text-tools",
+    label: "Prompt Enhancer",
+    category: "Text tools",
+    searchableText: "rewrite improve prompt",
+    inputPorts: [TEXT_INPUT_PORT],
+    outputPorts: [TEXT_OUTPUT_PORT],
+  }),
+  createStandardToolDefinition({
+    key: "run-any-llm",
+    group: "text-tools",
+    label: "Run Any LLM",
+    category: "Text tools",
+    searchableText: "llm chat text generation",
+    inputPorts: [PROMPT_INPUT_PORT],
+    outputPorts: [TEXT_OUTPUT_PORT],
+    runLabel: "Run LLM",
+  }),
+  createStandardToolDefinition({
+    key: "image-describer",
+    group: "text-tools",
+    label: "Image Describer",
+    category: "Text tools",
+    searchableText: "caption image to text",
+    inputPorts: [IMAGE_INPUT_PORT],
+    outputPorts: [TEXT_OUTPUT_PORT],
+  }),
+  createStandardToolDefinition({
+    key: "video-describer",
+    group: "text-tools",
+    label: "Video Describer",
+    category: "Text tools",
+    searchableText: "caption video to text",
+    inputPorts: [VIDEO_INPUT_PORT],
+    outputPorts: [TEXT_OUTPUT_PORT],
+  }),
+  createStandardToolDefinition({
+    key: "audio-describer",
+    group: "text-tools",
+    label: "Audio Describer",
+    category: "Text tools",
+    searchableText: "transcribe audio speech text",
+    inputPorts: [AUDIO_INPUT_PORT],
+    outputPorts: [TEXT_OUTPUT_PORT],
+  }),
+  createStandardToolDefinition({
+    key: "text-iterator",
+    group: "iterators",
+    label: "Text Iterator",
+    category: "Iterators",
+    inputPorts: [LIST_INPUT_PORT],
+    outputPorts: [TEXT_OUTPUT_PORT, INDEX_OUTPUT_PORT],
+  }),
+  createStandardToolDefinition({
+    key: "image-iterator",
+    group: "iterators",
+    label: "Image Iterator",
+    category: "Iterators",
+    inputPorts: [LIST_INPUT_PORT],
+    outputPorts: [IMAGE_OUTPUT_PORT, INDEX_OUTPUT_PORT],
+  }),
+  createStandardToolDefinition({
+    key: "video-iterator",
+    group: "iterators",
+    label: "Video Iterator",
+    category: "Iterators",
+    inputPorts: [LIST_INPUT_PORT],
+    outputPorts: [VIDEO_OUTPUT_PORT, INDEX_OUTPUT_PORT],
+  }),
+  createStandardToolDefinition({
+    key: "helper-import",
+    group: "helpers",
+    label: "Import",
+    category: "Helpers",
+    searchableText: "file input import",
+    outputPorts: [RESULT_OUTPUT_PORT],
+    showRunAction: false,
+  }),
+  createStandardToolDefinition({
+    key: "helper-export",
+    group: "helpers",
+    label: "Export",
+    category: "Helpers",
+    searchableText: "file output export",
+    inputPorts: [VALUE_INPUT_PORT],
+    showRunAction: false,
+  }),
+  createStandardToolDefinition({
+    key: "helper-preview",
+    group: "helpers",
+    label: "Preview",
+    category: "Helpers",
+    searchableText: "view inspect preview",
+    inputPorts: [VALUE_INPUT_PORT],
+    showRunAction: false,
+  }),
+  createStandardToolDefinition({
+    key: "helper-import-lora",
+    group: "helpers",
+    label: "Import LoRA",
+    category: "Helpers",
+    outputPorts: [VALUE_OUTPUT_PORT],
+    showRunAction: false,
+  }),
+  createStandardToolDefinition({
+    key: "helper-import-multiple-loras",
+    group: "helpers",
+    label: "Import Multiple LoRAs",
+    category: "Helpers",
+    outputPorts: [VALUE_OUTPUT_PORT, INDEX_OUTPUT_PORT],
+    showRunAction: false,
+  }),
+  createStandardToolDefinition({
+    key: "router",
+    group: "helpers",
+    label: "Router",
+    category: "Helpers",
+    searchableText: "branch switch route",
+    inputPorts: [VALUE_INPUT_PORT],
+    outputPorts: [ROUTE_TRUE_OUTPUT_PORT, ROUTE_FALSE_OUTPUT_PORT],
+  }),
+  createStandardToolDefinition({
+    key: "output",
+    group: "helpers",
+    label: "Output",
+    category: "Helpers",
+    inputPorts: [VALUE_INPUT_PORT],
+    showRunAction: false,
+  }),
+  createStandardToolDefinition({
+    key: "depth-anything-v2",
+    group: "helpers",
+    label: "Depth Anything V2",
+    category: "Helpers",
+    searchableText: "depth map image",
+    inputPorts: [IMAGE_INPUT_PORT],
+    outputPorts: [IMAGE_OUTPUT_PORT],
+  }),
+  createStandardToolDefinition({
+    key: "compare",
+    group: "helpers",
+    label: "Compare",
+    category: "Helpers",
+    searchableText: "diff compare values",
+    inputPorts: [VALUE_INPUT_PORT, VALUE_INPUT_PORT_2],
+    outputPorts: [VALUE_OUTPUT_PORT],
+  }),
+  createStandardToolDefinition({
+    key: "kling-element",
+    group: "helpers",
+    label: "Kling Element",
+    category: "Helpers",
+    inputPorts: [IMAGE_INPUT_PORT],
+    outputPorts: [RESULT_OUTPUT_PORT],
+  }),
+  createStandardToolDefinition({
+    key: "runway-aleph-2-keyframe",
+    group: "helpers",
+    label: "Runway Aleph 2 Keyframe",
+    category: "Helpers",
+    searchableText: "keyframe runway video",
+    inputPorts: [VIDEO_INPUT_PORT],
+    outputPorts: [VIDEO_OUTPUT_PORT],
+  }),
+  createStandardToolDefinition({
+    key: "blend",
+    group: "helpers",
+    label: "Blend",
+    category: "Helpers",
+    inputPorts: [IMAGE_INPUT_PORT, IMAGE_INPUT_PORT_2],
+    outputPorts: [IMAGE_OUTPUT_PORT],
+  }),
+  createStandardToolDefinition({
+    key: "number",
+    group: "datatypes",
+    label: "Number",
+    category: "Datatypes",
+    searchableText: "numeric scalar value",
+    outputPorts: [VALUE_OUTPUT_PORT],
+    runLabel: "Set Value",
+    showRunAction: false,
+  }),
+  createStandardToolDefinition({
+    key: "text",
+    group: "datatypes",
+    label: "Text",
+    category: "Datatypes",
+    searchableText: "string text value",
+    outputPorts: [TEXT_OUTPUT_PORT],
+    runLabel: "Set Value",
+    showRunAction: false,
+  }),
+  createStandardToolDefinition({
+    key: "toggle",
+    group: "datatypes",
+    label: "Toggle",
+    category: "Datatypes",
+    searchableText: "boolean switch value",
+    outputPorts: [VALUE_OUTPUT_PORT],
+    runLabel: "Set Value",
+    showRunAction: false,
+  }),
+  createStandardToolDefinition({
+    key: "list-selector",
+    group: "datatypes",
+    label: "List Selector",
+    category: "Datatypes",
+    searchableText: "select pick array list",
+    inputPorts: [LIST_INPUT_PORT],
+    outputPorts: [VALUE_OUTPUT_PORT],
+    showRunAction: false,
+  }),
+  createStandardToolDefinition({
+    key: "seed",
+    group: "datatypes",
+    label: "Seed",
+    category: "Datatypes",
+    searchableText: "random seed value",
+    outputPorts: [VALUE_OUTPUT_PORT],
+    runLabel: "Set Seed",
+    showRunAction: false,
+  }),
+  createStandardToolDefinition({
+    key: "array",
+    group: "datatypes",
+    label: "Array",
+    category: "Datatypes",
+    searchableText: "list array collection",
+    inputPorts: [VALUE_INPUT_PORT],
+    outputPorts: [VALUE_OUTPUT_PORT],
+    addInputLabel: "Add item",
+    showAddInputAction: true,
+    showRunAction: false,
+  }),
+] as const
+
+export const TOOL_MENU_CATEGORIES: readonly ToolMenuCategory[] = Array.from(
+  TOOL_DEFINITIONS.reduce<Map<string, ToolMenuCategory>>(
+    (result, definition) => {
+      const category = result.get(definition.group)
+      if (category) {
+        result.set(definition.group, {
+          ...category,
+          definitions: [...category.definitions, definition],
+        })
+        return result
+      }
+
+      result.set(definition.group, {
+        id: definition.group,
+        label: definition.menu.category,
+        definitions: [definition],
+      })
+      return result
+    },
+    new Map()
+  ).values()
+)
+
+export function getToolDefinition(toolKey?: string | null) {
+  if (!toolKey) {
+    return undefined
+  }
+
+  return TOOL_DEFINITIONS.find((definition) => definition.key === toolKey)
+}
+
+export function getDefaultToolDefinition() {
+  return TOOL_DEFINITIONS[0]
+}
+
+export function getToolSchema(toolKey?: string | null) {
+  return getToolDefinition(toolKey)?.schema
+}
+
+export function getToolPortOffset(toolKey: string | undefined, index: number) {
+  return (
+    getToolDefinition(toolKey)?.renderer.getPortOffset?.(index) ??
+    defaultGetPortOffset(index)
+  )
+}
+
+export function createToolNodeData(definition: ToolDefinition) {
+  return definition.createData()
+}
+
+export function getToolRuntimeOutputPorts(node: SharedWorkflowNode) {
+  return getSharedToolOutputPorts(node)
+}
+
+export function normalizeToolRuntimeResult(
+  result: unknown,
+  context: ToolRuntimeRunContext,
+  definition: ToolDefinition
+): WorkflowNodeRunResult {
+  if (
+    result &&
+    typeof result === "object" &&
+    ("output" in result || "outputs" in result)
+  ) {
+    return result as WorkflowNodeRunResult
+  }
+
+  const defaultOutput = createDefaultToolRuntimeResult({
+    node: context.node,
+    inputs: context.inputs,
+    outputPorts: context.outputPorts,
+    toolKey: definition.key,
+    toolCategory: definition.menu.category,
+  })
+
+  if (result === undefined) {
+    return defaultOutput
+  }
+
+  return {
+    output: result,
+    outputs: {
+      default: result,
+      ports: defaultOutput.outputs?.ports,
+    },
+  }
+}

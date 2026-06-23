@@ -1,3 +1,4 @@
+import { getDefaultToolDefinition } from "@/components/workflows/editor/model/constants/tool-definitions"
 import type {
   WorkflowNodeData,
   WorkflowNodeType,
@@ -5,6 +6,8 @@ import type {
 
 export const DEFAULT_PROMPT_NODE_CONTENT =
   'Hipster Sisyphus, lime overall suit, pushing a huge round rock up a hill. The rock is sprayed with the text "default prompt", bright grey background extreme side long shot, cinematic, fashion style, side view'
+
+const DEFAULT_TOOL_DEFINITION = getDefaultToolDefinition()
 
 export const WORKFLOW_NODE_DEFAULTS: Record<
   WorkflowNodeType,
@@ -143,32 +146,14 @@ export const WORKFLOW_NODE_DEFAULTS: Record<
     showAddInputAction: true,
     showRunAction: true,
   },
-  tool: {
-    title: "Rotate and flip",
-    toolKey: "rotate-and-flip",
-    toolCategory: "Editing",
-    inputPorts: [
-      {
-        key: "image-1",
-        label: "Image 1",
-        side: "left",
-        labelVisibility: "hover",
-        portToneClassName: "border-[#6fe7d1] bg-[#1c1d26]",
-        labelToneClassName: "text-[#6fe7d1]",
+  tool: DEFAULT_TOOL_DEFINITION
+    ? DEFAULT_TOOL_DEFINITION.createData()
+    : {
+        title: "Tool",
+        toolKey: "tool",
+        toolCategory: "Tools",
+        runLabel: "Run Tool",
+        showAddInputAction: false,
+        showRunAction: true,
       },
-    ],
-    outputPorts: [
-      {
-        key: "image",
-        label: "Image",
-        side: "right",
-        labelVisibility: "hover",
-        portToneClassName: "border-[#6fe7d1] bg-[#1c1d26]",
-        labelToneClassName: "text-[#6fe7d1]",
-      },
-    ],
-    runLabel: "Run Tool",
-    showAddInputAction: false,
-    showRunAction: true,
-  },
 }

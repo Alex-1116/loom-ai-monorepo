@@ -19,7 +19,7 @@ import {
 import {
   TOOL_MENU_CATEGORIES,
   createToolNodeData,
-} from "@/components/workflows/editor/model/constants/tool-presets"
+} from "@/components/workflows/editor/model/constants/tool-definitions"
 import {
   VIDEO_MODEL_MENU_CATEGORIES,
   createVideoModelNodeData,
@@ -35,6 +35,7 @@ type MenuActionItem = {
   label: string
   nodeType: WorkflowNodeType
   nodeData?: Partial<WorkflowNodeData>
+  searchableText?: string
 }
 
 type MenuBranchItem = {
@@ -144,21 +145,12 @@ const toolMenuItems: readonly MenuItem[] = TOOL_MENU_CATEGORIES.map(
   (category) => ({
     id: category.id,
     label: category.label,
-    children: category.presets.map((preset) => ({
-      id: preset.id,
-      label: preset.label,
+    children: category.definitions.map((definition) => ({
+      id: definition.key,
+      label: definition.label,
       nodeType: "tool" as const,
-      nodeData: createToolNodeData({
-        title: preset.label,
-        toolKey: preset.toolKey,
-        category: category.label,
-        inputPorts: preset.inputPorts,
-        outputPorts: preset.outputPorts,
-        addInputLabel: preset.addInputLabel,
-        runLabel: preset.runLabel,
-        showAddInputAction: preset.showAddInputAction,
-        showRunAction: preset.showRunAction,
-      }),
+      nodeData: createToolNodeData(definition),
+      searchableText: definition.menu.searchableText,
     })),
   })
 )
@@ -293,6 +285,7 @@ export function WorkflowCanvasContextMenu({
     return allSearchItems.filter(
       (item) =>
         item.label.toLowerCase().includes(keyword) ||
+        item.searchableText?.toLowerCase().includes(keyword) ||
         item.breadcrumb.some((part) => part.toLowerCase().includes(keyword))
     )
   }, [search])
