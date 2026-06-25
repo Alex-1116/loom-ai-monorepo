@@ -29,16 +29,7 @@ import {
   createInitialWorkflowNodes,
   createWorkflowNode,
 } from "@/components/workflows/editor/nodes/registry/workflow-node-factory"
-import { WorkflowPromptNode } from "@/components/workflows/editor/nodes/blocks/prompt/workflow-prompt-node"
-import { WorkflowFileNode } from "@/components/workflows/editor/nodes/blocks/file/workflow-file-node"
-import { WorkflowImageModelNode } from "@/components/workflows/editor/nodes/blocks/image-model/workflow-image-model-node"
-import { WorkflowVideoModelNode } from "@/components/workflows/editor/nodes/blocks/video-model/workflow-video-model-node"
-import { WorkflowThreeDModelNode } from "@/components/workflows/editor/nodes/blocks/3d-model/workflow-3d-model-node"
-import { WorkflowToolNode } from "@/components/workflows/editor/nodes/blocks/tool/workflow-tool-node"
-import { WorkflowPreviewNode } from "@/components/workflows/editor/nodes/blocks/preview/workflow-preview-node"
-import { WorkflowExportNode } from "@/components/workflows/editor/nodes/blocks/export/workflow-export-node"
-import { WorkflowImportLoraNode } from "@/components/workflows/editor/nodes/blocks/import-lora/workflow-import-lora-node"
-import { WorkflowImportMultipleLorasNode } from "@/components/workflows/editor/nodes/blocks/import-multiple-loras/workflow-import-multiple-loras-node"
+import { renderWorkflowCanvasNode } from "@/components/workflows/editor/nodes/registry/workflow-canvas-node-renderers"
 import { useCanvasPan } from "@/components/workflows/editor/interactions/hooks/useCanvasPan"
 import { useCanvasNodeDrag } from "@/components/workflows/editor/interactions/hooks/useCanvasNodeDrag"
 import { useCanvasNodeMeasurements } from "@/components/workflows/editor/interactions/hooks/useCanvasNodeMeasurements"
@@ -875,132 +866,13 @@ export function WorkflowCanvasViewport() {
                     handleNodePointerDown(event, node)
                   }}
                 >
-                  {node.type === "prompt" ? (
-                    <WorkflowPromptNode
-                      nodeId={node.id}
-                      isSelected={selectedNodeIdSet.has(node.id)}
-                      executionStatus={nodeExecutionStatuses[node.id]}
-                      title={node.data?.title}
-                      content={node.data?.content}
-                      onPortPointerDown={handlePortPointerDown}
-                    />
-                  ) : node.type === "export" ? (
-                    <WorkflowExportNode
-                      nodeId={node.id}
-                      isSelected={selectedNodeIdSet.has(node.id)}
-                      executionStatus={nodeExecutionStatuses[node.id]}
-                      title={node.data?.title}
-                      inputLabel={node.data?.inputLabel}
-                      actionLabel={node.data?.actionLabel}
-                      onPortPointerDown={handlePortPointerDown}
-                    />
-                  ) : node.type === "file" ? (
-                    <WorkflowFileNode
-                      nodeId={node.id}
-                      isSelected={selectedNodeIdSet.has(node.id)}
-                      executionStatus={nodeExecutionStatuses[node.id]}
-                      title={node.data?.title}
-                      onPortPointerDown={handlePortPointerDown}
-                    />
-                  ) : node.type === "image-model" ? (
-                    <WorkflowImageModelNode
-                      nodeId={node.id}
-                      isSelected={selectedNodeIdSet.has(node.id)}
-                      executionStatus={nodeExecutionStatuses[node.id]}
-                      title={node.data?.title}
-                      inputPorts={node.data?.inputPorts}
-                      outputPorts={node.data?.outputPorts}
-                      addInputLabel={node.data?.addInputLabel}
-                      runLabel={node.data?.runLabel}
-                      showAddInputAction={node.data?.showAddInputAction}
-                      showRunAction={node.data?.showRunAction}
-                      onPortPointerDown={handlePortPointerDown}
-                      onRunClick={() => {
-                        void handleRunPreview()
-                      }}
-                    />
-                  ) : node.type === "video-model" ? (
-                    <WorkflowVideoModelNode
-                      nodeId={node.id}
-                      isSelected={selectedNodeIdSet.has(node.id)}
-                      executionStatus={nodeExecutionStatuses[node.id]}
-                      title={node.data?.title}
-                      inputPorts={node.data?.inputPorts}
-                      outputPorts={node.data?.outputPorts}
-                      addInputLabel={node.data?.addInputLabel}
-                      runLabel={node.data?.runLabel}
-                      showAddInputAction={node.data?.showAddInputAction}
-                      showRunAction={node.data?.showRunAction}
-                      onPortPointerDown={handlePortPointerDown}
-                      onRunClick={() => {
-                        void handleRunPreview()
-                      }}
-                    />
-                  ) : node.type === "3d-model" ? (
-                    <WorkflowThreeDModelNode
-                      nodeId={node.id}
-                      isSelected={selectedNodeIdSet.has(node.id)}
-                      executionStatus={nodeExecutionStatuses[node.id]}
-                      title={node.data?.title}
-                      inputPorts={node.data?.inputPorts}
-                      outputPorts={node.data?.outputPorts}
-                      addInputLabel={node.data?.addInputLabel}
-                      runLabel={node.data?.runLabel}
-                      showAddInputAction={node.data?.showAddInputAction}
-                      showRunAction={node.data?.showRunAction}
-                      onPortPointerDown={handlePortPointerDown}
-                      onRunClick={() => {
-                        void handleRunPreview()
-                      }}
-                    />
-                  ) : node.type === "tool" ? (
-                    <WorkflowToolNode
-                      nodeId={node.id}
-                      isSelected={selectedNodeIdSet.has(node.id)}
-                      executionStatus={nodeExecutionStatuses[node.id]}
-                      toolKey={node.data?.toolKey}
-                      title={node.data?.title}
-                      toolCategory={node.data?.toolCategory}
-                      inputPorts={node.data?.inputPorts}
-                      outputPorts={node.data?.outputPorts}
-                      addInputLabel={node.data?.addInputLabel}
-                      runLabel={node.data?.runLabel}
-                      showAddInputAction={node.data?.showAddInputAction}
-                      showRunAction={node.data?.showRunAction}
-                      onPortPointerDown={handlePortPointerDown}
-                      onRunClick={() => {
-                        void handleRunPreview()
-                      }}
-                    />
-                  ) : node.type === "preview" ? (
-                    <WorkflowPreviewNode
-                      nodeId={node.id}
-                      isSelected={selectedNodeIdSet.has(node.id)}
-                      executionStatus={nodeExecutionStatuses[node.id]}
-                      title={node.data?.title}
-                      inputLabel={node.data?.inputLabel}
-                      onPortPointerDown={handlePortPointerDown}
-                    />
-                  ) : node.type === "import-lora" ? (
-                    <WorkflowImportLoraNode
-                      nodeId={node.id}
-                      isSelected={selectedNodeIdSet.has(node.id)}
-                      executionStatus={nodeExecutionStatuses[node.id]}
-                      title={node.data?.title}
-                      outputLabel={node.data?.outputLabel}
-                      onPortPointerDown={handlePortPointerDown}
-                    />
-                  ) : (
-                    <WorkflowImportMultipleLorasNode
-                      nodeId={node.id}
-                      isSelected={selectedNodeIdSet.has(node.id)}
-                      executionStatus={nodeExecutionStatuses[node.id]}
-                      title={node.data?.title}
-                      outputLabel={node.data?.outputLabel}
-                      secondaryOutputLabel={node.data?.secondaryOutputLabel}
-                      onPortPointerDown={handlePortPointerDown}
-                    />
-                  )}
+                  {renderWorkflowCanvasNode({
+                    node,
+                    isSelected: selectedNodeIdSet.has(node.id),
+                    executionStatus: nodeExecutionStatuses[node.id],
+                    onPortPointerDown: handlePortPointerDown,
+                    onRunPreview: handleRunPreview,
+                  })}
                 </div>
               ))}
             </div>
