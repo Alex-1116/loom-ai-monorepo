@@ -10,6 +10,7 @@ import type {
 } from "@/components/workflows/editor/model/types/workflow-edge"
 import type { WorkflowCanvasNode } from "@/components/workflows/editor/model/types/workflow-node"
 import type { EdgeConnectionPreview } from "@/components/workflows/editor/interactions/hooks/useCanvasEdgeConnection"
+import type { CanvasNodePortAnchors } from "@/components/workflows/editor/interactions/hooks/useCanvasNodeMeasurements"
 
 type WorkflowCanvasNodeSize = {
   width: number
@@ -19,6 +20,7 @@ type WorkflowCanvasNodeSize = {
 type WorkflowCanvasEdgesLayerProps = {
   nodes: WorkflowCanvasNode[]
   nodeSizes: Record<string, WorkflowCanvasNodeSize>
+  portAnchors: Record<string, CanvasNodePortAnchors>
   edges: WorkflowEdge[]
   selectedEdgeIds?: string[]
   onSelectEdge?: (edgeId: string) => void
@@ -39,14 +41,26 @@ type EdgeAnchor = {
 function getEdgeAnchor({
   node,
   nodeSize,
-  side,
+  port,
+  nodePortAnchors,
 }: {
   node: WorkflowCanvasNode
   nodeSize: WorkflowCanvasNodeSize
-  side: WorkflowEdge["source"]["side"]
+  port: WorkflowPortRef
+  nodePortAnchors?: CanvasNodePortAnchors
 }): EdgeAnchor {
+  const anchorKey = `${port.side}:${port.key ?? "__default__"}`
+  const preciseAnchor = nodePortAnchors?.[anchorKey]
+
+  if (preciseAnchor) {
+    return {
+      x: node.x + preciseAnchor.x,
+      y: node.y + preciseAnchor.y,
+    }
+  }
+
   return {
-    x: side === "right" ? node.x + nodeSize.width : node.x,
+    x: port.side === "right" ? node.x + nodeSize.width : node.x,
     y: node.y + nodeSize.height / 2,
   }
 }
@@ -65,6 +79,7 @@ function createEdgePath(source: EdgeAnchor, target: EdgeAnchor) {
 export function WorkflowCanvasEdgesLayer({
   nodes,
   nodeSizes,
+  portAnchors,
   edges,
   selectedEdgeIds = [],
   onSelectEdge,
@@ -102,12 +117,14 @@ export function WorkflowCanvasEdgesLayer({
       const source = getEdgeAnchor({
         node: sourceNode,
         nodeSize: sourceNodeSize,
-        side: edge.source.side,
+        port: edge.source,
+        nodePortAnchors: portAnchors[sourceNode.id],
       })
       const target = getEdgeAnchor({
         node: targetNode,
         nodeSize: targetNodeSize,
-        side: edge.target.side,
+        port: edge.target,
+        nodePortAnchors: portAnchors[targetNode.id],
       })
 
       return [
@@ -142,7 +159,8 @@ export function WorkflowCanvasEdgesLayer({
     const anchor = getEdgeAnchor({
       node: anchorNode,
       nodeSize: anchorNodeSize,
-      side: previewConnection.anchorPort.side,
+      port: previewConnection.anchorPort,
+      nodePortAnchors: portAnchors[anchorNode.id],
     })
 
     return [
@@ -163,6 +181,7 @@ export function WorkflowCanvasEdgesLayer({
     hoveredEdgeId,
     nodeMap,
     nodeSizes,
+    portAnchors,
     previewConnection,
     selectedEdgeIdSet,
   ])

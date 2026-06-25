@@ -90,7 +90,10 @@ export function WorkflowNodePort({
         </NodeHoverLabel>
       ) : null}
 
-      <div className={cn("size-5 rounded-full border-2", portToneClassName)} />
+      <div
+        className={cn("size-5 rounded-full border-2", portToneClassName)}
+        data-workflow-port-dot="true"
+      />
 
       {side === "right" && label ? (
         <NodeHoverLabel

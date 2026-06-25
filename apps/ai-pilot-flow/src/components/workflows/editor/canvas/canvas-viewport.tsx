@@ -133,9 +133,10 @@ export function WorkflowCanvasViewport() {
       scale: 1,
     },
   })
-  const { nodeSizes, handleNodeElementRef } = useCanvasNodeMeasurements({
-    nodes,
-  })
+  const { nodeSizes, portAnchors, handleNodeElementRef } =
+    useCanvasNodeMeasurements({
+      nodes,
+    })
   const selectedNodeIdSet = React.useMemo(
     () => new Set(selectedNodeIds),
     [selectedNodeIds]
@@ -821,6 +822,7 @@ export function WorkflowCanvasViewport() {
               <WorkflowCanvasEdgesLayer
                 nodes={nodes}
                 nodeSizes={nodeSizes}
+                portAnchors={portAnchors}
                 edges={edges}
                 selectedEdgeIds={selectedEdgeIds}
                 onSelectEdge={handleSelectEdge}
