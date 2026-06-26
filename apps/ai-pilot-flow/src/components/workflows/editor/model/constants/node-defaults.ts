@@ -1,5 +1,6 @@
 import { getExportDefinition } from "@/components/workflows/editor/model/constants/export-definitions"
 import { getFileDefinition } from "@/components/workflows/editor/model/constants/file-definitions"
+import { getDefaultImageModelDefinition } from "@/components/workflows/editor/model/constants/image-model-definitions"
 import { getImportLoraDefinition } from "@/components/workflows/editor/model/constants/import-lora-definitions"
 import { getImportMultipleLorasDefinition } from "@/components/workflows/editor/model/constants/import-multiple-loras-definitions"
 import {
@@ -18,6 +19,7 @@ const DEFAULT_PROMPT_DEFINITION = getPromptDefinition()
 const DEFAULT_FILE_DEFINITION = getFileDefinition()
 const DEFAULT_EXPORT_DEFINITION = getExportDefinition()
 const DEFAULT_PREVIEW_DEFINITION = getPreviewDefinition()
+const DEFAULT_IMAGE_MODEL_DEFINITION = getDefaultImageModelDefinition()
 const DEFAULT_IMPORT_LORA_DEFINITION = getImportLoraDefinition()
 const DEFAULT_IMPORT_MULTIPLE_LORAS_DEFINITION =
   getImportMultipleLorasDefinition()
@@ -35,42 +37,15 @@ export const WORKFLOW_NODE_DEFAULTS: Record<
   "import-lora": DEFAULT_IMPORT_LORA_DEFINITION.createData(),
   "import-multiple-loras":
     DEFAULT_IMPORT_MULTIPLE_LORAS_DEFINITION.createData(),
-  "image-model": {
-    title: "Flux 2 Pro",
-    modelKey: "flux-2-pro",
-    inputPorts: [
-      {
-        key: "prompt",
-        label: "Prompt *",
-        side: "left",
-        labelVisibility: "hover",
-        portToneClassName: "border-[#d78cff] bg-[#1c1d26]",
-        labelToneClassName: "text-[#d78cff]",
+  "image-model": DEFAULT_IMAGE_MODEL_DEFINITION
+    ? DEFAULT_IMAGE_MODEL_DEFINITION.createData()
+    : {
+        title: "Flux 2 Pro",
+        modelKey: "flux-2-pro",
+        runLabel: "Run Model",
+        showAddInputAction: true,
+        showRunAction: true,
       },
-      {
-        key: "image-1",
-        label: "Image 1",
-        side: "left",
-        labelVisibility: "hover",
-        portToneClassName: "border-[#6fe7d1] bg-[#1c1d26]",
-        labelToneClassName: "text-[#6fe7d1]",
-      },
-    ],
-    outputPorts: [
-      {
-        key: "result",
-        label: "Result",
-        side: "right",
-        labelVisibility: "hover",
-        portToneClassName: "border-[#6fe7d1] bg-[#1c1d26]",
-        labelToneClassName: "text-[#6fe7d1]",
-      },
-    ],
-    addInputLabel: "Add another image input",
-    runLabel: "Run Model",
-    showAddInputAction: true,
-    showRunAction: true,
-  },
   "video-model": {
     title: "Kling 3.0 Turbo",
     modelKey: "kling-3-0-turbo",

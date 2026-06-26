@@ -1,5 +1,6 @@
 import { getExportDefinition } from "@/components/workflows/editor/model/constants/export-definitions"
 import { getFileDefinition } from "@/components/workflows/editor/model/constants/file-definitions"
+import { getImageModelDefinition } from "@/components/workflows/editor/model/constants/image-model-definitions"
 import { getImportLoraDefinition } from "@/components/workflows/editor/model/constants/import-lora-definitions"
 import { getImportMultipleLorasDefinition } from "@/components/workflows/editor/model/constants/import-multiple-loras-definitions"
 import { getPromptDefinition } from "@/components/workflows/editor/model/constants/prompt-definitions"
@@ -147,6 +148,18 @@ export function getWorkflowNodeSchemaForNode(
       return {
         type: "import-multiple-loras",
         fields: importMultipleLorasSchema.fields,
+      }
+    }
+  }
+
+  if (node.type === "image-model") {
+    const imageModelSchema = getImageModelDefinition(
+      node.data?.modelKey
+    )?.schema
+    if (imageModelSchema) {
+      return {
+        type: "image-model",
+        fields: imageModelSchema.fields,
       }
     }
   }

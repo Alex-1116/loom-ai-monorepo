@@ -9,6 +9,11 @@ import {
   normalizeFileRuntimeResult,
 } from "@/components/workflows/editor/model/constants/file-definitions"
 import {
+  getImageModelDefinition,
+  getImageModelRuntimeOutputPorts,
+  normalizeImageModelRuntimeResult,
+} from "@/components/workflows/editor/model/constants/image-model-definitions"
+import {
   getImportLoraDefinition,
   getImportLoraRuntimeOutputPorts,
   normalizeImportLoraRuntimeResult,
@@ -241,35 +246,27 @@ function createBuiltInWorkflowNodeHandlers(): Record<
     },
     "image-model"({ node, graph, context }) {
       const inputs = getWorkflowNodeInputs(node, graph, context)
-      const outputPorts = getGeneratedModelOutputPorts(node)
-      const output = {
-        kind: "image-model",
-        nodeId: node.id,
-        title: node.data?.title ?? "Image Model",
-        modelKey: node.data?.modelKey ?? "image-model",
-        inputs: inputs.inputsByTargetPort,
-        connections: inputs.connections,
-        result: `mock://image-model/${node.id}`,
-      }
-      const portOutputs = outputPorts.reduce<WorkflowRuntimePortOutputs>(
-        (result, port) => {
-          result[port.key] = {
-            kind: "image-model-result",
-            nodeId: node.id,
-            modelKey: node.data?.modelKey ?? "image-model",
-            portKey: port.key,
-            value: output.result,
-            inputs: inputs.inputsByTargetPort,
-          }
-          return result
-        },
-        {}
-      )
+      const outputPorts = getImageModelRuntimeOutputPorts(node)
+      const definition = getImageModelDefinition(node.data?.modelKey)
+      const result = definition?.runtime?.run({
+        node,
+        graph,
+        context,
+        inputs,
+        outputPorts,
+      })
 
-      return {
-        output,
-        outputs: createWorkflowNodeOutput(output, portOutputs),
-      }
+      return definition
+        ? normalizeImageModelRuntimeResult(result, {
+            node,
+            graph,
+            context,
+            inputs,
+            outputPorts,
+          })
+        : {
+            output: node.data ?? null,
+          }
     },
     "video-model"({ node, graph, context }) {
       const inputs = getWorkflowNodeInputs(node, graph, context)

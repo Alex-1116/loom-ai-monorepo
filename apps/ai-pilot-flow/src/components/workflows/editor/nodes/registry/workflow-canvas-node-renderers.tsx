@@ -118,7 +118,31 @@ const WORKFLOW_CANVAS_NODE_RENDERERS: Record<
       onPortPointerDown={onPortPointerDown}
     />
   ),
-  "image-model": (params) => renderModelNode(WorkflowImageModelNode, params),
+  "image-model": ({
+    node,
+    isSelected,
+    executionStatus,
+    onPortPointerDown,
+    onRunPreview,
+  }) => (
+    <WorkflowImageModelNode
+      nodeId={node.id}
+      isSelected={isSelected}
+      executionStatus={executionStatus}
+      title={node.data?.title}
+      modelKey={node.data?.modelKey}
+      inputPorts={node.data?.inputPorts}
+      outputPorts={node.data?.outputPorts}
+      addInputLabel={node.data?.addInputLabel}
+      runLabel={node.data?.runLabel}
+      showAddInputAction={node.data?.showAddInputAction}
+      showRunAction={node.data?.showRunAction}
+      onPortPointerDown={onPortPointerDown}
+      onRunClick={() => {
+        void onRunPreview()
+      }}
+    />
+  ),
   "video-model": (params) => renderModelNode(WorkflowVideoModelNode, params),
   "3d-model": (params) => renderModelNode(WorkflowThreeDModelNode, params),
   tool: ({

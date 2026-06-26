@@ -15,7 +15,7 @@ import {
 import {
   IMAGE_MODEL_MENU_CATEGORIES,
   createImageModelNodeData,
-} from "@/components/workflows/editor/model/constants/image-model-presets"
+} from "@/components/workflows/editor/model/constants/image-model-definitions"
 import {
   TOOL_MENU_CATEGORIES,
   createToolNodeData,
