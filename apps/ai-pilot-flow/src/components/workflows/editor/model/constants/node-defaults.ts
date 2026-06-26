@@ -1,5 +1,6 @@
 import { getExportDefinition } from "@/components/workflows/editor/model/constants/export-definitions"
 import { getFileDefinition } from "@/components/workflows/editor/model/constants/file-definitions"
+import { getImportLoraDefinition } from "@/components/workflows/editor/model/constants/import-lora-definitions"
 import {
   DEFAULT_PROMPT_NODE_CONTENT,
   getPromptDefinition,
@@ -16,6 +17,7 @@ const DEFAULT_PROMPT_DEFINITION = getPromptDefinition()
 const DEFAULT_FILE_DEFINITION = getFileDefinition()
 const DEFAULT_EXPORT_DEFINITION = getExportDefinition()
 const DEFAULT_PREVIEW_DEFINITION = getPreviewDefinition()
+const DEFAULT_IMPORT_LORA_DEFINITION = getImportLoraDefinition()
 
 export { DEFAULT_PROMPT_NODE_CONTENT }
 
@@ -27,10 +29,7 @@ export const WORKFLOW_NODE_DEFAULTS: Record<
   file: DEFAULT_FILE_DEFINITION.createData(),
   preview: DEFAULT_PREVIEW_DEFINITION.createData(),
   export: DEFAULT_EXPORT_DEFINITION.createData(),
-  "import-lora": {
-    title: "Import LoRA",
-    outputLabel: "LoRA URL",
-  },
+  "import-lora": DEFAULT_IMPORT_LORA_DEFINITION.createData(),
   "import-multiple-loras": {
     title: "Import Multiple LoRAs",
     outputLabel: "LoRA URL",

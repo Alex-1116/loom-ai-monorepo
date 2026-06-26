@@ -165,6 +165,7 @@ const WORKFLOW_CANVAS_NODE_RENDERERS: Record<
       executionStatus={executionStatus}
       title={node.data?.title}
       outputLabel={node.data?.outputLabel}
+      outputPorts={node.data?.outputPorts}
       onPortPointerDown={onPortPointerDown}
     />
   ),

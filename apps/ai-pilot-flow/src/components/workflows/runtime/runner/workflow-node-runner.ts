@@ -9,6 +9,11 @@ import {
   normalizeFileRuntimeResult,
 } from "@/components/workflows/editor/model/constants/file-definitions"
 import {
+  getImportLoraDefinition,
+  getImportLoraRuntimeOutputPorts,
+  normalizeImportLoraRuntimeResult,
+} from "@/components/workflows/editor/model/constants/import-lora-definitions"
+import {
   getPromptDefinition,
   getPromptRuntimeOutputPorts,
   normalizePromptRuntimeResult,
@@ -353,27 +358,22 @@ function createBuiltInWorkflowNodeHandlers(): Record<
             output: node.data ?? null,
           }
     },
-    "import-lora"({ node }) {
-      const output = {
-        kind: "import-lora",
-        nodeId: node.id,
-        title: node.data?.title ?? "Import LoRA",
-        outputLabel: node.data?.outputLabel ?? "LoRA URL",
-        url: `mock://lora/${node.id}`,
-        files: [
-          {
-            name: `${node.id}.safetensors`,
-            source: "mock-runtime",
-          },
-        ],
-      }
+    "import-lora"({ node, graph, context }) {
+      const outputPorts = getImportLoraRuntimeOutputPorts(node)
+      const definition = getImportLoraDefinition()
+      const result = definition.runtime?.run({
+        node,
+        graph,
+        context,
+        outputPorts,
+      })
 
-      return {
-        output,
-        outputs: createWorkflowNodeOutput(output, {
-          output,
-        }),
-      }
+      return normalizeImportLoraRuntimeResult(result, {
+        node,
+        graph,
+        context,
+        outputPorts,
+      })
     },
     "import-multiple-loras"({ node }) {
       const loras = [

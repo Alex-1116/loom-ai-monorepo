@@ -1,5 +1,6 @@
 import { getExportDefinition } from "@/components/workflows/editor/model/constants/export-definitions"
 import { getFileDefinition } from "@/components/workflows/editor/model/constants/file-definitions"
+import { getImportLoraDefinition } from "@/components/workflows/editor/model/constants/import-lora-definitions"
 import { getPromptDefinition } from "@/components/workflows/editor/model/constants/prompt-definitions"
 import { getPreviewDefinition } from "@/components/workflows/editor/model/constants/preview-definitions"
 import { getToolDefinition } from "@/components/workflows/editor/model/constants/tool-definitions"
@@ -125,6 +126,16 @@ export function getWorkflowNodeSchemaForNode(
       return {
         type: "export",
         fields: exportSchema.fields,
+      }
+    }
+  }
+
+  if (node.type === "import-lora") {
+    const importLoraSchema = getImportLoraDefinition().schema
+    if (importLoraSchema) {
+      return {
+        type: "import-lora",
+        fields: importLoraSchema.fields,
       }
     }
   }
