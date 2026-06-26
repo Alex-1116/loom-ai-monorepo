@@ -182,6 +182,7 @@ const WORKFLOW_CANVAS_NODE_RENDERERS: Record<
       title={node.data?.title}
       outputLabel={node.data?.outputLabel}
       secondaryOutputLabel={node.data?.secondaryOutputLabel}
+      outputPorts={node.data?.outputPorts}
       onPortPointerDown={onPortPointerDown}
     />
   ),

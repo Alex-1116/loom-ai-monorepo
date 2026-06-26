@@ -14,6 +14,11 @@ import {
   normalizeImportLoraRuntimeResult,
 } from "@/components/workflows/editor/model/constants/import-lora-definitions"
 import {
+  getImportMultipleLorasDefinition,
+  getImportMultipleLorasRuntimeOutputPorts,
+  normalizeImportMultipleLorasRuntimeResult,
+} from "@/components/workflows/editor/model/constants/import-multiple-loras-definitions"
+import {
   getPromptDefinition,
   getPromptRuntimeOutputPorts,
   normalizePromptRuntimeResult,
@@ -375,41 +380,22 @@ function createBuiltInWorkflowNodeHandlers(): Record<
         outputPorts,
       })
     },
-    "import-multiple-loras"({ node }) {
-      const loras = [
-        {
-          url: `mock://loras/${node.id}/default`,
-          weight: 0,
-        },
-      ]
-      const output = {
-        kind: "import-multiple-loras",
-        nodeId: node.id,
-        title: node.data?.title ?? "Import Multiple LoRAs",
-        outputLabel: node.data?.outputLabel ?? "LoRA URL",
-        secondaryOutputLabel: node.data?.secondaryOutputLabel ?? "Weight",
-        url: `mock://loras/${node.id}`,
-        weight: 0,
-        loras,
-      }
+    "import-multiple-loras"({ node, graph, context }) {
+      const outputPorts = getImportMultipleLorasRuntimeOutputPorts(node)
+      const definition = getImportMultipleLorasDefinition()
+      const result = definition.runtime?.run({
+        node,
+        graph,
+        context,
+        outputPorts,
+      })
 
-      return {
-        output,
-        outputs: createWorkflowNodeOutput(output, {
-          "lora-url": {
-            kind: "lora-url",
-            nodeId: node.id,
-            values: loras.map((lora) => lora.url),
-            loras,
-          },
-          weight: {
-            kind: "lora-weight",
-            nodeId: node.id,
-            values: loras.map((lora) => lora.weight),
-            weight: 0,
-          },
-        }),
-      }
+      return normalizeImportMultipleLorasRuntimeResult(result, {
+        node,
+        graph,
+        context,
+        outputPorts,
+      })
     },
   }
 }

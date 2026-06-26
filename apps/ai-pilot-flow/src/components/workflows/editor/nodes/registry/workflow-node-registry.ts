@@ -77,6 +77,7 @@ export function getWorkflowNodePortsForNode(node: WorkflowCanvasNode) {
     node.type === "export" ||
     node.type === "file" ||
     node.type === "import-lora" ||
+    node.type === "import-multiple-loras" ||
     node.type === "preview" ||
     node.type === "prompt" ||
     node.type === "image-model" ||

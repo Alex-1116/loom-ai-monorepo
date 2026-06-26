@@ -1,6 +1,7 @@
 import { getExportDefinition } from "@/components/workflows/editor/model/constants/export-definitions"
 import { getFileDefinition } from "@/components/workflows/editor/model/constants/file-definitions"
 import { getImportLoraDefinition } from "@/components/workflows/editor/model/constants/import-lora-definitions"
+import { getImportMultipleLorasDefinition } from "@/components/workflows/editor/model/constants/import-multiple-loras-definitions"
 import {
   DEFAULT_PROMPT_NODE_CONTENT,
   getPromptDefinition,
@@ -18,6 +19,8 @@ const DEFAULT_FILE_DEFINITION = getFileDefinition()
 const DEFAULT_EXPORT_DEFINITION = getExportDefinition()
 const DEFAULT_PREVIEW_DEFINITION = getPreviewDefinition()
 const DEFAULT_IMPORT_LORA_DEFINITION = getImportLoraDefinition()
+const DEFAULT_IMPORT_MULTIPLE_LORAS_DEFINITION =
+  getImportMultipleLorasDefinition()
 
 export { DEFAULT_PROMPT_NODE_CONTENT }
 
@@ -30,11 +33,8 @@ export const WORKFLOW_NODE_DEFAULTS: Record<
   preview: DEFAULT_PREVIEW_DEFINITION.createData(),
   export: DEFAULT_EXPORT_DEFINITION.createData(),
   "import-lora": DEFAULT_IMPORT_LORA_DEFINITION.createData(),
-  "import-multiple-loras": {
-    title: "Import Multiple LoRAs",
-    outputLabel: "LoRA URL",
-    secondaryOutputLabel: "Weight",
-  },
+  "import-multiple-loras":
+    DEFAULT_IMPORT_MULTIPLE_LORAS_DEFINITION.createData(),
   "image-model": {
     title: "Flux 2 Pro",
     modelKey: "flux-2-pro",
