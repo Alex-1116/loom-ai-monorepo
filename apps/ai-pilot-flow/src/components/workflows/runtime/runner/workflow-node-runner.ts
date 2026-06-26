@@ -14,6 +14,11 @@ import {
   normalizePromptRuntimeResult,
 } from "@/components/workflows/editor/model/constants/prompt-definitions"
 import {
+  getPreviewDefinition,
+  getPreviewRuntimeInputPorts,
+  normalizePreviewRuntimeResult,
+} from "@/components/workflows/editor/model/constants/preview-definitions"
+import {
   getToolDefinition,
   getToolRuntimeOutputPorts,
   normalizeToolRuntimeResult,
@@ -204,6 +209,26 @@ function createBuiltInWorkflowNodeHandlers(): Record<
         inputs,
       })
     },
+    preview({ node, graph, context }) {
+      const inputPorts = getPreviewRuntimeInputPorts(node)
+      const inputs = getWorkflowNodeInputs(node, graph, context)
+      const definition = getPreviewDefinition()
+      const result = definition.runtime?.run({
+        node,
+        graph,
+        context,
+        inputPorts,
+        inputs,
+      })
+
+      return normalizePreviewRuntimeResult(result, {
+        node,
+        graph,
+        context,
+        inputPorts,
+        inputs,
+      })
+    },
     "image-model"({ node, graph, context }) {
       const inputs = getWorkflowNodeInputs(node, graph, context)
       const outputPorts = getGeneratedModelOutputPorts(node)
@@ -384,23 +409,6 @@ function createBuiltInWorkflowNodeHandlers(): Record<
             weight: 0,
           },
         }),
-      }
-    },
-    preview({ node, graph, context }) {
-      const inputs = getWorkflowNodeInputs(node, graph, context)
-      const sourceValues =
-        inputs.inputsByTargetPort.input ?? inputs.upstreamOutputs
-      const output = {
-        kind: "preview",
-        nodeId: node.id,
-        title: node.data?.title ?? "Preview",
-        inputLabel: node.data?.inputLabel ?? "File",
-        source: sourceValues.length === 1 ? sourceValues[0] : sourceValues,
-      }
-
-      return {
-        output,
-        outputs: createWorkflowNodeOutput(output),
       }
     },
   }

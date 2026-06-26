@@ -76,6 +76,7 @@ export function getWorkflowNodePortsForNode(node: WorkflowCanvasNode) {
   if (
     node.type === "export" ||
     node.type === "file" ||
+    node.type === "preview" ||
     node.type === "prompt" ||
     node.type === "image-model" ||
     node.type === "video-model" ||

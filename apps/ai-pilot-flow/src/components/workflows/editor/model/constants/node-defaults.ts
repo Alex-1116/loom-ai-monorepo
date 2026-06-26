@@ -4,6 +4,7 @@ import {
   DEFAULT_PROMPT_NODE_CONTENT,
   getPromptDefinition,
 } from "@/components/workflows/editor/model/constants/prompt-definitions"
+import { getPreviewDefinition } from "@/components/workflows/editor/model/constants/preview-definitions"
 import { getDefaultToolDefinition } from "@/components/workflows/editor/model/constants/tool-definitions"
 import type {
   WorkflowNodeData,
@@ -14,6 +15,7 @@ const DEFAULT_TOOL_DEFINITION = getDefaultToolDefinition()
 const DEFAULT_PROMPT_DEFINITION = getPromptDefinition()
 const DEFAULT_FILE_DEFINITION = getFileDefinition()
 const DEFAULT_EXPORT_DEFINITION = getExportDefinition()
+const DEFAULT_PREVIEW_DEFINITION = getPreviewDefinition()
 
 export { DEFAULT_PROMPT_NODE_CONTENT }
 
@@ -23,10 +25,7 @@ export const WORKFLOW_NODE_DEFAULTS: Record<
 > = {
   prompt: DEFAULT_PROMPT_DEFINITION.createData(),
   file: DEFAULT_FILE_DEFINITION.createData(),
-  preview: {
-    title: "Preview",
-    inputLabel: "File",
-  },
+  preview: DEFAULT_PREVIEW_DEFINITION.createData(),
   export: DEFAULT_EXPORT_DEFINITION.createData(),
   "import-lora": {
     title: "Import LoRA",

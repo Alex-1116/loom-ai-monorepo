@@ -1,6 +1,7 @@
 import { getExportDefinition } from "@/components/workflows/editor/model/constants/export-definitions"
 import { getFileDefinition } from "@/components/workflows/editor/model/constants/file-definitions"
 import { getPromptDefinition } from "@/components/workflows/editor/model/constants/prompt-definitions"
+import { getPreviewDefinition } from "@/components/workflows/editor/model/constants/preview-definitions"
 import { getToolDefinition } from "@/components/workflows/editor/model/constants/tool-definitions"
 import type { WorkflowNodeType } from "@/components/workflows/editor/model/types/workflow-node"
 import type { WorkflowCanvasNode } from "@/components/workflows/editor/model/types/workflow-node"
@@ -124,6 +125,16 @@ export function getWorkflowNodeSchemaForNode(
       return {
         type: "export",
         fields: exportSchema.fields,
+      }
+    }
+  }
+
+  if (node.type === "preview") {
+    const previewSchema = getPreviewDefinition().schema
+    if (previewSchema) {
+      return {
+        type: "preview",
+        fields: previewSchema.fields,
       }
     }
   }
