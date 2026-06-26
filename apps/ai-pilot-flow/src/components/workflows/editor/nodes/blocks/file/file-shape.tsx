@@ -9,7 +9,7 @@ export function renderFileBody({ title }: FileRendererProps) {
   return (
     <div className="flex w-full flex-col gap-4">
       <div
-        className="flex h-[324px] items-center justify-center rounded-[12px] border border-white/6"
+        className="flex h-[324px] items-center justify-center rounded-xl border border-white/6"
         style={{
           backgroundImage:
             "linear-gradient(45deg, rgba(255,255,255,0.03) 25%, transparent 25%, transparent 75%, rgba(255,255,255,0.03) 75%, rgba(255,255,255,0.03)), linear-gradient(45deg, rgba(255,255,255,0.03) 25%, transparent 25%, transparent 75%, rgba(255,255,255,0.03) 75%, rgba(255,255,255,0.03))",
@@ -30,7 +30,7 @@ export function renderFileBody({ title }: FileRendererProps) {
       <Input
         value={`Paste a ${title?.toLowerCase() ?? "file"} link`}
         readOnly
-        className="rounded-[10px] border-white/6 bg-white/4 text-sm text-white/45"
+        className="rounded-md border-white/6 bg-white/4 text-sm text-white/45"
       />
     </div>
   )
