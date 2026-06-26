@@ -1,3 +1,4 @@
+import { getExportDefinition } from "@/components/workflows/editor/model/constants/export-definitions"
 import { getFileDefinition } from "@/components/workflows/editor/model/constants/file-definitions"
 import {
   DEFAULT_PROMPT_NODE_CONTENT,
@@ -12,6 +13,7 @@ import type {
 const DEFAULT_TOOL_DEFINITION = getDefaultToolDefinition()
 const DEFAULT_PROMPT_DEFINITION = getPromptDefinition()
 const DEFAULT_FILE_DEFINITION = getFileDefinition()
+const DEFAULT_EXPORT_DEFINITION = getExportDefinition()
 
 export { DEFAULT_PROMPT_NODE_CONTENT }
 
@@ -25,11 +27,7 @@ export const WORKFLOW_NODE_DEFAULTS: Record<
     title: "Preview",
     inputLabel: "File",
   },
-  export: {
-    title: "Export",
-    inputLabel: "Input",
-    actionLabel: "Export",
-  },
+  export: DEFAULT_EXPORT_DEFINITION.createData(),
   "import-lora": {
     title: "Import LoRA",
     outputLabel: "LoRA URL",

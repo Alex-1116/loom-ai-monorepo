@@ -1,4 +1,9 @@
 import {
+  getExportDefinition,
+  getExportRuntimeInputPorts,
+  normalizeExportRuntimeResult,
+} from "@/components/workflows/editor/model/constants/export-definitions"
+import {
   getFileDefinition,
   getFileRuntimeOutputPorts,
   normalizeFileRuntimeResult,
@@ -177,6 +182,26 @@ function createBuiltInWorkflowNodeHandlers(): Record<
         graph,
         context,
         outputPorts,
+      })
+    },
+    export({ node, graph, context }) {
+      const inputPorts = getExportRuntimeInputPorts(node)
+      const inputs = getWorkflowNodeInputs(node, graph, context)
+      const definition = getExportDefinition()
+      const result = definition.runtime?.run({
+        node,
+        graph,
+        context,
+        inputPorts,
+        inputs,
+      })
+
+      return normalizeExportRuntimeResult(result, {
+        node,
+        graph,
+        context,
+        inputPorts,
+        inputs,
       })
     },
     "image-model"({ node, graph, context }) {
@@ -371,24 +396,6 @@ function createBuiltInWorkflowNodeHandlers(): Record<
         title: node.data?.title ?? "Preview",
         inputLabel: node.data?.inputLabel ?? "File",
         source: sourceValues.length === 1 ? sourceValues[0] : sourceValues,
-      }
-
-      return {
-        output,
-        outputs: createWorkflowNodeOutput(output),
-      }
-    },
-    export({ node, graph, context }) {
-      const inputs = getWorkflowNodeInputs(node, graph, context)
-      const inputValues =
-        inputs.inputsByTargetPort.input ?? inputs.upstreamOutputs
-      const output = {
-        kind: "export",
-        nodeId: node.id,
-        title: node.data?.title ?? "Export",
-        actionLabel: node.data?.actionLabel ?? "Export",
-        inputs: inputValues,
-        result: inputValues.length === 1 ? inputValues[0] : inputValues,
       }
 
       return {

@@ -1,3 +1,4 @@
+import { getExportDefinition } from "@/components/workflows/editor/model/constants/export-definitions"
 import { getFileDefinition } from "@/components/workflows/editor/model/constants/file-definitions"
 import { getPromptDefinition } from "@/components/workflows/editor/model/constants/prompt-definitions"
 import { getToolDefinition } from "@/components/workflows/editor/model/constants/tool-definitions"
@@ -113,6 +114,16 @@ export function getWorkflowNodeSchemaForNode(
       return {
         type: "file",
         fields: fileSchema.fields,
+      }
+    }
+  }
+
+  if (node.type === "export") {
+    const exportSchema = getExportDefinition().schema
+    if (exportSchema) {
+      return {
+        type: "export",
+        fields: exportSchema.fields,
       }
     }
   }
