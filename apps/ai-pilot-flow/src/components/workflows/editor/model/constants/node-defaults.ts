@@ -9,6 +9,7 @@ import {
 } from "@/components/workflows/editor/model/constants/prompt-definitions"
 import { getPreviewDefinition } from "@/components/workflows/editor/model/constants/preview-definitions"
 import { getDefaultToolDefinition } from "@/components/workflows/editor/model/constants/tool-definitions"
+import { getDefaultVideoModelDefinition } from "@/components/workflows/editor/model/constants/video-model-definitions"
 import type {
   WorkflowNodeData,
   WorkflowNodeType,
@@ -20,6 +21,7 @@ const DEFAULT_FILE_DEFINITION = getFileDefinition()
 const DEFAULT_EXPORT_DEFINITION = getExportDefinition()
 const DEFAULT_PREVIEW_DEFINITION = getPreviewDefinition()
 const DEFAULT_IMAGE_MODEL_DEFINITION = getDefaultImageModelDefinition()
+const DEFAULT_VIDEO_MODEL_DEFINITION = getDefaultVideoModelDefinition()
 const DEFAULT_IMPORT_LORA_DEFINITION = getImportLoraDefinition()
 const DEFAULT_IMPORT_MULTIPLE_LORAS_DEFINITION =
   getImportMultipleLorasDefinition()
@@ -46,42 +48,15 @@ export const WORKFLOW_NODE_DEFAULTS: Record<
         showAddInputAction: true,
         showRunAction: true,
       },
-  "video-model": {
-    title: "Kling 3.0 Turbo",
-    modelKey: "kling-3-0-turbo",
-    inputPorts: [
-      {
-        key: "prompt",
-        label: "Prompt *",
-        side: "left",
-        labelVisibility: "hover",
-        portToneClassName: "border-[#d78cff] bg-[#1c1d26]",
-        labelToneClassName: "text-[#d78cff]",
+  "video-model": DEFAULT_VIDEO_MODEL_DEFINITION
+    ? DEFAULT_VIDEO_MODEL_DEFINITION.createData()
+    : {
+        title: "Kling 3.0 Turbo",
+        modelKey: "kling-3-0-turbo",
+        runLabel: "Run Model",
+        showAddInputAction: true,
+        showRunAction: true,
       },
-      {
-        key: "image-1",
-        label: "Image 1",
-        side: "left",
-        labelVisibility: "hover",
-        portToneClassName: "border-[#6fe7d1] bg-[#1c1d26]",
-        labelToneClassName: "text-[#6fe7d1]",
-      },
-    ],
-    outputPorts: [
-      {
-        key: "result",
-        label: "Result",
-        side: "right",
-        labelVisibility: "hover",
-        portToneClassName: "border-[#6fe7d1] bg-[#1c1d26]",
-        labelToneClassName: "text-[#6fe7d1]",
-      },
-    ],
-    addInputLabel: "Add another input",
-    runLabel: "Run Model",
-    showAddInputAction: true,
-    showRunAction: true,
-  },
   "3d-model": {
     title: "Meshy V6",
     modelKey: "meshy-v6",

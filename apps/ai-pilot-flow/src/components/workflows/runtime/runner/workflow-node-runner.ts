@@ -38,6 +38,11 @@ import {
   getToolRuntimeOutputPorts,
   normalizeToolRuntimeResult,
 } from "@/components/workflows/editor/model/constants/tool-definitions"
+import {
+  getVideoModelDefinition,
+  getVideoModelRuntimeOutputPorts,
+  normalizeVideoModelRuntimeResult,
+} from "@/components/workflows/editor/model/constants/video-model-definitions"
 import type { WorkflowRuntimeContext } from "@/components/workflows/runtime/context/workflow-runtime-context"
 import { getWorkflowRuntimeOutput } from "@/components/workflows/runtime/context/workflow-runtime-context"
 import type {
@@ -270,35 +275,27 @@ function createBuiltInWorkflowNodeHandlers(): Record<
     },
     "video-model"({ node, graph, context }) {
       const inputs = getWorkflowNodeInputs(node, graph, context)
-      const outputPorts = getGeneratedModelOutputPorts(node)
-      const output = {
-        kind: "video-model",
-        nodeId: node.id,
-        title: node.data?.title ?? "Video Model",
-        modelKey: node.data?.modelKey ?? "video-model",
-        inputs: inputs.inputsByTargetPort,
-        connections: inputs.connections,
-        result: `mock://video-model/${node.id}`,
-      }
-      const portOutputs = outputPorts.reduce<WorkflowRuntimePortOutputs>(
-        (result, port) => {
-          result[port.key] = {
-            kind: "video-model-result",
-            nodeId: node.id,
-            modelKey: node.data?.modelKey ?? "video-model",
-            portKey: port.key,
-            value: output.result,
-            inputs: inputs.inputsByTargetPort,
-          }
-          return result
-        },
-        {}
-      )
+      const outputPorts = getVideoModelRuntimeOutputPorts(node)
+      const definition = getVideoModelDefinition(node.data?.modelKey)
+      const result = definition?.runtime?.run({
+        node,
+        graph,
+        context,
+        inputs,
+        outputPorts,
+      })
 
-      return {
-        output,
-        outputs: createWorkflowNodeOutput(output, portOutputs),
-      }
+      return definition
+        ? normalizeVideoModelRuntimeResult(result, {
+            node,
+            graph,
+            context,
+            inputs,
+            outputPorts,
+          })
+        : {
+            output: node.data ?? null,
+          }
     },
     "3d-model"({ node, graph, context }) {
       const inputs = getWorkflowNodeInputs(node, graph, context)

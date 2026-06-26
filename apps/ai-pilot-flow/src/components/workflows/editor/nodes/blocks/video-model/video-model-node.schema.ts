@@ -1,39 +1,7 @@
+import { getVideoModelSchema } from "@/components/workflows/editor/model/constants/video-model-definitions"
 import type { WorkflowNodeSchema } from "@/components/workflows/editor/model/schema/node-schema"
 
 export const videoModelNodeSchema: WorkflowNodeSchema = {
   type: "video-model",
-  fields: [
-    {
-      key: "title",
-      label: "Title",
-      input: "text",
-      placeholder: "Model title",
-      rules: [
-        {
-          kind: "required",
-          level: "warning",
-          code: "node.video-model.title.missing",
-          message: "Video model node title is empty.",
-        },
-      ],
-    },
-    {
-      key: "modelKey",
-      label: "Model Key",
-      input: "text",
-      placeholder: "kling-3-0-turbo",
-    },
-    {
-      key: "runLabel",
-      label: "Run Label",
-      input: "text",
-      placeholder: "Run Model",
-    },
-    {
-      key: "addInputLabel",
-      label: "Add Input Label",
-      input: "text",
-      placeholder: "Add another input",
-    },
-  ],
+  fields: getVideoModelSchema("kling-3-0-turbo")?.fields ?? [],
 }

@@ -143,7 +143,31 @@ const WORKFLOW_CANVAS_NODE_RENDERERS: Record<
       }}
     />
   ),
-  "video-model": (params) => renderModelNode(WorkflowVideoModelNode, params),
+  "video-model": ({
+    node,
+    isSelected,
+    executionStatus,
+    onPortPointerDown,
+    onRunPreview,
+  }) => (
+    <WorkflowVideoModelNode
+      nodeId={node.id}
+      isSelected={isSelected}
+      executionStatus={executionStatus}
+      title={node.data?.title}
+      modelKey={node.data?.modelKey}
+      inputPorts={node.data?.inputPorts}
+      outputPorts={node.data?.outputPorts}
+      addInputLabel={node.data?.addInputLabel}
+      runLabel={node.data?.runLabel}
+      showAddInputAction={node.data?.showAddInputAction}
+      showRunAction={node.data?.showRunAction}
+      onPortPointerDown={onPortPointerDown}
+      onRunClick={() => {
+        void onRunPreview()
+      }}
+    />
+  ),
   "3d-model": (params) => renderModelNode(WorkflowThreeDModelNode, params),
   tool: ({
     node,

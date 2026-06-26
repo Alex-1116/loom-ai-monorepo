@@ -6,6 +6,7 @@ import { getImportMultipleLorasDefinition } from "@/components/workflows/editor/
 import { getPromptDefinition } from "@/components/workflows/editor/model/constants/prompt-definitions"
 import { getPreviewDefinition } from "@/components/workflows/editor/model/constants/preview-definitions"
 import { getToolDefinition } from "@/components/workflows/editor/model/constants/tool-definitions"
+import { getVideoModelDefinition } from "@/components/workflows/editor/model/constants/video-model-definitions"
 import type { WorkflowNodeType } from "@/components/workflows/editor/model/types/workflow-node"
 import type { WorkflowCanvasNode } from "@/components/workflows/editor/model/types/workflow-node"
 import { threeDModelNodeConfig } from "@/components/workflows/editor/nodes/blocks/3d-model/3d-model-node.config"
@@ -160,6 +161,18 @@ export function getWorkflowNodeSchemaForNode(
       return {
         type: "image-model",
         fields: imageModelSchema.fields,
+      }
+    }
+  }
+
+  if (node.type === "video-model") {
+    const videoModelSchema = getVideoModelDefinition(
+      node.data?.modelKey
+    )?.schema
+    if (videoModelSchema) {
+      return {
+        type: "video-model",
+        fields: videoModelSchema.fields,
       }
     }
   }

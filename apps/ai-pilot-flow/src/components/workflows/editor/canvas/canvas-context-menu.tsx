@@ -23,7 +23,7 @@ import {
 import {
   VIDEO_MODEL_MENU_CATEGORIES,
   createVideoModelNodeData,
-} from "@/components/workflows/editor/model/constants/video-model-presets"
+} from "@/components/workflows/editor/model/constants/video-model-definitions"
 import type { WorkflowNodeData } from "@/components/workflows/editor/model/types/workflow-node"
 import {
   workflowNodeMenuItems,
