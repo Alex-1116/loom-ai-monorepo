@@ -113,6 +113,7 @@ const WORKFLOW_CANVAS_NODE_RENDERERS: Record<
       isSelected={isSelected}
       executionStatus={executionStatus}
       title={node.data?.title}
+      outputPorts={node.data?.outputPorts}
       onPortPointerDown={onPortPointerDown}
     />
   ),

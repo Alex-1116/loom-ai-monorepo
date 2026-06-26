@@ -1,3 +1,4 @@
+import { getFileDefinition } from "@/components/workflows/editor/model/constants/file-definitions"
 import { getPromptDefinition } from "@/components/workflows/editor/model/constants/prompt-definitions"
 import { getToolDefinition } from "@/components/workflows/editor/model/constants/tool-definitions"
 import type { WorkflowNodeType } from "@/components/workflows/editor/model/types/workflow-node"
@@ -106,6 +107,16 @@ export function getWorkflowNodeSchema(
 export function getWorkflowNodeSchemaForNode(
   node: Pick<WorkflowCanvasNode, "type" | "data">
 ): WorkflowNodeSchema {
+  if (node.type === "file") {
+    const fileSchema = getFileDefinition().schema
+    if (fileSchema) {
+      return {
+        type: "file",
+        fields: fileSchema.fields,
+      }
+    }
+  }
+
   if (node.type === "prompt") {
     const promptSchema = getPromptDefinition().schema
     if (promptSchema) {

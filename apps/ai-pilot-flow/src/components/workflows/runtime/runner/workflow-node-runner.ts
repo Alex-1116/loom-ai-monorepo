@@ -1,4 +1,9 @@
 import {
+  getFileDefinition,
+  getFileRuntimeOutputPorts,
+  normalizeFileRuntimeResult,
+} from "@/components/workflows/editor/model/constants/file-definitions"
+import {
   getPromptDefinition,
   getPromptRuntimeOutputPorts,
   normalizePromptRuntimeResult,
@@ -157,25 +162,22 @@ function createBuiltInWorkflowNodeHandlers(): Record<
         outputPorts,
       })
     },
-    file({ node }) {
-      const output = {
-        kind: "file",
-        nodeId: node.id,
-        title: node.data?.title ?? "File",
-        files: [
-          {
-            name: `${node.id}.mock`,
-            source: "mock-runtime",
-          },
-        ],
-      }
+    file({ node, graph, context }) {
+      const outputPorts = getFileRuntimeOutputPorts(node)
+      const definition = getFileDefinition()
+      const result = definition.runtime?.run({
+        node,
+        graph,
+        context,
+        outputPorts,
+      })
 
-      return {
-        output,
-        outputs: createWorkflowNodeOutput(output, {
-          output,
-        }),
-      }
+      return normalizeFileRuntimeResult(result, {
+        node,
+        graph,
+        context,
+        outputPorts,
+      })
     },
     "image-model"({ node, graph, context }) {
       const inputs = getWorkflowNodeInputs(node, graph, context)
