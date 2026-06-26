@@ -872,6 +872,8 @@ export function WorkflowCanvasViewport() {
                     executionStatus: nodeExecutionStatuses[node.id],
                     onPortPointerDown: handlePortPointerDown,
                     onRunPreview: handleRunPreview,
+                    onPatchNode: handlePatchNode,
+                    onCommitNodeChanges: flushHistory,
                   })}
                 </div>
               ))}

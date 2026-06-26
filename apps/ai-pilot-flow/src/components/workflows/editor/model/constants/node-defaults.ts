@@ -1,22 +1,23 @@
+import {
+  DEFAULT_PROMPT_NODE_CONTENT,
+  getPromptDefinition,
+} from "@/components/workflows/editor/model/constants/prompt-definitions"
 import { getDefaultToolDefinition } from "@/components/workflows/editor/model/constants/tool-definitions"
 import type {
   WorkflowNodeData,
   WorkflowNodeType,
 } from "@/components/workflows/editor/model/types/workflow-node"
 
-export const DEFAULT_PROMPT_NODE_CONTENT =
-  'Hipster Sisyphus, lime overall suit, pushing a huge round rock up a hill. The rock is sprayed with the text "default prompt", bright grey background extreme side long shot, cinematic, fashion style, side view'
-
 const DEFAULT_TOOL_DEFINITION = getDefaultToolDefinition()
+const DEFAULT_PROMPT_DEFINITION = getPromptDefinition()
+
+export { DEFAULT_PROMPT_NODE_CONTENT }
 
 export const WORKFLOW_NODE_DEFAULTS: Record<
   WorkflowNodeType,
   WorkflowNodeData
 > = {
-  prompt: {
-    title: "Prompt",
-    content: DEFAULT_PROMPT_NODE_CONTENT,
-  },
+  prompt: DEFAULT_PROMPT_DEFINITION.createData(),
   file: {
     title: "File",
   },

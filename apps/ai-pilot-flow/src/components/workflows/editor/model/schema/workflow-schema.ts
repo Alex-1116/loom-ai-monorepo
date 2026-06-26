@@ -1,3 +1,4 @@
+import { getPromptDefinition } from "@/components/workflows/editor/model/constants/prompt-definitions"
 import { getToolDefinition } from "@/components/workflows/editor/model/constants/tool-definitions"
 import type { WorkflowNodeType } from "@/components/workflows/editor/model/types/workflow-node"
 import type { WorkflowCanvasNode } from "@/components/workflows/editor/model/types/workflow-node"
@@ -21,7 +22,6 @@ import { promptNodeConfig } from "@/components/workflows/editor/nodes/blocks/pro
 import { promptNodeSchema } from "@/components/workflows/editor/nodes/blocks/prompt/prompt-node.schema"
 import { toolNodeConfig } from "@/components/workflows/editor/nodes/blocks/tool/tool-node.config"
 import { toolNodeSchema } from "@/components/workflows/editor/nodes/blocks/tool/tool-node.schema"
-
 import type {
   WorkflowNodeConfig,
   WorkflowNodeSchema,
@@ -106,6 +106,16 @@ export function getWorkflowNodeSchema(
 export function getWorkflowNodeSchemaForNode(
   node: Pick<WorkflowCanvasNode, "type" | "data">
 ): WorkflowNodeSchema {
+  if (node.type === "prompt") {
+    const promptSchema = getPromptDefinition().schema
+    if (promptSchema) {
+      return {
+        type: "prompt",
+        fields: promptSchema.fields,
+      }
+    }
+  }
+
   if (node.type === "tool") {
     const toolSchema = getToolDefinition(node.data?.toolKey)?.schema
     if (toolSchema) {

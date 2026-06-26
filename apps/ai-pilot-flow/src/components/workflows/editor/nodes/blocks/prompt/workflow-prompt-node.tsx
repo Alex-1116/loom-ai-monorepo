@@ -1,72 +1,120 @@
 "use client"
 
+import * as React from "react"
+
+import {
+  getPromptDefinition,
+  getPromptPortOffset,
+} from "@/components/workflows/editor/model/constants/prompt-definitions"
+import type { WorkflowNodePortData } from "@/components/workflows/editor/model/types/workflow-node"
 import {
   WorkflowNodeBody,
   WorkflowNodeHeader,
   WorkflowNodePort,
-  type WorkflowNodePortPointerHandler,
   WorkflowNodeShell,
+  type WorkflowNodePortPointerHandler,
 } from "@/components/workflows/editor/nodes/shell/workflow-node-shell"
-import {
-  DEFAULT_PROMPT_NODE_CONTENT,
-  WORKFLOW_NODE_DEFAULTS,
-} from "@/components/workflows/editor/model/constants/node-defaults"
-import { getRequiredWorkflowNodePort } from "@/components/workflows/editor/nodes/registry/workflow-node-registry"
 import type { WorkflowExecutionStatus } from "@/components/workflows/shared/types/workflow-runtime"
-import { Button } from "@loom/ui/components/button"
 
 type WorkflowPromptNodeProps = {
   nodeId: string
   title?: string
   content?: string
+  outputPorts?: WorkflowNodePortData[]
+  addInputLabel?: string
+  showAddInputAction?: boolean
   isSelected?: boolean
   executionStatus?: WorkflowExecutionStatus
   onPortPointerDown?: WorkflowNodePortPointerHandler
+  onAddVariableClick?: () => void
+  onContentChange?: (value: string) => void
+  onContentCommit?: () => void
 }
 
 export function WorkflowPromptNode({
   nodeId,
-  title = WORKFLOW_NODE_DEFAULTS.prompt.title,
-  content = DEFAULT_PROMPT_NODE_CONTENT,
+  title,
+  content,
+  outputPorts,
+  addInputLabel,
+  showAddInputAction,
   isSelected = false,
   executionStatus,
   onPortPointerDown,
+  onAddVariableClick,
+  onContentChange,
+  onContentCommit,
 }: WorkflowPromptNodeProps) {
-  const port = getRequiredWorkflowNodePort("prompt", "output")
+  const isRunning = executionStatus === "running"
+  const promptDefinition = React.useMemo(() => getPromptDefinition(), [])
+  const defaultOutputPorts = React.useMemo(
+    () => promptDefinition.createData().outputPorts ?? [],
+    [promptDefinition]
+  )
+  const resolvedOutputPorts = outputPorts ?? defaultOutputPorts
+  const rendererProps = React.useMemo(
+    () => ({
+      nodeId,
+      prompt: promptDefinition,
+      title,
+      content,
+      outputPorts: resolvedOutputPorts ?? [],
+      addInputLabel,
+      showAddInputAction,
+      isSelected,
+      executionStatus,
+      isRunning,
+      onAddVariableClick,
+      onContentChange,
+      onContentCommit,
+    }),
+    [
+      addInputLabel,
+      content,
+      executionStatus,
+      isRunning,
+      isSelected,
+      nodeId,
+      onAddVariableClick,
+      onContentChange,
+      onContentCommit,
+      promptDefinition,
+      resolvedOutputPorts,
+      showAddInputAction,
+      title,
+    ]
+  )
+  const customFooter = promptDefinition.renderer.renderFooter?.(rendererProps)
 
   return (
     <WorkflowNodeShell
+      widthClassName={promptDefinition.renderer.width}
       isSelected={isSelected}
       executionStatus={executionStatus}
+      className="gap-4"
     >
-      <WorkflowNodeHeader title={title} />
+      <WorkflowNodeHeader title={title ?? promptDefinition.label} />
 
-      <WorkflowNodeBody className="flex flex-col items-start gap-4">
-        {/* 当前 prompt 节点主体就是一段可扩展的提示词内容。 */}
-        <div className="rounded-[14px] border border-white/6 bg-white/8 p-5">
-          <p className="text-[14px] leading-7 text-white/85">{content}</p>
-        </div>
-
-        <Button
-          type="button"
-          variant="ghost"
-          size="sm"
-          className="rounded-sm text-sm font-medium text-white/70 shadow-none hover:bg-white/6 hover:text-white"
-        >
-          + Add variable
-        </Button>
+      <WorkflowNodeBody className="w-full">
+        {promptDefinition.renderer.renderBody(rendererProps)}
       </WorkflowNodeBody>
 
-      <WorkflowNodePort
-        nodeId={nodeId}
-        portKey={port.key}
-        side={port.side}
-        label={title || port.label}
-        labelVisibility={port.labelVisibility}
-        portToneClassName={port.portToneClassName}
-        labelToneClassName={port.labelToneClassName}
-        onPortPointerDown={onPortPointerDown}
-      />
+      {customFooter ?? null}
+
+      {resolvedOutputPorts?.map((port, index) => (
+        <WorkflowNodePort
+          key={port.key}
+          nodeId={nodeId}
+          portKey={port.key}
+          side="right"
+          label={port.label}
+          labelVisibility={port.labelVisibility ?? "always"}
+          portToneClassName={port.portToneClassName}
+          labelToneClassName={port.labelToneClassName}
+          style={{ top: `${getPromptPortOffset(index)}px` }}
+          onPortPointerDown={onPortPointerDown}
+        />
+      ))}
     </WorkflowNodeShell>
   )
 }

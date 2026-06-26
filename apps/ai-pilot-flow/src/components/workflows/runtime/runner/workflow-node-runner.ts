@@ -1,4 +1,9 @@
 import {
+  getPromptDefinition,
+  getPromptRuntimeOutputPorts,
+  normalizePromptRuntimeResult,
+} from "@/components/workflows/editor/model/constants/prompt-definitions"
+import {
   getToolDefinition,
   getToolRuntimeOutputPorts,
   normalizeToolRuntimeResult,
@@ -136,22 +141,21 @@ function createBuiltInWorkflowNodeHandlers(): Record<
 > {
   return {
     prompt({ node, graph, context }) {
-      const inputs = getWorkflowNodeInputs(node, graph, context)
-      const output = {
-        kind: "prompt",
-        nodeId: node.id,
-        title: node.data?.title ?? "Prompt",
-        content: node.data?.content ?? "",
-        inputCount: inputs.upstreamOutputs.length,
-        inputs: inputs.upstreamOutputs,
-      }
+      const outputPorts = getPromptRuntimeOutputPorts(node)
+      const definition = getPromptDefinition()
+      const result = definition.runtime?.run({
+        node,
+        graph,
+        context,
+        outputPorts,
+      })
 
-      return {
-        output,
-        outputs: createWorkflowNodeOutput(output, {
-          output,
-        }),
-      }
+      return normalizePromptRuntimeResult(result, {
+        node,
+        graph,
+        context,
+        outputPorts,
+      })
     },
     file({ node }) {
       const output = {

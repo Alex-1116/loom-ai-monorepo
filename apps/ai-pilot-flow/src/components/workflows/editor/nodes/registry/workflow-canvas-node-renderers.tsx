@@ -22,6 +22,11 @@ type WorkflowCanvasNodeRendererParams = {
   executionStatus?: WorkflowExecutionStatus
   onPortPointerDown?: WorkflowNodePortPointerHandler
   onRunPreview: () => void | Promise<void>
+  onPatchNode?: (
+    nodeId: string,
+    patch: Partial<NonNullable<WorkflowCanvasNode["data"]>>
+  ) => void
+  onCommitNodeChanges?: () => void
 }
 
 type WorkflowCanvasNodeRenderer = (
@@ -65,14 +70,30 @@ const WORKFLOW_CANVAS_NODE_RENDERERS: Record<
   WorkflowCanvasNode["type"],
   WorkflowCanvasNodeRenderer
 > = {
-  prompt: ({ node, isSelected, executionStatus, onPortPointerDown }) => (
+  prompt: ({
+    node,
+    isSelected,
+    executionStatus,
+    onPortPointerDown,
+    onPatchNode,
+    onCommitNodeChanges,
+  }) => (
     <WorkflowPromptNode
       nodeId={node.id}
       isSelected={isSelected}
       executionStatus={executionStatus}
       title={node.data?.title}
       content={node.data?.content}
+      outputPorts={node.data?.outputPorts}
+      addInputLabel={node.data?.addInputLabel}
+      showAddInputAction={node.data?.showAddInputAction}
       onPortPointerDown={onPortPointerDown}
+      onContentChange={(value) => {
+        onPatchNode?.(node.id, {
+          content: value,
+        })
+      }}
+      onContentCommit={onCommitNodeChanges}
     />
   ),
   export: ({ node, isSelected, executionStatus, onPortPointerDown }) => (
