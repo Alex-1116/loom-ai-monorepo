@@ -108,7 +108,7 @@ export function WorkflowPromptNode({
           portKey={port.key}
           side="right"
           label={port.label}
-          labelVisibility={port.labelVisibility ?? "always"}
+          labelVisibility={port.labelVisibility ?? "hover"}
           portToneClassName={port.portToneClassName}
           labelToneClassName={port.labelToneClassName}
           style={{ top: `${getPromptPortOffset(index)}px` }}

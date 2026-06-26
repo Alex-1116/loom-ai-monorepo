@@ -116,7 +116,7 @@ const PROMPT_OUTPUT_PORT: WorkflowNodePortData = {
   key: "prompt",
   label: "Prompt",
   side: "right",
-  labelVisibility: "always",
+  labelVisibility: "hover",
   portToneClassName: "border-[#d78cff] bg-[#1c1d26]",
   labelToneClassName: "text-[#d78cff]",
 }
