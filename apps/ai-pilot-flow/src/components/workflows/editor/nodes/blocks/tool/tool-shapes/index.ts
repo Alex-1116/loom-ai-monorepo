@@ -13,6 +13,10 @@ export {
 export { renderExtractVideoFrameBody } from "./extract-video-frame-shape"
 export { renderInvertBody } from "./invert-shape"
 export { renderLevelsBody, renderLevelsFooter } from "./levels-shape"
+export {
+  renderMaskExtractorBody,
+  renderMaskExtractorFooter,
+} from "./mask-extractor-shape"
 export { renderPainterBody, renderPainterTitle } from "./painter-shape"
 export { renderResizeBody } from "./resize-shape"
 export {

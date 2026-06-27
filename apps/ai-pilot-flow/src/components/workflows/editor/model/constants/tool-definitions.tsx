@@ -31,6 +31,8 @@ import {
   renderPainterBody,
   renderPainterTitle,
   renderResizeBody,
+  renderMaskExtractorBody,
+  renderMaskExtractorFooter,
   renderVideoConcatenatorBody,
   renderVideoConcatenatorTitle,
   renderVideoToGifBody,
@@ -737,10 +739,20 @@ export const TOOL_DEFINITIONS: readonly ToolDefinition[] = [
   createStandardToolDefinition({
     key: "mask-extractor",
     group: "matte",
-    label: "Mask Extractor",
+    label: "Masks Extractor",
     category: "Matte",
-    inputPorts: [IMAGE_INPUT_PORT],
-    outputPorts: [MASK_OUTPUT_PORT],
+    inputPorts: [{ ...IMAGE_INPUT_PORT, label: "Image" }],
+    outputPorts: [
+      {
+        ...IMAGE_OUTPUT_PORT,
+        key: "image-with-alpha",
+        label: "Image With Alpha",
+      },
+      { ...MASK_OUTPUT_PORT, label: "Mask" },
+    ],
+    renderBody: renderMaskExtractorBody,
+    renderFooter: renderMaskExtractorFooter,
+    showRunAction: false,
   }),
   createStandardToolDefinition({
     key: "mask-by-text",
