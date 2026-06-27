@@ -170,16 +170,6 @@ const menuItems: readonly MenuItem[] = [
       nodeType: item.type,
     })),
   {
-    id: "runway-gen-4-5",
-    label: "Runway Gen-4.5",
-    nodeType: "image-model",
-    nodeData: createImageModelNodeData({
-      title: "Runway Gen-4.5",
-      modelKey: "runway-gen-4-5",
-      mode: "generate-from-text",
-    }),
-  },
-  {
     id: "saved",
     label: "Saved",
     children: [],
