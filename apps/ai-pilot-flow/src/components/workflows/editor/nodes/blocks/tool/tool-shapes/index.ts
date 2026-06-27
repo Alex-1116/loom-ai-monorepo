@@ -16,6 +16,10 @@ export { renderLevelsBody, renderLevelsFooter } from "./levels-shape"
 export { renderPainterBody, renderPainterTitle } from "./painter-shape"
 export { renderResizeBody } from "./resize-shape"
 export {
+  renderVideoConcatenatorBody,
+  renderVideoConcatenatorTitle,
+} from "./video-concatenator-shape"
+export {
   renderRotateAndFlipBody,
   renderRotateAndFlipFooter,
 } from "./rotate-and-flip-shape"

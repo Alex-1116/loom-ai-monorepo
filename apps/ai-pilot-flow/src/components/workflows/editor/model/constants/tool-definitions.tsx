@@ -31,6 +31,8 @@ import {
   renderPainterBody,
   renderPainterTitle,
   renderResizeBody,
+  renderVideoConcatenatorBody,
+  renderVideoConcatenatorTitle,
   renderRotateAndFlipBody,
   renderRotateAndFlipFooter,
 } from "@/components/workflows/editor/nodes/blocks/tool/tool-shapes"
@@ -674,10 +676,33 @@ export const TOOL_DEFINITIONS: readonly ToolDefinition[] = [
     label: "Video Concatenator",
     category: "Editing",
     searchableText: "merge combine video",
-    inputPorts: [VIDEO_INPUT_PORT, VIDEO_INPUT_PORT_2],
-    outputPorts: [VIDEO_OUTPUT_PORT],
-    addInputLabel: "Add video input",
+    inputPorts: [
+      {
+        ...VIDEO_INPUT_PORT,
+        label: "Video 1",
+        portToneClassName: "border-[#f19a9a] bg-[#1c1d26]",
+        labelToneClassName: "text-[#f19a9a]",
+      },
+      {
+        ...VIDEO_INPUT_PORT_2,
+        label: "Video 2",
+        portToneClassName: "border-[#f19a9a] bg-[#1c1d26]",
+        labelToneClassName: "text-[#f19a9a]",
+      },
+    ],
+    outputPorts: [
+      {
+        ...VIDEO_OUTPUT_PORT,
+        label: "Video",
+        portToneClassName: "border-[#72e6cf] bg-[#1c1d26]",
+        labelToneClassName: "text-[#72e6cf]",
+      },
+    ],
+    addInputLabel: "Add another video input",
+    runLabel: "Run Model",
     showAddInputAction: true,
+    renderTitle: renderVideoConcatenatorTitle,
+    renderBody: renderVideoConcatenatorBody,
   }),
   createStandardToolDefinition({
     key: "video-to-gif",
