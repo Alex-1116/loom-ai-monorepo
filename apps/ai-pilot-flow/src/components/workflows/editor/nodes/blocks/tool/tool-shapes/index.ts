@@ -9,6 +9,7 @@ export {
   renderColorCorrectionBody,
   renderColorCorrectionFooter,
 } from "./color-correction-shape"
+export { renderInvertBody } from "./invert-shape"
 export { renderLevelsBody, renderLevelsFooter } from "./levels-shape"
 export { renderPainterBody, renderPainterTitle } from "./painter-shape"
 export { renderResizeBody } from "./resize-shape"
