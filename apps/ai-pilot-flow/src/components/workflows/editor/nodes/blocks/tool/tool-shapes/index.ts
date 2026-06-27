@@ -42,6 +42,12 @@ export { renderPromptEnhancerBody } from "./prompt-enhancer-shape"
 export { renderPromptBody, renderPromptFooter } from "./prompt-shape"
 export { renderResizeBody } from "./resize-shape"
 export {
+  renderTextIteratorBody,
+  renderTextIteratorFooter,
+  renderTextIteratorHeaderActions,
+  renderTextIteratorTitle,
+} from "./text-iterator-shape"
+export {
   renderVideoConcatenatorBody,
   renderVideoConcatenatorTitle,
 } from "./video-concatenator-shape"

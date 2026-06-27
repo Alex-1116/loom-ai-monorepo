@@ -46,6 +46,10 @@ import {
   renderPromptBody,
   renderPromptFooter,
   renderResizeBody,
+  renderTextIteratorBody,
+  renderTextIteratorFooter,
+  renderTextIteratorHeaderActions,
+  renderTextIteratorTitle,
   renderMaskExtractorBody,
   renderMaskExtractorFooter,
   renderVideoConcatenatorBody,
@@ -119,6 +123,7 @@ export type ToolDefinition = {
   renderer: {
     width?: string
     renderTitle?: (props: ToolRendererProps) => React.ReactNode
+    renderHeaderActions?: (props: ToolRendererProps) => React.ReactNode
     renderBody: (props: ToolRendererProps) => React.ReactNode
     renderFooter?: (props: ToolRendererProps) => React.ReactNode
     getPortOffset?: (index: number) => number
@@ -485,6 +490,7 @@ function createStandardToolDefinition({
   width = DEFAULT_TOOL_WIDTH,
   getPortOffset = getNodePortOffset,
   renderTitle,
+  renderHeaderActions,
   renderBody,
   renderFooter,
 }: {
@@ -503,6 +509,7 @@ function createStandardToolDefinition({
   width?: string
   getPortOffset?: (index: number) => number
   renderTitle?: (props: ToolRendererProps) => React.ReactNode
+  renderHeaderActions?: (props: ToolRendererProps) => React.ReactNode
   renderBody?: (props: ToolRendererProps) => React.ReactNode
   renderFooter?: (props: ToolRendererProps) => React.ReactNode
 }): ToolDefinition {
@@ -529,6 +536,7 @@ function createStandardToolDefinition({
     renderer: {
       width,
       renderTitle,
+      renderHeaderActions,
       renderBody: renderBody ?? createDefaultToolRenderer(category),
       renderFooter,
       getPortOffset,
@@ -957,8 +965,23 @@ export const TOOL_DEFINITIONS: readonly ToolDefinition[] = [
     group: "iterators",
     label: "Text Iterator",
     category: "Iterators",
-    inputPorts: [LIST_INPUT_PORT],
-    outputPorts: [TEXT_OUTPUT_PORT, INDEX_OUTPUT_PORT],
+    inputPorts: [
+      {
+        ...LIST_INPUT_PORT,
+        key: "text-or-array",
+        label: "Text Or Array",
+        portToneClassName: "border-white/70 bg-[#1c1d26]",
+        labelToneClassName: "text-white/92",
+      },
+    ],
+    outputPorts: [{ ...TEXT_OUTPUT_PORT, key: "text", label: "Text" }],
+    showAddInputAction: false,
+    showRunAction: false,
+    getPortOffset: () => 61,
+    renderTitle: renderTextIteratorTitle,
+    renderHeaderActions: renderTextIteratorHeaderActions,
+    renderBody: renderTextIteratorBody,
+    renderFooter: renderTextIteratorFooter,
   }),
   createStandardToolDefinition({
     key: "image-iterator",
