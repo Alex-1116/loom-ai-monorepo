@@ -1,5 +1,9 @@
 export { renderAnyLlmBody } from "./any-llm-shape"
 export {
+  renderAudioDescriberBody,
+  renderAudioDescriberTitle,
+} from "./audio-describer-shape"
+export {
   renderCompositorBody,
   renderCompositorFooter,
 } from "./compositor-shape"

@@ -16,6 +16,8 @@ import type {
 } from "@/components/workflows/shared/types/workflow-runtime"
 import { getNodePortOffset } from "@/components/workflows/editor/model/constants/workflow-node-port-offsets"
 import {
+  renderAudioDescriberBody,
+  renderAudioDescriberTitle,
   renderAnyLlmBody,
   renderBlurBody,
   renderChannelsBody,
@@ -942,8 +944,13 @@ export const TOOL_DEFINITIONS: readonly ToolDefinition[] = [
     label: "Audio Describer",
     category: "Text tools",
     searchableText: "transcribe audio speech text",
-    inputPorts: [AUDIO_INPUT_PORT],
-    outputPorts: [TEXT_OUTPUT_PORT],
+    inputPorts: [{ ...AUDIO_INPUT_PORT, key: "audio", label: "Audio*" }],
+    outputPorts: [{ ...TEXT_OUTPUT_PORT, key: "text", label: "Text" }],
+    runLabel: "Run Model",
+    showAddInputAction: false,
+    showRunAction: true,
+    renderTitle: renderAudioDescriberTitle,
+    renderBody: renderAudioDescriberBody,
   }),
   createStandardToolDefinition({
     key: "text-iterator",
