@@ -33,39 +33,6 @@ type WorkflowCanvasNodeRenderer = (
   params: WorkflowCanvasNodeRendererParams
 ) => React.ReactNode
 
-function renderModelNode(
-  Component:
-    | typeof WorkflowImageModelNode
-    | typeof WorkflowVideoModelNode
-    | typeof WorkflowThreeDModelNode,
-  {
-    node,
-    isSelected,
-    executionStatus,
-    onPortPointerDown,
-    onRunPreview,
-  }: WorkflowCanvasNodeRendererParams
-) {
-  return (
-    <Component
-      nodeId={node.id}
-      isSelected={isSelected}
-      executionStatus={executionStatus}
-      title={node.data?.title}
-      inputPorts={node.data?.inputPorts}
-      outputPorts={node.data?.outputPorts}
-      addInputLabel={node.data?.addInputLabel}
-      runLabel={node.data?.runLabel}
-      showAddInputAction={node.data?.showAddInputAction}
-      showRunAction={node.data?.showRunAction}
-      onPortPointerDown={onPortPointerDown}
-      onRunClick={() => {
-        void onRunPreview()
-      }}
-    />
-  )
-}
-
 const WORKFLOW_CANVAS_NODE_RENDERERS: Record<
   WorkflowCanvasNode["type"],
   WorkflowCanvasNodeRenderer
@@ -168,7 +135,31 @@ const WORKFLOW_CANVAS_NODE_RENDERERS: Record<
       }}
     />
   ),
-  "3d-model": (params) => renderModelNode(WorkflowThreeDModelNode, params),
+  "3d-model": ({
+    node,
+    isSelected,
+    executionStatus,
+    onPortPointerDown,
+    onRunPreview,
+  }) => (
+    <WorkflowThreeDModelNode
+      nodeId={node.id}
+      isSelected={isSelected}
+      executionStatus={executionStatus}
+      title={node.data?.title}
+      modelKey={node.data?.modelKey}
+      inputPorts={node.data?.inputPorts}
+      outputPorts={node.data?.outputPorts}
+      addInputLabel={node.data?.addInputLabel}
+      runLabel={node.data?.runLabel}
+      showAddInputAction={node.data?.showAddInputAction}
+      showRunAction={node.data?.showRunAction}
+      onPortPointerDown={onPortPointerDown}
+      onRunClick={() => {
+        void onRunPreview()
+      }}
+    />
+  ),
   tool: ({
     node,
     isSelected,

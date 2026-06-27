@@ -1,3 +1,4 @@
+import { getThreeDModelDefinition } from "@/components/workflows/editor/model/constants/3d-model-definitions"
 import { getExportDefinition } from "@/components/workflows/editor/model/constants/export-definitions"
 import { getFileDefinition } from "@/components/workflows/editor/model/constants/file-definitions"
 import { getImageModelDefinition } from "@/components/workflows/editor/model/constants/image-model-definitions"
@@ -173,6 +174,18 @@ export function getWorkflowNodeSchemaForNode(
       return {
         type: "video-model",
         fields: videoModelSchema.fields,
+      }
+    }
+  }
+
+  if (node.type === "3d-model") {
+    const threeDModelSchema = getThreeDModelDefinition(
+      node.data?.modelKey
+    )?.schema
+    if (threeDModelSchema) {
+      return {
+        type: "3d-model",
+        fields: threeDModelSchema.fields,
       }
     }
   }

@@ -1,4 +1,9 @@
 import {
+  getThreeDModelDefinition,
+  getThreeDModelRuntimeOutputPorts,
+  normalizeThreeDModelRuntimeResult,
+} from "@/components/workflows/editor/model/constants/3d-model-definitions"
+import {
   getExportDefinition,
   getExportRuntimeInputPorts,
   normalizeExportRuntimeResult,
@@ -50,7 +55,6 @@ import type {
   SharedWorkflowNode,
   SharedWorkflowNodeType,
   WorkflowRuntimeNodeOutput,
-  WorkflowRuntimePortOutputs,
   WorkflowRuntimeValue,
 } from "@/components/workflows/shared/types/workflow-runtime"
 
@@ -139,35 +143,6 @@ function getWorkflowNodeInputs(
     inputsByTargetPort,
     connections,
   }
-}
-
-function createWorkflowNodeOutput(
-  defaultOutput?: WorkflowRuntimeValue,
-  portOutputs?: WorkflowRuntimePortOutputs
-): WorkflowRuntimeNodeOutput {
-  return {
-    default: defaultOutput,
-    ports:
-      portOutputs && Object.keys(portOutputs).length > 0
-        ? portOutputs
-        : undefined,
-  }
-}
-
-function getGeneratedModelOutputPorts(node: SharedWorkflowNode) {
-  const outputPorts = node.data?.outputPorts?.filter(
-    (port) => port.side === "right"
-  )
-
-  return outputPorts && outputPorts.length > 0
-    ? outputPorts
-    : [
-        {
-          key: "result",
-          label: "Result",
-          side: "right" as const,
-        },
-      ]
 }
 
 function createBuiltInWorkflowNodeHandlers(): Record<
@@ -299,35 +274,27 @@ function createBuiltInWorkflowNodeHandlers(): Record<
     },
     "3d-model"({ node, graph, context }) {
       const inputs = getWorkflowNodeInputs(node, graph, context)
-      const outputPorts = getGeneratedModelOutputPorts(node)
-      const output = {
-        kind: "3d-model",
-        nodeId: node.id,
-        title: node.data?.title ?? "3D Model",
-        modelKey: node.data?.modelKey ?? "3d-model",
-        inputs: inputs.inputsByTargetPort,
-        connections: inputs.connections,
-        result: `mock://3d-model/${node.id}`,
-      }
-      const portOutputs = outputPorts.reduce<WorkflowRuntimePortOutputs>(
-        (result, port) => {
-          result[port.key] = {
-            kind: "3d-model-result",
-            nodeId: node.id,
-            modelKey: node.data?.modelKey ?? "3d-model",
-            portKey: port.key,
-            value: output.result,
-            inputs: inputs.inputsByTargetPort,
-          }
-          return result
-        },
-        {}
-      )
+      const outputPorts = getThreeDModelRuntimeOutputPorts(node)
+      const definition = getThreeDModelDefinition(node.data?.modelKey)
+      const result = definition?.runtime?.run({
+        node,
+        graph,
+        context,
+        inputs,
+        outputPorts,
+      })
 
-      return {
-        output,
-        outputs: createWorkflowNodeOutput(output, portOutputs),
-      }
+      return definition
+        ? normalizeThreeDModelRuntimeResult(result, {
+            node,
+            graph,
+            context,
+            inputs,
+            outputPorts,
+          })
+        : {
+            output: node.data ?? null,
+          }
     },
     tool({ node, graph, context }) {
       const inputs = getWorkflowNodeInputs(node, graph, context)

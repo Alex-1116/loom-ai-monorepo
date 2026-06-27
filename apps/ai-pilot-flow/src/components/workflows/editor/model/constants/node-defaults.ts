@@ -1,3 +1,4 @@
+import { getDefaultThreeDModelDefinition } from "@/components/workflows/editor/model/constants/3d-model-definitions"
 import { getExportDefinition } from "@/components/workflows/editor/model/constants/export-definitions"
 import { getFileDefinition } from "@/components/workflows/editor/model/constants/file-definitions"
 import { getDefaultImageModelDefinition } from "@/components/workflows/editor/model/constants/image-model-definitions"
@@ -22,6 +23,7 @@ const DEFAULT_EXPORT_DEFINITION = getExportDefinition()
 const DEFAULT_PREVIEW_DEFINITION = getPreviewDefinition()
 const DEFAULT_IMAGE_MODEL_DEFINITION = getDefaultImageModelDefinition()
 const DEFAULT_VIDEO_MODEL_DEFINITION = getDefaultVideoModelDefinition()
+const DEFAULT_THREE_D_MODEL_DEFINITION = getDefaultThreeDModelDefinition()
 const DEFAULT_IMPORT_LORA_DEFINITION = getImportLoraDefinition()
 const DEFAULT_IMPORT_MULTIPLE_LORAS_DEFINITION =
   getImportMultipleLorasDefinition()
@@ -57,42 +59,15 @@ export const WORKFLOW_NODE_DEFAULTS: Record<
         showAddInputAction: true,
         showRunAction: true,
       },
-  "3d-model": {
-    title: "Meshy V6",
-    modelKey: "meshy-v6",
-    inputPorts: [
-      {
-        key: "prompt",
-        label: "Prompt *",
-        side: "left",
-        labelVisibility: "hover",
-        portToneClassName: "border-[#d78cff] bg-[#1c1d26]",
-        labelToneClassName: "text-[#d78cff]",
+  "3d-model": DEFAULT_THREE_D_MODEL_DEFINITION
+    ? DEFAULT_THREE_D_MODEL_DEFINITION.createData()
+    : {
+        title: "Meshy V6",
+        modelKey: "meshy-v6",
+        runLabel: "Run Model",
+        showAddInputAction: true,
+        showRunAction: true,
       },
-      {
-        key: "image-1",
-        label: "Image 1",
-        side: "left",
-        labelVisibility: "hover",
-        portToneClassName: "border-[#6fe7d1] bg-[#1c1d26]",
-        labelToneClassName: "text-[#6fe7d1]",
-      },
-    ],
-    outputPorts: [
-      {
-        key: "result",
-        label: "Result",
-        side: "right",
-        labelVisibility: "hover",
-        portToneClassName: "border-[#6fe7d1] bg-[#1c1d26]",
-        labelToneClassName: "text-[#6fe7d1]",
-      },
-    ],
-    addInputLabel: "Add image input",
-    runLabel: "Run Model",
-    showAddInputAction: true,
-    showRunAction: true,
-  },
   tool: DEFAULT_TOOL_DEFINITION
     ? DEFAULT_TOOL_DEFINITION.createData()
     : {

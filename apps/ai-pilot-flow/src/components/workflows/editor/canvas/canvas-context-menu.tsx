@@ -11,7 +11,7 @@ import { useCanvasBlockGestures } from "@/components/workflows/editor/interactio
 import {
   THREE_D_MODEL_MENU_CATEGORIES,
   createThreeDModelNodeData,
-} from "@/components/workflows/editor/model/constants/3d-model-presets"
+} from "@/components/workflows/editor/model/constants/3d-model-definitions"
 import {
   IMAGE_MODEL_MENU_CATEGORIES,
   createImageModelNodeData,
