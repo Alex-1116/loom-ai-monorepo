@@ -53,6 +53,7 @@ import {
   renderPromptFooter,
   renderPreviewBody,
   renderResizeBody,
+  renderRouterTitle,
   renderTextIteratorBody,
   renderTextIteratorFooter,
   renderTextIteratorHeaderActions,
@@ -353,24 +354,6 @@ const INDEX_OUTPUT_PORT: WorkflowNodePortData = {
   labelVisibility: "hover",
   portToneClassName: "border-[#c4b5fd] bg-[#1c1d26]",
   labelToneClassName: "text-[#c4b5fd]",
-}
-
-const ROUTE_TRUE_OUTPUT_PORT: WorkflowNodePortData = {
-  key: "route-a",
-  label: "Route A",
-  side: "right",
-  labelVisibility: "hover",
-  portToneClassName: "border-[#6fe7d1] bg-[#1c1d26]",
-  labelToneClassName: "text-[#6fe7d1]",
-}
-
-const ROUTE_FALSE_OUTPUT_PORT: WorkflowNodePortData = {
-  key: "route-b",
-  label: "Route B",
-  side: "right",
-  labelVisibility: "hover",
-  portToneClassName: "border-[#f5c56b] bg-[#1c1d26]",
-  labelToneClassName: "text-[#f5c56b]",
 }
 
 function clonePort(port: WorkflowNodePortData): WorkflowNodePortData {
@@ -1148,7 +1131,22 @@ export const TOOL_DEFINITIONS: readonly ToolDefinition[] = [
     category: "Helpers",
     searchableText: "branch switch route",
     inputPorts: [VALUE_INPUT_PORT],
-    outputPorts: [ROUTE_TRUE_OUTPUT_PORT, ROUTE_FALSE_OUTPUT_PORT],
+    outputPorts: [
+      {
+        ...VALUE_OUTPUT_PORT,
+        key: "output",
+        label: "Output",
+        portToneClassName: "border-white/80 bg-[#1c1d26]",
+        labelToneClassName: "text-white/92",
+      },
+    ],
+    showAddInputAction: false,
+    showRunAction: false,
+    getPortOffset: () => 33,
+    renderTitle: renderRouterTitle,
+    renderBody: () => null,
+    renderFooter: () => <></>,
+    width: "w-[300px]",
   }),
   createStandardToolDefinition({
     key: "output",

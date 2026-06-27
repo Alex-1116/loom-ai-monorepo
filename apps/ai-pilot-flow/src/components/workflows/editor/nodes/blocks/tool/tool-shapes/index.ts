@@ -50,6 +50,7 @@ export { renderPromptEnhancerBody } from "./prompt-enhancer-shape"
 export { renderPromptBody, renderPromptFooter } from "./prompt-shape"
 export { renderPreviewBody } from "./preview-shape"
 export { renderResizeBody } from "./resize-shape"
+export { renderRouterTitle } from "./router-shape"
 export {
   renderTextIteratorBody,
   renderTextIteratorFooter,
