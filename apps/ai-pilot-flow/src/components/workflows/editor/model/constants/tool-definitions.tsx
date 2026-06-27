@@ -16,6 +16,7 @@ import type {
 } from "@/components/workflows/shared/types/workflow-runtime"
 import { getNodePortOffset } from "@/components/workflows/editor/model/constants/workflow-node-port-offsets"
 import {
+  renderBlurBody,
   renderCompositorBody,
   renderCompositorFooter,
   renderColorCorrectionBody,
@@ -624,8 +625,11 @@ export const TOOL_DEFINITIONS: readonly ToolDefinition[] = [
     group: "editing",
     label: "Blur",
     category: "Editing",
-    inputPorts: [IMAGE_INPUT_PORT],
-    outputPorts: [IMAGE_OUTPUT_PORT],
+    inputPorts: [{ ...IMAGE_INPUT_PORT, label: "Input*" }],
+    outputPorts: [{ ...IMAGE_OUTPUT_PORT, label: "Output" }],
+    renderBody: renderBlurBody,
+    renderFooter: () => <></>,
+    showRunAction: false,
   }),
   createStandardToolDefinition({
     key: "invert",

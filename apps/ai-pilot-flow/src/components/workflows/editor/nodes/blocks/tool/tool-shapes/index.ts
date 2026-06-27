@@ -2,6 +2,7 @@ export {
   renderCompositorBody,
   renderCompositorFooter,
 } from "./compositor-shape"
+export { renderBlurBody } from "./blur-shape"
 export { renderCropBody } from "./crop-shape"
 export { renderColorPaletteBody } from "./color-palette-shape"
 export {
