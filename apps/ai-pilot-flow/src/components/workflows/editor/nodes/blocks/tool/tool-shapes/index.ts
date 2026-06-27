@@ -11,6 +11,10 @@ export {
   renderColorCorrectionFooter,
 } from "./color-correction-shape"
 export { renderExtractVideoFrameBody } from "./extract-video-frame-shape"
+export {
+  renderExtractVideoMatteBody,
+  renderExtractVideoMatteTitle,
+} from "./extract-video-matte-shape"
 export { renderInvertBody } from "./invert-shape"
 export { renderLevelsBody, renderLevelsFooter } from "./levels-shape"
 export {
