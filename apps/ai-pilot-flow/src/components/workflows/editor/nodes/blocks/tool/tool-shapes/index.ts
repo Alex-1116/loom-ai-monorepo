@@ -3,6 +3,7 @@ export {
   renderCompositorFooter,
 } from "./compositor-shape"
 export { renderBlurBody } from "./blur-shape"
+export { renderChannelsBody } from "./channels-shape"
 export { renderCropBody } from "./crop-shape"
 export { renderColorPaletteBody } from "./color-palette-shape"
 export {
