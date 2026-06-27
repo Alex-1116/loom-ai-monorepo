@@ -16,6 +16,7 @@ import type {
 } from "@/components/workflows/shared/types/workflow-runtime"
 import { getNodePortOffset } from "@/components/workflows/editor/model/constants/workflow-node-port-offsets"
 import {
+  renderAnyLlmBody,
   renderBlurBody,
   renderChannelsBody,
   renderCompositorBody,
@@ -888,12 +889,20 @@ export const TOOL_DEFINITIONS: readonly ToolDefinition[] = [
   createStandardToolDefinition({
     key: "run-any-llm",
     group: "text-tools",
-    label: "Run Any LLM",
+    label: "Any LLM",
     category: "Text tools",
     searchableText: "llm chat text generation",
-    inputPorts: [PROMPT_INPUT_PORT],
-    outputPorts: [TEXT_OUTPUT_PORT],
-    runLabel: "Run LLM",
+    inputPorts: [
+      { ...PROMPT_INPUT_PORT, label: "Prompt*" },
+      { ...PROMPT_INPUT_PORT, key: "system-prompt", label: "System Prompt" },
+      { ...IMAGE_INPUT_PORT, key: "image-1", label: "Image 1" },
+    ],
+    outputPorts: [{ ...TEXT_OUTPUT_PORT, key: "text", label: "Text" }],
+    addInputLabel: "Add another image input",
+    runLabel: "Run Model",
+    showAddInputAction: true,
+    showRunAction: true,
+    renderBody: renderAnyLlmBody,
   }),
   createStandardToolDefinition({
     key: "image-describer",
