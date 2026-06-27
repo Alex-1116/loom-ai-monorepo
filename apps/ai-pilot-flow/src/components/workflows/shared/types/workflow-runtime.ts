@@ -7,7 +7,6 @@ export type SharedWorkflowPortRef = {
 }
 
 export type SharedWorkflowNodeType =
-  | "preview"
   | "import-lora"
   | "import-multiple-loras"
   | "image-model"

@@ -49,6 +49,7 @@ import {
   renderPromptEnhancerBody,
   renderPromptBody,
   renderPromptFooter,
+  renderPreviewBody,
   renderResizeBody,
   renderTextIteratorBody,
   renderTextIteratorFooter,
@@ -1077,8 +1078,19 @@ export const TOOL_DEFINITIONS: readonly ToolDefinition[] = [
     label: "Preview",
     category: "Helpers",
     searchableText: "view inspect preview",
-    inputPorts: [VALUE_INPUT_PORT],
+    inputPorts: [
+      {
+        ...VALUE_INPUT_PORT,
+        key: "file",
+        label: "File",
+        portToneClassName: "border-white/70 bg-[#1c1d26]",
+        labelToneClassName: "text-white/92",
+      },
+    ],
     showRunAction: false,
+    getPortOffset: getNodePortOffset,
+    renderBody: renderPreviewBody,
+    renderFooter: () => <></>,
   }),
   createStandardToolDefinition({
     key: "helper-import-lora",

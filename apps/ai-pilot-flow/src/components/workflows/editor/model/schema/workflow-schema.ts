@@ -2,7 +2,6 @@ import { getThreeDModelDefinition } from "@/components/workflows/editor/model/co
 import { getImageModelDefinition } from "@/components/workflows/editor/model/constants/image-model-definitions"
 import { getImportLoraDefinition } from "@/components/workflows/editor/model/constants/import-lora-definitions"
 import { getImportMultipleLorasDefinition } from "@/components/workflows/editor/model/constants/import-multiple-loras-definitions"
-import { getPreviewDefinition } from "@/components/workflows/editor/model/constants/preview-definitions"
 import { getToolDefinition } from "@/components/workflows/editor/model/constants/tool-definitions"
 import { getVideoModelDefinition } from "@/components/workflows/editor/model/constants/video-model-definitions"
 import type { WorkflowNodeType } from "@/components/workflows/editor/model/types/workflow-node"
@@ -17,8 +16,6 @@ import { importLoraNodeConfig } from "@/components/workflows/editor/nodes/blocks
 import { importLoraNodeSchema } from "@/components/workflows/editor/nodes/blocks/import-lora/import-lora-node.schema"
 import { importMultipleLorasNodeConfig } from "@/components/workflows/editor/nodes/blocks/import-multiple-loras/import-multiple-loras-node.config"
 import { importMultipleLorasNodeSchema } from "@/components/workflows/editor/nodes/blocks/import-multiple-loras/import-multiple-loras-node.schema"
-import { previewNodeConfig } from "@/components/workflows/editor/nodes/blocks/preview/preview-node.config"
-import { previewNodeSchema } from "@/components/workflows/editor/nodes/blocks/preview/preview-node.schema"
 import { toolNodeConfig } from "@/components/workflows/editor/nodes/blocks/tool/tool-node.config"
 import { toolNodeSchema } from "@/components/workflows/editor/nodes/blocks/tool/tool-node.schema"
 import type {
@@ -48,10 +45,6 @@ export const workflowSchema: WorkflowSchema = {
     {
       config: toolNodeConfig,
       schema: toolNodeSchema,
-    },
-    {
-      config: previewNodeConfig,
-      schema: previewNodeSchema,
     },
     {
       config: importLoraNodeConfig,
@@ -145,16 +138,6 @@ export function getWorkflowNodeSchemaForNode(
       return {
         type: "3d-model",
         fields: threeDModelSchema.fields,
-      }
-    }
-  }
-
-  if (node.type === "preview") {
-    const previewSchema = getPreviewDefinition().schema
-    if (previewSchema) {
-      return {
-        type: "preview",
-        fields: previewSchema.fields,
       }
     }
   }

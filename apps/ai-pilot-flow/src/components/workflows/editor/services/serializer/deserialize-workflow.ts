@@ -36,7 +36,6 @@ function isWorkflowNodeType(value: unknown): value is WorkflowNodeType {
     value === "video-model" ||
     value === "3d-model" ||
     value === "tool" ||
-    value === "preview" ||
     value === "import-lora" ||
     value === "import-multiple-loras"
   )

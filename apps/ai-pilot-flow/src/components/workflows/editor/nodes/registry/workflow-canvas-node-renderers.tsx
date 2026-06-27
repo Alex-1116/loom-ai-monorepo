@@ -6,7 +6,6 @@ import { WorkflowThreeDModelNode } from "@/components/workflows/editor/nodes/blo
 import { WorkflowImageModelNode } from "@/components/workflows/editor/nodes/blocks/image-model/workflow-image-model-node"
 import { WorkflowImportLoraNode } from "@/components/workflows/editor/nodes/blocks/import-lora/workflow-import-lora-node"
 import { WorkflowImportMultipleLorasNode } from "@/components/workflows/editor/nodes/blocks/import-multiple-loras/workflow-import-multiple-loras-node"
-import { WorkflowPreviewNode } from "@/components/workflows/editor/nodes/blocks/preview/workflow-preview-node"
 import { WorkflowToolNode } from "@/components/workflows/editor/nodes/blocks/tool/workflow-tool-node"
 import { WorkflowVideoModelNode } from "@/components/workflows/editor/nodes/blocks/video-model/workflow-video-model-node"
 import type { WorkflowCanvasNode } from "@/components/workflows/editor/model/types/workflow-node"
@@ -142,17 +141,6 @@ const WORKFLOW_CANVAS_NODE_RENDERERS: Record<
       onRunClick={() => {
         void onRunPreview()
       }}
-    />
-  ),
-  preview: ({ node, isSelected, executionStatus, onPortPointerDown }) => (
-    <WorkflowPreviewNode
-      nodeId={node.id}
-      isSelected={isSelected}
-      executionStatus={executionStatus}
-      title={node.data?.title}
-      inputPorts={node.data?.inputPorts}
-      inputLabel={node.data?.inputLabel}
-      onPortPointerDown={onPortPointerDown}
     />
   ),
   "import-lora": ({ node, isSelected, executionStatus, onPortPointerDown }) => (
