@@ -23,6 +23,8 @@ import {
   renderColorPaletteBody,
   renderLevelsBody,
   renderLevelsFooter,
+  renderPainterBody,
+  renderPainterTitle,
   renderRotateAndFlipBody,
   renderRotateAndFlipFooter,
 } from "@/components/workflows/editor/nodes/blocks/tool/tool-shapes"
@@ -82,6 +84,7 @@ export type ToolDefinition = {
   createData: () => WorkflowNodeData
   renderer: {
     width?: string
+    renderTitle?: (props: ToolRendererProps) => React.ReactNode
     renderBody: (props: ToolRendererProps) => React.ReactNode
     renderFooter?: (props: ToolRendererProps) => React.ReactNode
     getPortOffset?: (index: number) => number
@@ -447,6 +450,7 @@ function createStandardToolDefinition({
   schema = DEFAULT_TOOL_SCHEMA,
   width = DEFAULT_TOOL_WIDTH,
   getPortOffset = getNodePortOffset,
+  renderTitle,
   renderBody,
   renderFooter,
 }: {
@@ -464,6 +468,7 @@ function createStandardToolDefinition({
   schema?: ToolSchema
   width?: string
   getPortOffset?: (index: number) => number
+  renderTitle?: (props: ToolRendererProps) => React.ReactNode
   renderBody?: (props: ToolRendererProps) => React.ReactNode
   renderFooter?: (props: ToolRendererProps) => React.ReactNode
 }): ToolDefinition {
@@ -489,6 +494,7 @@ function createStandardToolDefinition({
     }),
     renderer: {
       width,
+      renderTitle,
       renderBody: renderBody ?? createDefaultToolRenderer(category),
       renderFooter,
       getPortOffset,
@@ -579,8 +585,15 @@ export const TOOL_DEFINITIONS: readonly ToolDefinition[] = [
     group: "editing",
     label: "Painter",
     category: "Editing",
-    inputPorts: [IMAGE_INPUT_PORT],
-    outputPorts: [IMAGE_OUTPUT_PORT],
+    inputPorts: [{ ...IMAGE_INPUT_PORT, label: "Image" }],
+    outputPorts: [
+      { ...RESULT_OUTPUT_PORT, label: "Result" },
+      { ...MASK_OUTPUT_PORT, label: "Mask" },
+    ],
+    getPortOffset: (index) => getNodePortOffset(index, { step: 72 }),
+    renderTitle: renderPainterTitle,
+    renderBody: renderPainterBody,
+    renderFooter: () => <></>,
   }),
   createStandardToolDefinition({
     key: "crop",

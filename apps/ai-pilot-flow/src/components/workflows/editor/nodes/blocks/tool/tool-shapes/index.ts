@@ -8,6 +8,7 @@ export {
   renderColorCorrectionFooter,
 } from "./color-correction-shape"
 export { renderLevelsBody, renderLevelsFooter } from "./levels-shape"
+export { renderPainterBody, renderPainterTitle } from "./painter-shape"
 export {
   renderRotateAndFlipBody,
   renderRotateAndFlipFooter,

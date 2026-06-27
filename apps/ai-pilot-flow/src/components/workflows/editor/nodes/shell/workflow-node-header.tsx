@@ -10,7 +10,10 @@ import {
   type NodeStatusBadgeProps,
 } from "@/components/workflows/editor/nodes/shared/node-status-badge"
 
-export type WorkflowNodeHeaderProps = React.HTMLAttributes<HTMLDivElement> & {
+export type WorkflowNodeHeaderProps = Omit<
+  React.HTMLAttributes<HTMLDivElement>,
+  "title"
+> & {
   title: React.ReactNode
   actions?: React.ReactNode
   showDefaultActions?: boolean

@@ -119,6 +119,8 @@ export function WorkflowToolNode({
   )
 
   const customFooter = toolDefinition?.renderer.renderFooter?.(rendererProps)
+  const headerTitle: React.ReactNode =
+    toolDefinition?.renderer.renderTitle?.(rendererProps) ?? title
 
   return (
     <WorkflowNodeShell
@@ -127,7 +129,7 @@ export function WorkflowToolNode({
       executionStatus={executionStatus}
       className="gap-4"
     >
-      <WorkflowNodeHeader title={title} />
+      <WorkflowNodeHeader title={headerTitle} />
 
       <WorkflowNodeBody className="w-full">
         {toolDefinition?.renderer.renderBody(rendererProps) ?? null}
