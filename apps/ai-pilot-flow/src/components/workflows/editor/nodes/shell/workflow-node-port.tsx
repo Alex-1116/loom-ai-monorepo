@@ -42,10 +42,10 @@ export function WorkflowNodePort({
     side === "right"
       ? align === "start"
         ? "right-0 top-6 translate-x-1/2"
-        : "top-1/2 -right-2.5 -translate-y-1/2"
+        : "top-1/2 -right-3.5 -translate-y-1/2"
       : align === "start"
         ? "left-0 top-6 -translate-x-1/2"
-        : "top-1/2 -left-2.5 -translate-y-1/2"
+        : "top-1/2 -left-3.5 -translate-y-1/2"
 
   const labelOffsetClassName =
     side === "right"
@@ -91,9 +91,13 @@ export function WorkflowNodePort({
       ) : null}
 
       <div
-        className={cn("size-5 rounded-full border-2", portToneClassName)}
+        className="flex size-7 items-center justify-center rounded-full bg-[#1c1d26]/96"
         data-workflow-port-dot="true"
-      />
+      >
+        <div
+          className={cn("size-3.5 rounded-full border-2", portToneClassName)}
+        />
+      </div>
 
       {side === "right" && label ? (
         <NodeHoverLabel
