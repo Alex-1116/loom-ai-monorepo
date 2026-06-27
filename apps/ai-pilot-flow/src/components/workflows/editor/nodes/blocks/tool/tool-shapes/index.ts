@@ -21,6 +21,7 @@ export {
   renderMaskByTextBody,
   renderMaskByTextTitle,
 } from "./mask-by-text-shape"
+export { renderMergeAlphaBody } from "./merge-alpha-shape"
 export {
   renderMatteGrowShrinkBody,
   renderMatteGrowShrinkTitle,
