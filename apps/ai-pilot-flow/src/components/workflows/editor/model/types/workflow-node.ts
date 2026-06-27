@@ -1,7 +1,6 @@
 import type { WorkflowPortRef } from "@/components/workflows/editor/model/types/workflow-edge"
 
 export type WorkflowNodeType =
-  | "prompt"
   | "file"
   | "preview"
   | "export"

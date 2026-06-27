@@ -32,7 +32,6 @@ function isRecord(value: unknown): value is Record<string, unknown> {
 
 function isWorkflowNodeType(value: unknown): value is WorkflowNodeType {
   return (
-    value === "prompt" ||
     value === "file" ||
     value === "image-model" ||
     value === "video-model" ||

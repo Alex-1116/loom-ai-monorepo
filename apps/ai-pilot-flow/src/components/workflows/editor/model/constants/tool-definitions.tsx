@@ -37,6 +37,8 @@ import {
   renderMatteGrowShrinkTitle,
   renderPainterBody,
   renderPainterTitle,
+  renderPromptBody,
+  renderPromptFooter,
   renderResizeBody,
   renderMaskExtractorBody,
   renderMaskExtractorFooter,
@@ -58,6 +60,7 @@ export type ToolRendererProps = {
   nodeId: string
   tool: ToolDefinition
   title?: string
+  content?: string
   toolCategory?: string
   inputPorts: WorkflowNodePortData[]
   outputPorts: WorkflowNodePortData[]
@@ -69,6 +72,8 @@ export type ToolRendererProps = {
   executionStatus?: WorkflowExecutionStatus
   isRunning: boolean
   onAddInputClick?: () => void
+  onContentChange?: (value: string) => void
+  onContentCommit?: () => void
   onRunClick?: () => void
 }
 
@@ -832,13 +837,17 @@ export const TOOL_DEFINITIONS: readonly ToolDefinition[] = [
     renderBody: renderVideoMaskByTextBody,
   }),
   createStandardToolDefinition({
-    key: "prompt-tool",
+    key: "prompt",
     group: "text-tools",
     label: "Prompt",
     category: "Text tools",
     searchableText: "text prompt composer",
-    outputPorts: [TEXT_OUTPUT_PORT],
-    runLabel: "Compose",
+    outputPorts: [{ ...TEXT_OUTPUT_PORT, key: "prompt", label: "Prompt" }],
+    addInputLabel: "Add variable",
+    showAddInputAction: true,
+    showRunAction: false,
+    renderBody: renderPromptBody,
+    renderFooter: renderPromptFooter,
   }),
   createStandardToolDefinition({
     key: "prompt-concatenator",

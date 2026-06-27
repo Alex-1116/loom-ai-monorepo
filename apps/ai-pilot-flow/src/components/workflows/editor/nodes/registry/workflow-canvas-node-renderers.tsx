@@ -9,7 +9,6 @@ import { WorkflowImageModelNode } from "@/components/workflows/editor/nodes/bloc
 import { WorkflowImportLoraNode } from "@/components/workflows/editor/nodes/blocks/import-lora/workflow-import-lora-node"
 import { WorkflowImportMultipleLorasNode } from "@/components/workflows/editor/nodes/blocks/import-multiple-loras/workflow-import-multiple-loras-node"
 import { WorkflowPreviewNode } from "@/components/workflows/editor/nodes/blocks/preview/workflow-preview-node"
-import { WorkflowPromptNode } from "@/components/workflows/editor/nodes/blocks/prompt/workflow-prompt-node"
 import { WorkflowToolNode } from "@/components/workflows/editor/nodes/blocks/tool/workflow-tool-node"
 import { WorkflowVideoModelNode } from "@/components/workflows/editor/nodes/blocks/video-model/workflow-video-model-node"
 import type { WorkflowCanvasNode } from "@/components/workflows/editor/model/types/workflow-node"
@@ -37,32 +36,6 @@ const WORKFLOW_CANVAS_NODE_RENDERERS: Record<
   WorkflowCanvasNode["type"],
   WorkflowCanvasNodeRenderer
 > = {
-  prompt: ({
-    node,
-    isSelected,
-    executionStatus,
-    onPortPointerDown,
-    onPatchNode,
-    onCommitNodeChanges,
-  }) => (
-    <WorkflowPromptNode
-      nodeId={node.id}
-      isSelected={isSelected}
-      executionStatus={executionStatus}
-      title={node.data?.title}
-      content={node.data?.content}
-      outputPorts={node.data?.outputPorts}
-      addInputLabel={node.data?.addInputLabel}
-      showAddInputAction={node.data?.showAddInputAction}
-      onPortPointerDown={onPortPointerDown}
-      onContentChange={(value) => {
-        onPatchNode?.(node.id, {
-          content: value,
-        })
-      }}
-      onContentCommit={onCommitNodeChanges}
-    />
-  ),
   export: ({ node, isSelected, executionStatus, onPortPointerDown }) => (
     <WorkflowExportNode
       nodeId={node.id}
@@ -165,6 +138,8 @@ const WORKFLOW_CANVAS_NODE_RENDERERS: Record<
     isSelected,
     executionStatus,
     onPortPointerDown,
+    onPatchNode,
+    onCommitNodeChanges,
     onRunPreview,
   }) => (
     <WorkflowToolNode
@@ -173,6 +148,7 @@ const WORKFLOW_CANVAS_NODE_RENDERERS: Record<
       executionStatus={executionStatus}
       toolKey={node.data?.toolKey}
       title={node.data?.title}
+      content={node.data?.content}
       toolCategory={node.data?.toolCategory}
       inputPorts={node.data?.inputPorts}
       outputPorts={node.data?.outputPorts}
@@ -181,6 +157,12 @@ const WORKFLOW_CANVAS_NODE_RENDERERS: Record<
       showAddInputAction={node.data?.showAddInputAction}
       showRunAction={node.data?.showRunAction}
       onPortPointerDown={onPortPointerDown}
+      onContentChange={(value) => {
+        onPatchNode?.(node.id, {
+          content: value,
+        })
+      }}
+      onContentCommit={onCommitNodeChanges}
       onRunClick={() => {
         void onRunPreview()
       }}

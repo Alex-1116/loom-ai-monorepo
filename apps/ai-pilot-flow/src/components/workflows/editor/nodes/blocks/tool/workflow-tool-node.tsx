@@ -26,6 +26,7 @@ type WorkflowToolNodeProps = {
   nodeId: string
   toolKey?: string
   title?: string
+  content?: string
   toolCategory?: string
   inputPorts?: WorkflowNodePortData[]
   outputPorts?: WorkflowNodePortData[]
@@ -37,6 +38,8 @@ type WorkflowToolNodeProps = {
   executionStatus?: WorkflowExecutionStatus
   onPortPointerDown?: WorkflowNodePortPointerHandler
   onAddInputClick?: () => void
+  onContentChange?: (value: string) => void
+  onContentCommit?: () => void
   onRunClick?: () => void
 }
 
@@ -47,6 +50,7 @@ export function WorkflowToolNode({
   nodeId,
   toolKey = WORKFLOW_NODE_DEFAULTS.tool.toolKey,
   title = WORKFLOW_NODE_DEFAULTS.tool.title,
+  content = WORKFLOW_NODE_DEFAULTS.tool.content,
   toolCategory = WORKFLOW_NODE_DEFAULTS.tool.toolCategory,
   inputPorts = DEFAULT_INPUT_PORTS,
   outputPorts = DEFAULT_OUTPUT_PORTS,
@@ -58,6 +62,8 @@ export function WorkflowToolNode({
   executionStatus,
   onPortPointerDown,
   onAddInputClick,
+  onContentChange,
+  onContentCommit,
   onRunClick,
 }: WorkflowToolNodeProps) {
   const isRunning = executionStatus === "running"
@@ -85,6 +91,7 @@ export function WorkflowToolNode({
           },
         } as const),
       title,
+      content,
       toolCategory,
       inputPorts,
       outputPorts,
@@ -96,16 +103,21 @@ export function WorkflowToolNode({
       executionStatus,
       isRunning,
       onAddInputClick,
+      onContentChange,
+      onContentCommit,
       onRunClick,
     }),
     [
       addInputLabel,
+      content,
       executionStatus,
       inputPorts,
       isRunning,
       isSelected,
       nodeId,
       onAddInputClick,
+      onContentChange,
+      onContentCommit,
       onRunClick,
       outputPorts,
       runLabel,

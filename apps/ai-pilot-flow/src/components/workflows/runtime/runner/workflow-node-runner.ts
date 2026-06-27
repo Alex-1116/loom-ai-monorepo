@@ -29,11 +29,6 @@ import {
   normalizeImportMultipleLorasRuntimeResult,
 } from "@/components/workflows/editor/model/constants/import-multiple-loras-definitions"
 import {
-  getPromptDefinition,
-  getPromptRuntimeOutputPorts,
-  normalizePromptRuntimeResult,
-} from "@/components/workflows/editor/model/constants/prompt-definitions"
-import {
   getPreviewDefinition,
   getPreviewRuntimeInputPorts,
   normalizePreviewRuntimeResult,
@@ -150,23 +145,6 @@ function createBuiltInWorkflowNodeHandlers(): Record<
   WorkflowNodeHandler
 > {
   return {
-    prompt({ node, graph, context }) {
-      const outputPorts = getPromptRuntimeOutputPorts(node)
-      const definition = getPromptDefinition()
-      const result = definition.runtime?.run({
-        node,
-        graph,
-        context,
-        outputPorts,
-      })
-
-      return normalizePromptRuntimeResult(result, {
-        node,
-        graph,
-        context,
-        outputPorts,
-      })
-    },
     file({ node, graph, context }) {
       const outputPorts = getFileRuntimeOutputPorts(node)
       const definition = getFileDefinition()

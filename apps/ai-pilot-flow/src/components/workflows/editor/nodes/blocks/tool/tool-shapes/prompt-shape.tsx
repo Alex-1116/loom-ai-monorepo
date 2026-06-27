@@ -1,20 +1,32 @@
 "use client"
 
+import * as React from "react"
 import { Plus } from "lucide-react"
 
 import { Button } from "@loom/ui/components/button"
 import { Textarea } from "@loom/ui/components/textarea"
 import { cn } from "@loom/ui/lib/utils"
 
-import type { PromptRendererProps } from "@/components/workflows/editor/model/constants/prompt-definitions"
 import { WorkflowNodeFooter } from "@/components/workflows/editor/nodes/shell/workflow-node-shell"
+import type { ToolRendererProps } from "@/components/workflows/editor/model/constants/tool-definitions"
+
+const DEFAULT_PROMPT_TEXT =
+  'Hipster Sisyphus, lime overall suit, pushing a huge round rock up a hill. The rock is sprayed with the text "default prompt", bright grey background extreme side long shot, cinematic, fashion style, side view'
+
+function stopPointer(event: React.PointerEvent<HTMLElement>) {
+  event.stopPropagation()
+}
+
+function stopMouse(event: React.MouseEvent<HTMLElement>) {
+  event.stopPropagation()
+}
 
 export function renderPromptBody({
-  content,
+  content = DEFAULT_PROMPT_TEXT,
   isRunning,
   onContentChange,
   onContentCommit,
-}: PromptRendererProps) {
+}: ToolRendererProps) {
   return (
     <div className="w-full">
       <Textarea
@@ -37,8 +49,8 @@ export function renderPromptBody({
 export function renderPromptFooter({
   addInputLabel,
   showAddInputAction,
-  onAddVariableClick,
-}: PromptRendererProps) {
+  onAddInputClick,
+}: ToolRendererProps) {
   return (
     <WorkflowNodeFooter
       leftActions={
@@ -53,7 +65,7 @@ export function renderPromptFooter({
             }}
             onClick={(event) => {
               event.stopPropagation()
-              onAddVariableClick?.()
+              onAddInputClick?.()
             }}
           >
             <Plus className="mr-1 size-4" />

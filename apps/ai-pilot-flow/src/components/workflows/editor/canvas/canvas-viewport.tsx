@@ -402,7 +402,7 @@ export function WorkflowCanvasViewport() {
 
       return [
         createWorkflowNode({
-          type: "prompt",
+          type: "file",
           x: 0,
           y: 0,
         }),

@@ -85,7 +85,4 @@ export {
   WORKFLOW_EDITOR_LAYOUT_DEFAULTS,
   WORKFLOW_EDITOR_SCALE_LIMITS,
 } from "@/components/workflows/editor/model/constants/editor-constants"
-export {
-  DEFAULT_PROMPT_NODE_CONTENT,
-  WORKFLOW_NODE_DEFAULTS,
-} from "@/components/workflows/editor/model/constants/node-defaults"
+export { WORKFLOW_NODE_DEFAULTS } from "@/components/workflows/editor/model/constants/node-defaults"

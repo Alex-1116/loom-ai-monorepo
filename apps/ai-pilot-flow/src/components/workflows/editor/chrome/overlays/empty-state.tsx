@@ -46,7 +46,7 @@ export function WorkflowEmptyState({
           开始你的第一个工作流
         </h2>
         <p className="mt-3 text-sm leading-7 text-white/62">
-          右键画布可以快速插入节点，也可以直接创建一个 Prompt 节点作为起点。
+          右键画布可以快速插入节点，也可以直接创建第一个节点作为起点。
         </p>
 
         <div className="mt-6 flex items-center gap-3">
@@ -55,7 +55,7 @@ export function WorkflowEmptyState({
             onClick={onCreateFirstNode}
             className="rounded-xl bg-[#eef59a] px-4 text-slate-900 hover:bg-[#eef59a]/90"
           >
-            创建第一个 Prompt
+            创建第一个节点
           </Button>
           <div className="rounded-xl border border-white/10 bg-white/4 px-3 py-2 text-xs text-white/55">
             或者右键空白处打开节点菜单

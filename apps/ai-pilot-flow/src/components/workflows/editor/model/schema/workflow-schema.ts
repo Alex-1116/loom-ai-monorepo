@@ -4,7 +4,6 @@ import { getFileDefinition } from "@/components/workflows/editor/model/constants
 import { getImageModelDefinition } from "@/components/workflows/editor/model/constants/image-model-definitions"
 import { getImportLoraDefinition } from "@/components/workflows/editor/model/constants/import-lora-definitions"
 import { getImportMultipleLorasDefinition } from "@/components/workflows/editor/model/constants/import-multiple-loras-definitions"
-import { getPromptDefinition } from "@/components/workflows/editor/model/constants/prompt-definitions"
 import { getPreviewDefinition } from "@/components/workflows/editor/model/constants/preview-definitions"
 import { getToolDefinition } from "@/components/workflows/editor/model/constants/tool-definitions"
 import { getVideoModelDefinition } from "@/components/workflows/editor/model/constants/video-model-definitions"
@@ -26,8 +25,6 @@ import { importMultipleLorasNodeConfig } from "@/components/workflows/editor/nod
 import { importMultipleLorasNodeSchema } from "@/components/workflows/editor/nodes/blocks/import-multiple-loras/import-multiple-loras-node.schema"
 import { previewNodeConfig } from "@/components/workflows/editor/nodes/blocks/preview/preview-node.config"
 import { previewNodeSchema } from "@/components/workflows/editor/nodes/blocks/preview/preview-node.schema"
-import { promptNodeConfig } from "@/components/workflows/editor/nodes/blocks/prompt/prompt-node.config"
-import { promptNodeSchema } from "@/components/workflows/editor/nodes/blocks/prompt/prompt-node.schema"
 import { toolNodeConfig } from "@/components/workflows/editor/nodes/blocks/tool/tool-node.config"
 import { toolNodeSchema } from "@/components/workflows/editor/nodes/blocks/tool/tool-node.schema"
 import type {
@@ -42,10 +39,6 @@ export type WorkflowSchema = {
 
 export const workflowSchema: WorkflowSchema = {
   nodes: [
-    {
-      config: promptNodeConfig,
-      schema: promptNodeSchema,
-    },
     {
       config: fileNodeConfig,
       schema: fileNodeSchema,
@@ -196,16 +189,6 @@ export function getWorkflowNodeSchemaForNode(
       return {
         type: "preview",
         fields: previewSchema.fields,
-      }
-    }
-  }
-
-  if (node.type === "prompt") {
-    const promptSchema = getPromptDefinition().schema
-    if (promptSchema) {
-      return {
-        type: "prompt",
-        fields: promptSchema.fields,
       }
     }
   }
