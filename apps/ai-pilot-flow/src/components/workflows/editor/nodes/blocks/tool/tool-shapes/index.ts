@@ -25,6 +25,7 @@ export {
   renderImageIteratorBody,
   renderImageIteratorTitle,
 } from "./image-iterator-shape"
+export { renderImportBody } from "./import-shape"
 export { renderInvertBody } from "./invert-shape"
 export { renderLevelsBody, renderLevelsFooter } from "./levels-shape"
 export {

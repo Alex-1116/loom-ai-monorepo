@@ -7,7 +7,6 @@ export type SharedWorkflowPortRef = {
 }
 
 export type SharedWorkflowNodeType =
-  | "file"
   | "preview"
   | "export"
   | "import-lora"

@@ -4,7 +4,6 @@ import * as React from "react"
 
 import { WorkflowThreeDModelNode } from "@/components/workflows/editor/nodes/blocks/3d-model/workflow-3d-model-node"
 import { WorkflowExportNode } from "@/components/workflows/editor/nodes/blocks/export/workflow-export-node"
-import { WorkflowFileNode } from "@/components/workflows/editor/nodes/blocks/file/workflow-file-node"
 import { WorkflowImageModelNode } from "@/components/workflows/editor/nodes/blocks/image-model/workflow-image-model-node"
 import { WorkflowImportLoraNode } from "@/components/workflows/editor/nodes/blocks/import-lora/workflow-import-lora-node"
 import { WorkflowImportMultipleLorasNode } from "@/components/workflows/editor/nodes/blocks/import-multiple-loras/workflow-import-multiple-loras-node"
@@ -45,16 +44,6 @@ const WORKFLOW_CANVAS_NODE_RENDERERS: Record<
       inputPorts={node.data?.inputPorts}
       inputLabel={node.data?.inputLabel}
       actionLabel={node.data?.actionLabel}
-      onPortPointerDown={onPortPointerDown}
-    />
-  ),
-  file: ({ node, isSelected, executionStatus, onPortPointerDown }) => (
-    <WorkflowFileNode
-      nodeId={node.id}
-      isSelected={isSelected}
-      executionStatus={executionStatus}
-      title={node.data?.title}
-      outputPorts={node.data?.outputPorts}
       onPortPointerDown={onPortPointerDown}
     />
   ),

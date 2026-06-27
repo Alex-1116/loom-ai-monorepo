@@ -1,6 +1,5 @@
 import { getThreeDModelDefinition } from "@/components/workflows/editor/model/constants/3d-model-definitions"
 import { getExportDefinition } from "@/components/workflows/editor/model/constants/export-definitions"
-import { getFileDefinition } from "@/components/workflows/editor/model/constants/file-definitions"
 import { getImageModelDefinition } from "@/components/workflows/editor/model/constants/image-model-definitions"
 import { getImportLoraDefinition } from "@/components/workflows/editor/model/constants/import-lora-definitions"
 import { getImportMultipleLorasDefinition } from "@/components/workflows/editor/model/constants/import-multiple-loras-definitions"
@@ -13,8 +12,6 @@ import { threeDModelNodeConfig } from "@/components/workflows/editor/nodes/block
 import { threeDModelNodeSchema } from "@/components/workflows/editor/nodes/blocks/3d-model/3d-model-node.schema"
 import { exportNodeConfig } from "@/components/workflows/editor/nodes/blocks/export/export-node.config"
 import { exportNodeSchema } from "@/components/workflows/editor/nodes/blocks/export/export-node.schema"
-import { fileNodeConfig } from "@/components/workflows/editor/nodes/blocks/file/file-node.config"
-import { fileNodeSchema } from "@/components/workflows/editor/nodes/blocks/file/file-node.schema"
 import { imageModelNodeConfig } from "@/components/workflows/editor/nodes/blocks/image-model/image-model-node.config"
 import { imageModelNodeSchema } from "@/components/workflows/editor/nodes/blocks/image-model/image-model-node.schema"
 import { videoModelNodeConfig } from "@/components/workflows/editor/nodes/blocks/video-model/video-model-node.config"
@@ -39,10 +36,6 @@ export type WorkflowSchema = {
 
 export const workflowSchema: WorkflowSchema = {
   nodes: [
-    {
-      config: fileNodeConfig,
-      schema: fileNodeSchema,
-    },
     {
       config: imageModelNodeConfig,
       schema: imageModelNodeSchema,
@@ -107,16 +100,6 @@ export function getWorkflowNodeSchema(
 export function getWorkflowNodeSchemaForNode(
   node: Pick<WorkflowCanvasNode, "type" | "data">
 ): WorkflowNodeSchema {
-  if (node.type === "file") {
-    const fileSchema = getFileDefinition().schema
-    if (fileSchema) {
-      return {
-        type: "file",
-        fields: fileSchema.fields,
-      }
-    }
-  }
-
   if (node.type === "export") {
     const exportSchema = getExportDefinition().schema
     if (exportSchema) {

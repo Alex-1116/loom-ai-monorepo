@@ -35,6 +35,7 @@ import {
   renderImageDescriberBody,
   renderImageIteratorBody,
   renderImageIteratorTitle,
+  renderImportBody,
   renderInvertBody,
   renderMaskByTextBody,
   renderMaskByTextTitle,
@@ -1035,8 +1036,19 @@ export const TOOL_DEFINITIONS: readonly ToolDefinition[] = [
     label: "Import",
     category: "Helpers",
     searchableText: "file input import",
-    outputPorts: [RESULT_OUTPUT_PORT],
+    outputPorts: [
+      {
+        ...RESULT_OUTPUT_PORT,
+        key: "file",
+        label: "File",
+        portToneClassName: "border-white/70 bg-[#1c1d26]",
+        labelToneClassName: "text-white/92",
+      },
+    ],
     showRunAction: false,
+    getPortOffset: getNodePortOffset,
+    renderBody: renderImportBody,
+    renderFooter: () => <></>,
   }),
   createStandardToolDefinition({
     key: "helper-export",

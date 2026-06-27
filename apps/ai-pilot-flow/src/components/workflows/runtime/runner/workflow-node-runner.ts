@@ -9,11 +9,6 @@ import {
   normalizeExportRuntimeResult,
 } from "@/components/workflows/editor/model/constants/export-definitions"
 import {
-  getFileDefinition,
-  getFileRuntimeOutputPorts,
-  normalizeFileRuntimeResult,
-} from "@/components/workflows/editor/model/constants/file-definitions"
-import {
   getImageModelDefinition,
   getImageModelRuntimeOutputPorts,
   normalizeImageModelRuntimeResult,
@@ -145,23 +140,6 @@ function createBuiltInWorkflowNodeHandlers(): Record<
   WorkflowNodeHandler
 > {
   return {
-    file({ node, graph, context }) {
-      const outputPorts = getFileRuntimeOutputPorts(node)
-      const definition = getFileDefinition()
-      const result = definition.runtime?.run({
-        node,
-        graph,
-        context,
-        outputPorts,
-      })
-
-      return normalizeFileRuntimeResult(result, {
-        node,
-        graph,
-        context,
-        outputPorts,
-      })
-    },
     export({ node, graph, context }) {
       const inputPorts = getExportRuntimeInputPorts(node)
       const inputs = getWorkflowNodeInputs(node, graph, context)
