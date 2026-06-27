@@ -33,6 +33,8 @@ import {
   renderResizeBody,
   renderVideoConcatenatorBody,
   renderVideoConcatenatorTitle,
+  renderVideoToGifBody,
+  renderVideoToGifTitle,
   renderRotateAndFlipBody,
   renderRotateAndFlipFooter,
 } from "@/components/workflows/editor/nodes/blocks/tool/tool-shapes"
@@ -710,8 +712,27 @@ export const TOOL_DEFINITIONS: readonly ToolDefinition[] = [
     label: "Video to GIF",
     category: "Editing",
     searchableText: "gif convert video",
-    inputPorts: [VIDEO_INPUT_PORT],
-    outputPorts: [RESULT_OUTPUT_PORT],
+    inputPorts: [
+      {
+        ...VIDEO_INPUT_PORT,
+        label: "Video*",
+        portToneClassName: "border-[#f19a9a] bg-[#1c1d26]",
+        labelToneClassName: "text-[#f19a9a]",
+      },
+    ],
+    outputPorts: [
+      {
+        ...VIDEO_OUTPUT_PORT,
+        key: "gif",
+        label: "GIF",
+        portToneClassName: "border-[#72e6cf] bg-[#1c1d26]",
+        labelToneClassName: "text-[#72e6cf]",
+      },
+    ],
+    runLabel: "Run Model",
+    showRunAction: true,
+    renderTitle: renderVideoToGifTitle,
+    renderBody: renderVideoToGifBody,
   }),
   createStandardToolDefinition({
     key: "mask-extractor",

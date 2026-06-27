@@ -20,6 +20,10 @@ export {
   renderVideoConcatenatorTitle,
 } from "./video-concatenator-shape"
 export {
+  renderVideoToGifBody,
+  renderVideoToGifTitle,
+} from "./video-to-gif-shape"
+export {
   renderRotateAndFlipBody,
   renderRotateAndFlipFooter,
 } from "./rotate-and-flip-shape"
