@@ -15,7 +15,7 @@ export function renderPromptConcatenatorBody({
     <div className="flex w-full flex-col gap-3">
       <div
         className={cn(
-          "min-h-[200px] w-full rounded-xl border border-white/6 bg-white/6 px-5 py-4 text-sm leading-6 text-white/26",
+          "min-h-[188px] w-full rounded-xl border border-white/6 bg-white/6 px-5 py-4 text-sm leading-6 text-white/26",
           isRunning &&
             "border-sky-400/20 shadow-[inset_0_0_0_1px_rgba(56,189,248,0.1)]"
         )}
@@ -31,7 +31,7 @@ export function renderPromptConcatenatorBody({
         onBlur={onContentCommit}
         placeholder="Write additional text"
         className={cn(
-          "min-h-[200px] resize-none rounded-xl border border-white/6 bg-white/6 px-5 py-4 text-sm leading-6 text-white/92 placeholder:text-white/26",
+          "min-h-[188px] resize-none rounded-xl border border-white/6 bg-white/6 px-5 py-4 text-sm leading-6 text-white/92 placeholder:text-white/26",
           isRunning &&
             "border-sky-400/20 shadow-[inset_0_0_0_1px_rgba(56,189,248,0.1)]"
         )}

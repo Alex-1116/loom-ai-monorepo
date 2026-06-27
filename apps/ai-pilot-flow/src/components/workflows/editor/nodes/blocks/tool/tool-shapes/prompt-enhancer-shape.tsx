@@ -9,7 +9,7 @@ export function renderPromptEnhancerBody({ isRunning }: ToolRendererProps) {
     <div className="flex w-full flex-col">
       <div
         className={cn(
-          "min-h-[378px] w-full rounded-xl border border-white/6 bg-white/6 px-5 py-4 text-sm leading-6 text-white/24",
+          "min-h-[398px] w-full rounded-xl border border-white/6 bg-white/6 px-5 py-4 text-sm leading-6 text-white/24",
           isRunning &&
             "border-sky-400/20 shadow-[inset_0_0_0_1px_rgba(56,189,248,0.1)]"
         )}
