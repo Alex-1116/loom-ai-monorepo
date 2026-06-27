@@ -16,6 +16,7 @@ import type {
   WorkflowRuntimeNodeOutput,
   WorkflowRuntimeValue,
 } from "@/components/workflows/shared/types/workflow-runtime"
+import { getNodePortOffset } from "@/components/workflows/editor/model/constants/workflow-node-port-offsets"
 import { renderPreviewBody } from "@/components/workflows/editor/nodes/blocks/preview/preview-shape"
 
 export type PreviewSchema = {
@@ -113,10 +114,6 @@ function clonePort(port: WorkflowNodePortData): WorkflowNodePortData {
   return { ...port }
 }
 
-function defaultGetPortOffset(index: number) {
-  return 72 + index * 80
-}
-
 function createDefaultPreviewRuntimeResult({
   node,
   inputs,
@@ -158,7 +155,6 @@ export const PREVIEW_DEFINITIONS: readonly PreviewDefinition[] = [
     }),
     renderer: {
       renderBody: renderPreviewBody,
-      getPortOffset: () => 104,
     },
     runtime: {
       run({ node, inputs }) {
@@ -182,7 +178,7 @@ export function getPreviewSchema() {
 export function getPreviewPortOffset(index: number) {
   return (
     getPreviewDefinition().renderer.getPortOffset?.(index) ??
-    defaultGetPortOffset(index)
+    getNodePortOffset(index)
   )
 }
 

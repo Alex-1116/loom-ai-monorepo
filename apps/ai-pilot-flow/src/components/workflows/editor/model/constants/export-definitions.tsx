@@ -16,6 +16,7 @@ import type {
   WorkflowRuntimeNodeOutput,
   WorkflowRuntimeValue,
 } from "@/components/workflows/shared/types/workflow-runtime"
+import { getNodePortOffset } from "@/components/workflows/editor/model/constants/workflow-node-port-offsets"
 import { renderExportBody } from "@/components/workflows/editor/nodes/blocks/export/export-shape"
 
 export type ExportSchema = {
@@ -128,10 +129,6 @@ function clonePort(port: WorkflowNodePortData): WorkflowNodePortData {
   return { ...port }
 }
 
-function defaultGetPortOffset(index: number) {
-  return 72 + index * 80
-}
-
 function createDefaultExportRuntimeResult({
   node,
   inputs,
@@ -175,7 +172,7 @@ export const EXPORT_DEFINITIONS: readonly ExportDefinition[] = [
     }),
     renderer: {
       renderBody: renderExportBody,
-      getPortOffset: () => 104,
+      getPortOffset: getNodePortOffset,
     },
     runtime: {
       run({ node, inputs }) {
@@ -199,7 +196,7 @@ export function getExportSchema() {
 export function getExportPortOffset(index: number) {
   return (
     getExportDefinition().renderer.getPortOffset?.(index) ??
-    defaultGetPortOffset(index)
+    getNodePortOffset(index)
   )
 }
 

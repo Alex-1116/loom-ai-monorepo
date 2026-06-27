@@ -19,6 +19,7 @@ import {
   IMAGE_MODEL_MENU_CATEGORIES,
   type ImageModelMenuCategory,
 } from "@/components/workflows/editor/model/constants/image-model-presets"
+import { getNodePortOffset } from "@/components/workflows/editor/model/constants/workflow-node-port-offsets"
 import {
   renderImageModelBody,
   renderImageModelFooter,
@@ -163,10 +164,6 @@ function clonePort(port: WorkflowNodePortData): WorkflowNodePortData {
   return { ...port }
 }
 
-function defaultGetPortOffset(index: number) {
-  return 72 + index * 80
-}
-
 function createImageModelDataByMode({
   title,
   modelKey,
@@ -256,7 +253,7 @@ function createImageModelDefinition({
   label,
   mode,
   category,
-  getPortOffset = defaultGetPortOffset,
+  getPortOffset = getNodePortOffset,
 }: {
   key: string
   label: string
@@ -305,7 +302,7 @@ export const IMAGE_MODEL_DEFINITIONS: readonly ImageModelDefinition[] =
         label: preset.label,
         mode: category.id,
         category: category.label,
-        getPortOffset: () => 104,
+        getPortOffset: getNodePortOffset,
       })
     )
   )
@@ -340,7 +337,7 @@ export function getImageModelPortOffset(
 ) {
   return (
     getImageModelDefinition(modelKey)?.renderer.getPortOffset?.(index) ??
-    defaultGetPortOffset(index)
+    getNodePortOffset(index)
   )
 }
 

@@ -19,6 +19,7 @@ import {
   VIDEO_MODEL_MENU_CATEGORIES,
   type VideoModelMenuCategory,
 } from "@/components/workflows/editor/model/constants/video-model-presets"
+import { getNodePortOffset } from "@/components/workflows/editor/model/constants/workflow-node-port-offsets"
 import {
   renderVideoModelBody,
   renderVideoModelFooter,
@@ -181,10 +182,6 @@ function clonePort(port: WorkflowNodePortData): WorkflowNodePortData {
   return { ...port }
 }
 
-function defaultGetPortOffset(index: number) {
-  return 72 + index * 80
-}
-
 function createVideoModelDataByMode({
   title,
   modelKey,
@@ -279,7 +276,7 @@ function createVideoModelDefinition({
   label,
   mode,
   category,
-  getPortOffset = defaultGetPortOffset,
+  getPortOffset = getNodePortOffset,
 }: {
   key: string
   label: string
@@ -328,7 +325,7 @@ export const VIDEO_MODEL_DEFINITIONS: readonly VideoModelDefinition[] =
         label: preset.label,
         mode: category.id,
         category: category.label,
-        getPortOffset: () => 104,
+        getPortOffset: getNodePortOffset,
       })
     )
   )
@@ -363,7 +360,7 @@ export function getVideoModelPortOffset(
 ) {
   return (
     getVideoModelDefinition(modelKey)?.renderer.getPortOffset?.(index) ??
-    defaultGetPortOffset(index)
+    getNodePortOffset(index)
   )
 }
 

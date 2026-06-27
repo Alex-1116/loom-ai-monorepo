@@ -14,6 +14,7 @@ import type {
   WorkflowRuntimeValue,
   WorkflowExecutionStatus,
 } from "@/components/workflows/shared/types/workflow-runtime"
+import { getNodePortOffset } from "@/components/workflows/editor/model/constants/workflow-node-port-offsets"
 import {
   renderPromptBody,
   renderPromptFooter,
@@ -125,10 +126,6 @@ function clonePort(port: WorkflowNodePortData): WorkflowNodePortData {
   return { ...port }
 }
 
-function defaultGetPortOffset(index: number) {
-  return 72 + index * 80
-}
-
 function createDefaultPromptOutput({
   node,
   outputPorts,
@@ -178,7 +175,7 @@ export const PROMPT_DEFINITIONS: readonly PromptDefinition[] = [
     renderer: {
       renderBody: renderPromptBody,
       renderFooter: renderPromptFooter,
-      getPortOffset: () => 104,
+      getPortOffset: getNodePortOffset,
     },
     runtime: {
       run({ node, outputPorts }) {
@@ -202,7 +199,7 @@ export function getPromptSchema() {
 export function getPromptPortOffset(index: number) {
   return (
     getPromptDefinition()?.renderer.getPortOffset?.(index) ??
-    defaultGetPortOffset(index)
+    getNodePortOffset(index)
   )
 }
 

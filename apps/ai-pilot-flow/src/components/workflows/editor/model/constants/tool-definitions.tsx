@@ -14,6 +14,7 @@ import type {
   WorkflowExecutionStatus,
   WorkflowRuntimeValue,
 } from "@/components/workflows/shared/types/workflow-runtime"
+import { getNodePortOffset } from "@/components/workflows/editor/model/constants/workflow-node-port-offsets"
 import {
   renderCompositorBody,
   renderCompositorFooter,
@@ -325,10 +326,6 @@ function clonePort(port: WorkflowNodePortData): WorkflowNodePortData {
   return { ...port }
 }
 
-function defaultGetPortOffset(index: number) {
-  return 72 + index * 80
-}
-
 function getSharedToolOutputPorts(node: SharedWorkflowNode) {
   const outputPorts = node.data?.outputPorts?.filter(
     (port) => port.side === "right"
@@ -449,7 +446,7 @@ function createStandardToolDefinition({
   showRunAction = true,
   schema = DEFAULT_TOOL_SCHEMA,
   width = DEFAULT_TOOL_WIDTH,
-  getPortOffset = defaultGetPortOffset,
+  getPortOffset = getNodePortOffset,
   renderBody,
   renderFooter,
 }: {
@@ -518,7 +515,7 @@ export const TOOL_DEFINITIONS: readonly ToolDefinition[] = [
     category: "Editing",
     inputPorts: [{ ...IMAGE_INPUT_PORT, label: "Input*" }],
     outputPorts: [{ ...RESULT_OUTPUT_PORT, label: "Result" }],
-    getPortOffset: () => 104,
+    getPortOffset: getNodePortOffset,
     renderBody: renderRotateAndFlipBody,
     renderFooter: renderRotateAndFlipFooter,
   }),
@@ -532,7 +529,7 @@ export const TOOL_DEFINITIONS: readonly ToolDefinition[] = [
       { ...IMAGE_OUTPUT_PORT, label: "Image" },
       { ...TEXT_OUTPUT_PORT, label: "Text" },
     ],
-    getPortOffset: (index) => 104 + index * 76,
+    getPortOffset: (index) => getNodePortOffset(index, { step: 72 }),
     renderBody: renderColorPaletteBody,
     renderFooter: () => <></>,
     showRunAction: false,
@@ -544,7 +541,7 @@ export const TOOL_DEFINITIONS: readonly ToolDefinition[] = [
     category: "Editing",
     inputPorts: [{ ...IMAGE_INPUT_PORT, label: "File*" }],
     outputPorts: [{ ...RESULT_OUTPUT_PORT, label: "Result" }],
-    getPortOffset: () => 104,
+    getPortOffset: getNodePortOffset,
     renderBody: renderColorCorrectionBody,
     renderFooter: renderColorCorrectionFooter,
     showRunAction: false,
@@ -556,7 +553,7 @@ export const TOOL_DEFINITIONS: readonly ToolDefinition[] = [
     category: "Editing",
     inputPorts: [{ ...IMAGE_INPUT_PORT, label: "Input*" }],
     outputPorts: [{ ...IMAGE_OUTPUT_PORT, label: "Output" }],
-    getPortOffset: () => 104,
+    getPortOffset: getNodePortOffset,
     renderBody: renderLevelsBody,
     renderFooter: renderLevelsFooter,
     showRunAction: false,
@@ -571,7 +568,7 @@ export const TOOL_DEFINITIONS: readonly ToolDefinition[] = [
       { ...IMAGE_INPUT_PORT_2, label: "Layer 1" },
     ],
     outputPorts: [{ ...IMAGE_OUTPUT_PORT, label: "Output" }],
-    getPortOffset: (index) => 104 + index * 68,
+    getPortOffset: (index) => getNodePortOffset(index, { step: 66 }),
     renderBody: renderCompositorBody,
     renderFooter: renderCompositorFooter,
     showRunAction: false,
@@ -1006,7 +1003,7 @@ export function getToolSchema(toolKey?: string | null) {
 export function getToolPortOffset(toolKey: string | undefined, index: number) {
   return (
     getToolDefinition(toolKey)?.renderer.getPortOffset?.(index) ??
-    defaultGetPortOffset(index)
+    getNodePortOffset(index)
   )
 }
 

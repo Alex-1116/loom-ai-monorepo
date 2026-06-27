@@ -14,6 +14,7 @@ import type {
   WorkflowRuntimeNodeOutput,
   WorkflowRuntimeValue,
 } from "@/components/workflows/shared/types/workflow-runtime"
+import { getNodePortOffset } from "@/components/workflows/editor/model/constants/workflow-node-port-offsets"
 import { renderImportMultipleLorasBody } from "@/components/workflows/editor/nodes/blocks/import-multiple-loras/import-multiple-loras-shape"
 
 export type ImportMultipleLorasSchema = {
@@ -132,10 +133,6 @@ function clonePort(port: WorkflowNodePortData): WorkflowNodePortData {
   return { ...port }
 }
 
-function defaultGetPortOffset(index: number) {
-  return 72 + index * 80
-}
-
 function createDefaultImportMultipleLorasRuntimeResult({
   node,
   outputPorts,
@@ -235,7 +232,7 @@ export function getImportMultipleLorasSchema() {
 export function getImportMultipleLorasPortOffset(index: number) {
   return (
     getImportMultipleLorasDefinition().renderer.getPortOffset?.(index) ??
-    defaultGetPortOffset(index)
+    getNodePortOffset(index)
   )
 }
 

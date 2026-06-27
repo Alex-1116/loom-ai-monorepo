@@ -14,6 +14,7 @@ import type {
   WorkflowRuntimeNodeOutput,
   WorkflowRuntimeValue,
 } from "@/components/workflows/shared/types/workflow-runtime"
+import { getNodePortOffset } from "@/components/workflows/editor/model/constants/workflow-node-port-offsets"
 import { renderFileBody } from "@/components/workflows/editor/nodes/blocks/file/file-shape"
 
 export type FileSchema = {
@@ -91,10 +92,6 @@ function clonePort(port: WorkflowNodePortData): WorkflowNodePortData {
   return { ...port }
 }
 
-function defaultGetPortOffset(index: number) {
-  return 72 + index * 80
-}
-
 function createDefaultFileRuntimeResult({
   node,
   outputPorts,
@@ -147,7 +144,7 @@ export const FILE_DEFINITIONS: readonly FileDefinition[] = [
     }),
     renderer: {
       renderBody: renderFileBody,
-      getPortOffset: () => 104,
+      getPortOffset: getNodePortOffset,
     },
     runtime: {
       run({ node, outputPorts }) {
@@ -171,7 +168,7 @@ export function getFileSchema() {
 export function getFilePortOffset(index: number) {
   return (
     getFileDefinition().renderer.getPortOffset?.(index) ??
-    defaultGetPortOffset(index)
+    getNodePortOffset(index)
   )
 }
 

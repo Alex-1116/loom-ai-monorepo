@@ -14,6 +14,7 @@ import type {
   WorkflowRuntimeNodeOutput,
   WorkflowRuntimeValue,
 } from "@/components/workflows/shared/types/workflow-runtime"
+import { getNodePortOffset } from "@/components/workflows/editor/model/constants/workflow-node-port-offsets"
 import { renderImportLoraBody } from "../../nodes/blocks/import-lora/import-lora-shape"
 
 export type ImportLoraSchema = {
@@ -106,10 +107,6 @@ function clonePort(port: WorkflowNodePortData): WorkflowNodePortData {
   return { ...port }
 }
 
-function defaultGetPortOffset(index: number) {
-  return 72 + index * 80
-}
-
 function createDefaultImportLoraRuntimeResult({
   node,
   outputPorts,
@@ -165,7 +162,7 @@ export const IMPORT_LORA_DEFINITIONS: readonly ImportLoraDefinition[] = [
     }),
     renderer: {
       renderBody: renderImportLoraBody,
-      getPortOffset: () => 104,
+      getPortOffset: getNodePortOffset,
     },
     runtime: {
       run({ node, outputPorts }) {
@@ -189,7 +186,7 @@ export function getImportLoraSchema() {
 export function getImportLoraPortOffset(index: number) {
   return (
     getImportLoraDefinition().renderer.getPortOffset?.(index) ??
-    defaultGetPortOffset(index)
+    getNodePortOffset(index)
   )
 }
 
