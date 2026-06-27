@@ -1,6 +1,5 @@
 import { getThreeDModelDefinition } from "@/components/workflows/editor/model/constants/3d-model-definitions"
 import { getImageModelDefinition } from "@/components/workflows/editor/model/constants/image-model-definitions"
-import { getImportLoraDefinition } from "@/components/workflows/editor/model/constants/import-lora-definitions"
 import { getImportMultipleLorasDefinition } from "@/components/workflows/editor/model/constants/import-multiple-loras-definitions"
 import { getToolDefinition } from "@/components/workflows/editor/model/constants/tool-definitions"
 import { getVideoModelDefinition } from "@/components/workflows/editor/model/constants/video-model-definitions"
@@ -12,8 +11,6 @@ import { imageModelNodeConfig } from "@/components/workflows/editor/nodes/blocks
 import { imageModelNodeSchema } from "@/components/workflows/editor/nodes/blocks/image-model/image-model-node.schema"
 import { videoModelNodeConfig } from "@/components/workflows/editor/nodes/blocks/video-model/video-model-node.config"
 import { videoModelNodeSchema } from "@/components/workflows/editor/nodes/blocks/video-model/video-model-node.schema"
-import { importLoraNodeConfig } from "@/components/workflows/editor/nodes/blocks/import-lora/import-lora-node.config"
-import { importLoraNodeSchema } from "@/components/workflows/editor/nodes/blocks/import-lora/import-lora-node.schema"
 import { importMultipleLorasNodeConfig } from "@/components/workflows/editor/nodes/blocks/import-multiple-loras/import-multiple-loras-node.config"
 import { importMultipleLorasNodeSchema } from "@/components/workflows/editor/nodes/blocks/import-multiple-loras/import-multiple-loras-node.schema"
 import { toolNodeConfig } from "@/components/workflows/editor/nodes/blocks/tool/tool-node.config"
@@ -45,10 +42,6 @@ export const workflowSchema: WorkflowSchema = {
     {
       config: toolNodeConfig,
       schema: toolNodeSchema,
-    },
-    {
-      config: importLoraNodeConfig,
-      schema: importLoraNodeSchema,
     },
     {
       config: importMultipleLorasNodeConfig,
@@ -86,16 +79,6 @@ export function getWorkflowNodeSchema(
 export function getWorkflowNodeSchemaForNode(
   node: Pick<WorkflowCanvasNode, "type" | "data">
 ): WorkflowNodeSchema {
-  if (node.type === "import-lora") {
-    const importLoraSchema = getImportLoraDefinition().schema
-    if (importLoraSchema) {
-      return {
-        type: "import-lora",
-        fields: importLoraSchema.fields,
-      }
-    }
-  }
-
   if (node.type === "import-multiple-loras") {
     const importMultipleLorasSchema = getImportMultipleLorasDefinition().schema
     if (importMultipleLorasSchema) {

@@ -1,6 +1,5 @@
 import { getDefaultThreeDModelDefinition } from "@/components/workflows/editor/model/constants/3d-model-definitions"
 import { getDefaultImageModelDefinition } from "@/components/workflows/editor/model/constants/image-model-definitions"
-import { getImportLoraDefinition } from "@/components/workflows/editor/model/constants/import-lora-definitions"
 import { getImportMultipleLorasDefinition } from "@/components/workflows/editor/model/constants/import-multiple-loras-definitions"
 import { getDefaultToolDefinition } from "@/components/workflows/editor/model/constants/tool-definitions"
 import { getDefaultVideoModelDefinition } from "@/components/workflows/editor/model/constants/video-model-definitions"
@@ -13,7 +12,6 @@ const DEFAULT_TOOL_DEFINITION = getDefaultToolDefinition()
 const DEFAULT_IMAGE_MODEL_DEFINITION = getDefaultImageModelDefinition()
 const DEFAULT_VIDEO_MODEL_DEFINITION = getDefaultVideoModelDefinition()
 const DEFAULT_THREE_D_MODEL_DEFINITION = getDefaultThreeDModelDefinition()
-const DEFAULT_IMPORT_LORA_DEFINITION = getImportLoraDefinition()
 const DEFAULT_IMPORT_MULTIPLE_LORAS_DEFINITION =
   getImportMultipleLorasDefinition()
 
@@ -21,7 +19,6 @@ export const WORKFLOW_NODE_DEFAULTS: Record<
   WorkflowNodeType,
   WorkflowNodeData
 > = {
-  "import-lora": DEFAULT_IMPORT_LORA_DEFINITION.createData(),
   "import-multiple-loras":
     DEFAULT_IMPORT_MULTIPLE_LORAS_DEFINITION.createData(),
   "image-model": DEFAULT_IMAGE_MODEL_DEFINITION
