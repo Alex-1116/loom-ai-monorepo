@@ -1,5 +1,4 @@
 import { getThreeDModelDefinition } from "@/components/workflows/editor/model/constants/3d-model-definitions"
-import { getExportDefinition } from "@/components/workflows/editor/model/constants/export-definitions"
 import { getImageModelDefinition } from "@/components/workflows/editor/model/constants/image-model-definitions"
 import { getImportLoraDefinition } from "@/components/workflows/editor/model/constants/import-lora-definitions"
 import { getImportMultipleLorasDefinition } from "@/components/workflows/editor/model/constants/import-multiple-loras-definitions"
@@ -10,8 +9,6 @@ import type { WorkflowNodeType } from "@/components/workflows/editor/model/types
 import type { WorkflowCanvasNode } from "@/components/workflows/editor/model/types/workflow-node"
 import { threeDModelNodeConfig } from "@/components/workflows/editor/nodes/blocks/3d-model/3d-model-node.config"
 import { threeDModelNodeSchema } from "@/components/workflows/editor/nodes/blocks/3d-model/3d-model-node.schema"
-import { exportNodeConfig } from "@/components/workflows/editor/nodes/blocks/export/export-node.config"
-import { exportNodeSchema } from "@/components/workflows/editor/nodes/blocks/export/export-node.schema"
 import { imageModelNodeConfig } from "@/components/workflows/editor/nodes/blocks/image-model/image-model-node.config"
 import { imageModelNodeSchema } from "@/components/workflows/editor/nodes/blocks/image-model/image-model-node.schema"
 import { videoModelNodeConfig } from "@/components/workflows/editor/nodes/blocks/video-model/video-model-node.config"
@@ -51,10 +48,6 @@ export const workflowSchema: WorkflowSchema = {
     {
       config: toolNodeConfig,
       schema: toolNodeSchema,
-    },
-    {
-      config: exportNodeConfig,
-      schema: exportNodeSchema,
     },
     {
       config: previewNodeConfig,
@@ -100,16 +93,6 @@ export function getWorkflowNodeSchema(
 export function getWorkflowNodeSchemaForNode(
   node: Pick<WorkflowCanvasNode, "type" | "data">
 ): WorkflowNodeSchema {
-  if (node.type === "export") {
-    const exportSchema = getExportDefinition().schema
-    if (exportSchema) {
-      return {
-        type: "export",
-        fields: exportSchema.fields,
-      }
-    }
-  }
-
   if (node.type === "import-lora") {
     const importLoraSchema = getImportLoraDefinition().schema
     if (importLoraSchema) {

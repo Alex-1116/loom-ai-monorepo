@@ -4,11 +4,6 @@ import {
   normalizeThreeDModelRuntimeResult,
 } from "@/components/workflows/editor/model/constants/3d-model-definitions"
 import {
-  getExportDefinition,
-  getExportRuntimeInputPorts,
-  normalizeExportRuntimeResult,
-} from "@/components/workflows/editor/model/constants/export-definitions"
-import {
   getImageModelDefinition,
   getImageModelRuntimeOutputPorts,
   normalizeImageModelRuntimeResult,
@@ -140,26 +135,6 @@ function createBuiltInWorkflowNodeHandlers(): Record<
   WorkflowNodeHandler
 > {
   return {
-    export({ node, graph, context }) {
-      const inputPorts = getExportRuntimeInputPorts(node)
-      const inputs = getWorkflowNodeInputs(node, graph, context)
-      const definition = getExportDefinition()
-      const result = definition.runtime?.run({
-        node,
-        graph,
-        context,
-        inputPorts,
-        inputs,
-      })
-
-      return normalizeExportRuntimeResult(result, {
-        node,
-        graph,
-        context,
-        inputPorts,
-        inputs,
-      })
-    },
     preview({ node, graph, context }) {
       const inputPorts = getPreviewRuntimeInputPorts(node)
       const inputs = getWorkflowNodeInputs(node, graph, context)

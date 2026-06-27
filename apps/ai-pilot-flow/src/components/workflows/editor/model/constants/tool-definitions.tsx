@@ -27,6 +27,7 @@ import {
   renderColorCorrectionFooter,
   renderColorPaletteBody,
   renderCropBody,
+  renderExportBody,
   renderLevelsBody,
   renderLevelsFooter,
   renderExtractVideoFrameBody,
@@ -1056,8 +1057,19 @@ export const TOOL_DEFINITIONS: readonly ToolDefinition[] = [
     label: "Export",
     category: "Helpers",
     searchableText: "file output export",
-    inputPorts: [VALUE_INPUT_PORT],
+    inputPorts: [
+      {
+        ...VALUE_INPUT_PORT,
+        key: "input",
+        label: "Input",
+        portToneClassName: "border-white/70 bg-[#1c1d26]",
+        labelToneClassName: "text-white/92",
+      },
+    ],
     showRunAction: false,
+    getPortOffset: () => 59,
+    renderBody: renderExportBody,
+    renderFooter: () => <></>,
   }),
   createStandardToolDefinition({
     key: "helper-preview",

@@ -16,6 +16,7 @@ export {
   renderColorCorrectionFooter,
 } from "./color-correction-shape"
 export { renderExtractVideoFrameBody } from "./extract-video-frame-shape"
+export { renderExportBody } from "./export-shape"
 export {
   renderExtractVideoMatteBody,
   renderExtractVideoMatteTitle,

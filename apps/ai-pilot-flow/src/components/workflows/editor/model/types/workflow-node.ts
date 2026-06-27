@@ -2,7 +2,6 @@ import type { WorkflowPortRef } from "@/components/workflows/editor/model/types/
 
 export type WorkflowNodeType =
   | "preview"
-  | "export"
   | "import-lora"
   | "import-multiple-loras"
   | "image-model"
