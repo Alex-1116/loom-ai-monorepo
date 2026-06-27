@@ -26,6 +26,7 @@ import {
   renderLevelsFooter,
   renderPainterBody,
   renderPainterTitle,
+  renderResizeBody,
   renderRotateAndFlipBody,
   renderRotateAndFlipFooter,
 } from "@/components/workflows/editor/nodes/blocks/tool/tool-shapes"
@@ -612,8 +613,11 @@ export const TOOL_DEFINITIONS: readonly ToolDefinition[] = [
     group: "editing",
     label: "Resize",
     category: "Editing",
-    inputPorts: [IMAGE_INPUT_PORT],
-    outputPorts: [IMAGE_OUTPUT_PORT],
+    inputPorts: [{ ...IMAGE_INPUT_PORT, label: "Input*" }],
+    outputPorts: [{ ...IMAGE_OUTPUT_PORT, label: "Output" }],
+    renderBody: renderResizeBody,
+    renderFooter: () => <></>,
+    showRunAction: false,
   }),
   createStandardToolDefinition({
     key: "blur",

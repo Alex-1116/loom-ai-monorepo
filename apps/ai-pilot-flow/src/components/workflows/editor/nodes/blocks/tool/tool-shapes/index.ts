@@ -10,6 +10,7 @@ export {
 } from "./color-correction-shape"
 export { renderLevelsBody, renderLevelsFooter } from "./levels-shape"
 export { renderPainterBody, renderPainterTitle } from "./painter-shape"
+export { renderResizeBody } from "./resize-shape"
 export {
   renderRotateAndFlipBody,
   renderRotateAndFlipFooter,
