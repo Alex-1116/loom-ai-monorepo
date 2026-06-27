@@ -32,6 +32,7 @@ export {
 } from "./matte-grow-shrink-shape"
 export { renderPainterBody, renderPainterTitle } from "./painter-shape"
 export { renderPromptConcatenatorBody } from "./prompt-concatenator-shape"
+export { renderPromptEnhancerBody } from "./prompt-enhancer-shape"
 export { renderPromptBody, renderPromptFooter } from "./prompt-shape"
 export { renderResizeBody } from "./resize-shape"
 export {
