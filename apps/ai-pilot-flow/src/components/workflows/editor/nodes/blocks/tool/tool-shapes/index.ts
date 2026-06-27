@@ -21,6 +21,10 @@ export {
   renderExtractVideoMatteTitle,
 } from "./extract-video-matte-shape"
 export { renderImageDescriberBody } from "./image-describer-shape"
+export {
+  renderImageIteratorBody,
+  renderImageIteratorTitle,
+} from "./image-iterator-shape"
 export { renderInvertBody } from "./invert-shape"
 export { renderLevelsBody, renderLevelsFooter } from "./levels-shape"
 export {
