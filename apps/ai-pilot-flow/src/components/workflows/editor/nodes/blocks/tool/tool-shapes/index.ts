@@ -17,6 +17,10 @@ export {
   renderMaskExtractorBody,
   renderMaskExtractorFooter,
 } from "./mask-extractor-shape"
+export {
+  renderMaskByTextBody,
+  renderMaskByTextTitle,
+} from "./mask-by-text-shape"
 export { renderPainterBody, renderPainterTitle } from "./painter-shape"
 export { renderResizeBody } from "./resize-shape"
 export {
