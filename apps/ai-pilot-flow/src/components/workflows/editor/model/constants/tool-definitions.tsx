@@ -101,7 +101,7 @@ export type ToolMenuCategory = {
   definitions: readonly ToolDefinition[]
 }
 
-const DEFAULT_TOOL_WIDTH = "w-[392px]"
+const DEFAULT_TOOL_WIDTH = "w-[432px]"
 
 const DEFAULT_TOOL_SCHEMA: ToolSchema = {
   fields: [

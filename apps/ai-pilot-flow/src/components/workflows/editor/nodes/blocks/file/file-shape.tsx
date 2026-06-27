@@ -9,7 +9,7 @@ export function renderFileBody({ title }: FileRendererProps) {
   return (
     <div className="flex w-full flex-col gap-4">
       <div
-        className="flex h-[324px] items-center justify-center rounded-xl border border-white/6"
+        className="flex aspect-square items-center justify-center rounded-xl border border-white/6"
         style={{
           backgroundImage:
             "linear-gradient(45deg, rgba(255,255,255,0.03) 25%, transparent 25%, transparent 75%, rgba(255,255,255,0.03) 75%, rgba(255,255,255,0.03)), linear-gradient(45deg, rgba(255,255,255,0.03) 25%, transparent 25%, transparent 75%, rgba(255,255,255,0.03) 75%, rgba(255,255,255,0.03))",
