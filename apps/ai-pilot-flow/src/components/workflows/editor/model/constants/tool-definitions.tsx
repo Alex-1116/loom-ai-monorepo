@@ -37,6 +37,7 @@ import {
   renderMatteGrowShrinkTitle,
   renderPainterBody,
   renderPainterTitle,
+  renderPromptConcatenatorBody,
   renderPromptBody,
   renderPromptFooter,
   renderResizeBody,
@@ -856,12 +857,16 @@ export const TOOL_DEFINITIONS: readonly ToolDefinition[] = [
     category: "Text tools",
     searchableText: "merge prompt text",
     inputPorts: [
-      TEXT_INPUT_PORT,
-      { ...TEXT_INPUT_PORT, key: "text-2", label: "Text 2" },
+      { ...TEXT_INPUT_PORT, key: "prompt-1", label: "Prompt 1" },
+      { ...TEXT_INPUT_PORT, key: "prompt-2", label: "Prompt 2" },
     ],
-    outputPorts: [TEXT_OUTPUT_PORT],
+    outputPorts: [
+      { ...TEXT_OUTPUT_PORT, key: "combined-prompt", label: "Combined Prompt" },
+    ],
     addInputLabel: "Add text input",
     showAddInputAction: true,
+    showRunAction: false,
+    renderBody: renderPromptConcatenatorBody,
   }),
   createStandardToolDefinition({
     key: "prompt-enhancer",

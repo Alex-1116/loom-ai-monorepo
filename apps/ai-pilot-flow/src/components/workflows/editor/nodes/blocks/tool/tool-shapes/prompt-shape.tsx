@@ -37,7 +37,7 @@ export function renderPromptBody({
         onBlur={onContentCommit}
         placeholder="Write your prompt here"
         className={cn(
-          "min-h-[260px] resize-none rounded-xl border border-white/6 bg-white/6 px-5 py-4 text-[18px] leading-6 text-white/92 placeholder:text-white/35",
+          "min-h-[260px] resize-none rounded-xl border border-white/6 bg-white/6 px-5 py-4 text-sm leading-6 text-white/92 placeholder:text-white/35",
           isRunning &&
             "border-sky-400/20 shadow-[inset_0_0_0_1px_rgba(56,189,248,0.1)]"
         )}
