@@ -42,6 +42,10 @@ export {
   renderVideoConcatenatorTitle,
 } from "./video-concatenator-shape"
 export {
+  renderVideoDescriberBody,
+  renderVideoDescriberTitle,
+} from "./video-describer-shape"
+export {
   renderVideoMaskByTextBody,
   renderVideoMaskByTextTitle,
 } from "./video-mask-by-text-shape"
