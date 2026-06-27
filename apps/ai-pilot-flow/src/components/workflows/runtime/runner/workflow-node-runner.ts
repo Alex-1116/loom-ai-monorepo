@@ -9,11 +9,6 @@ import {
   normalizeImageModelRuntimeResult,
 } from "@/components/workflows/editor/model/constants/image-model-definitions"
 import {
-  getImportMultipleLorasDefinition,
-  getImportMultipleLorasRuntimeOutputPorts,
-  normalizeImportMultipleLorasRuntimeResult,
-} from "@/components/workflows/editor/model/constants/import-multiple-loras-definitions"
-import {
   getToolDefinition,
   getToolRuntimeOutputPorts,
   normalizeToolRuntimeResult,
@@ -224,23 +219,6 @@ function createBuiltInWorkflowNodeHandlers(): Record<
         : {
             output: node.data ?? null,
           }
-    },
-    "import-multiple-loras"({ node, graph, context }) {
-      const outputPorts = getImportMultipleLorasRuntimeOutputPorts(node)
-      const definition = getImportMultipleLorasDefinition()
-      const result = definition.runtime?.run({
-        node,
-        graph,
-        context,
-        outputPorts,
-      })
-
-      return normalizeImportMultipleLorasRuntimeResult(result, {
-        node,
-        graph,
-        context,
-        outputPorts,
-      })
     },
   }
 }

@@ -28,6 +28,7 @@ export {
 } from "./image-iterator-shape"
 export { renderImportBody } from "./import-shape"
 export { renderImportLoraBody } from "./import-lora-shape"
+export { renderImportMultipleLorasBody } from "./import-multiple-loras-shape"
 export { renderInvertBody } from "./invert-shape"
 export { renderLevelsBody, renderLevelsFooter } from "./levels-shape"
 export {

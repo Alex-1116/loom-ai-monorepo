@@ -1,7 +1,6 @@
 import type { WorkflowPortRef } from "@/components/workflows/editor/model/types/workflow-edge"
 
 export type WorkflowNodeType =
-  | "import-multiple-loras"
   | "image-model"
   | "video-model"
   | "3d-model"

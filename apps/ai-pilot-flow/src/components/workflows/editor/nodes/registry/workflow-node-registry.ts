@@ -74,7 +74,6 @@ export function getWorkflowNodeDefinition(type: WorkflowNodeType) {
 
 export function getWorkflowNodePortsForNode(node: WorkflowCanvasNode) {
   if (
-    node.type === "import-multiple-loras" ||
     node.type === "image-model" ||
     node.type === "video-model" ||
     node.type === "3d-model" ||
