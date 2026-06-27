@@ -52,6 +52,10 @@ export {
   renderVideoConcatenatorTitle,
 } from "./video-concatenator-shape"
 export {
+  renderVideoIteratorBody,
+  renderVideoIteratorTitle,
+} from "./video-iterator-shape"
+export {
   renderVideoDescriberBody,
   renderVideoDescriberTitle,
 } from "./video-describer-shape"
