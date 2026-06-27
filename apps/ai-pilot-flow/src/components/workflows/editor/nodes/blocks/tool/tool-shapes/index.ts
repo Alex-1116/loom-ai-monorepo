@@ -37,6 +37,10 @@ export {
   renderVideoConcatenatorTitle,
 } from "./video-concatenator-shape"
 export {
+  renderVideoMaskByTextBody,
+  renderVideoMaskByTextTitle,
+} from "./video-mask-by-text-shape"
+export {
   renderVideoToGifBody,
   renderVideoToGifTitle,
 } from "./video-to-gif-shape"
