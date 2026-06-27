@@ -21,6 +21,7 @@ import {
   renderColorCorrectionBody,
   renderColorCorrectionFooter,
   renderColorPaletteBody,
+  renderCropBody,
   renderLevelsBody,
   renderLevelsFooter,
   renderPainterBody,
@@ -100,7 +101,7 @@ export type ToolMenuCategory = {
   definitions: readonly ToolDefinition[]
 }
 
-const DEFAULT_TOOL_WIDTH = "w-[372px]"
+const DEFAULT_TOOL_WIDTH = "w-[392px]"
 
 const DEFAULT_TOOL_SCHEMA: ToolSchema = {
   fields: [
@@ -600,8 +601,11 @@ export const TOOL_DEFINITIONS: readonly ToolDefinition[] = [
     group: "editing",
     label: "Crop",
     category: "Editing",
-    inputPorts: [IMAGE_INPUT_PORT],
-    outputPorts: [IMAGE_OUTPUT_PORT],
+    inputPorts: [{ ...IMAGE_INPUT_PORT, label: "Input*" }],
+    outputPorts: [{ ...IMAGE_OUTPUT_PORT, label: "Output" }],
+    renderBody: renderCropBody,
+    renderFooter: () => <></>,
+    showRunAction: false,
   }),
   createStandardToolDefinition({
     key: "resize",
