@@ -84,3 +84,4 @@ export {
 } from "./rotate-and-flip-shape"
 export { renderDepthAnythingV2Body } from "./depth-anything-v2-shape"
 export { renderCompareBody } from "./compare-shape"
+export { renderKlingElementBody } from "./kling-element-shape"

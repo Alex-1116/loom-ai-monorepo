@@ -75,6 +75,7 @@ import {
   renderRotateAndFlipFooter,
   renderDepthAnythingV2Body,
   renderCompareBody,
+  renderKlingElementBody,
 } from "@/components/workflows/editor/nodes/blocks/tool/tool-shapes"
 
 export type ToolSchema = {
@@ -1209,8 +1210,40 @@ export const TOOL_DEFINITIONS: readonly ToolDefinition[] = [
     group: "helpers",
     label: "Kling Element",
     category: "Helpers",
-    inputPorts: [IMAGE_INPUT_PORT],
-    outputPorts: [RESULT_OUTPUT_PORT],
+    searchableText: "kling element 3d model",
+    inputPorts: [
+      { ...IMAGE_INPUT_PORT, key: "frontal-image", label: "Frontal Image*" },
+      {
+        ...IMAGE_INPUT_PORT_2,
+        key: "reference-image-1",
+        label: "Reference Image 1*",
+      },
+      {
+        ...IMAGE_INPUT_PORT,
+        key: "reference-image-2",
+        label: "Reference Image 2",
+      },
+      {
+        ...IMAGE_INPUT_PORT,
+        key: "reference-image-3",
+        label: "Reference Image 3",
+      },
+    ],
+    outputPorts: [
+      {
+        key: "kling-element",
+        label: "Kling Element",
+        side: "right",
+        labelVisibility: "hover",
+        portToneClassName: "border-[#f59e0b] bg-[#1c1d26]",
+        labelToneClassName: "text-[#f59e0b]",
+      },
+    ],
+    runLabel: "Generate",
+    showRunAction: false,
+    getPortOffset: (index) => getNodePortOffset(index, { step: 58 }),
+    renderBody: renderKlingElementBody,
+    renderFooter: () => <></>,
   }),
   createStandardToolDefinition({
     key: "runway-aleph-2-keyframe",
