@@ -47,6 +47,7 @@ import {
   renderMatteGrowShrinkTitle,
   renderNumberBody,
   renderOutputTitle,
+  renderTextBody,
   renderPainterBody,
   renderPainterTitle,
   renderPromptConcatenatorBody,
@@ -1344,6 +1345,8 @@ export const TOOL_DEFINITIONS: readonly ToolDefinition[] = [
     outputPorts: [TEXT_OUTPUT_PORT],
     runLabel: "Set Value",
     showRunAction: false,
+    renderBody: renderTextBody,
+    renderFooter: () => <></>,
   }),
   createStandardToolDefinition({
     key: "toggle",
