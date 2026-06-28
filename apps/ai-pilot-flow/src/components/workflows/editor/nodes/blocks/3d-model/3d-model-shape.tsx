@@ -11,7 +11,7 @@ export function renderThreeDModelBody({ isRunning }: { isRunning: boolean }) {
     <div
       className={cn(
         "relative aspect-square w-full overflow-hidden rounded-xl bg-[#1f212b]",
-        "bg-[radial-gradient(circle_at_50%_35%,rgba(106,152,255,0.16),transparent_40%),linear-gradient(135deg,rgba(255,255,255,0.05),transparent_55%),linear-gradient(0deg,rgba(255,255,255,0.03),rgba(255,255,255,0.03))]",
+        "bg-[radial-gradient(circle_at_50%_30%,rgba(129,140,248,0.1),transparent_50%),linear-gradient(180deg,rgba(255,255,255,0.02),transparent_70%)]",
         isRunning &&
           "border-sky-400/25 shadow-[inset_0_0_0_1px_rgba(56,189,248,0.14)]"
       )}

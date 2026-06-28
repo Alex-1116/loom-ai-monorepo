@@ -757,7 +757,7 @@ export function WorkflowCanvasViewport() {
         </div>
 
         <div
-          className="pointer-events-none absolute inset-0 z-20 p-4"
+          className="pointer-events-none absolute inset-0 z-21 p-4"
           data-workflow-overlay
         >
           <WorkflowRunPreviewPanel

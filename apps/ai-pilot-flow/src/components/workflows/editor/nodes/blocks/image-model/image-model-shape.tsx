@@ -22,7 +22,7 @@ export function renderImageModelBody({ isRunning }: { isRunning: boolean }) {
 
       <div className="pointer-events-none absolute right-4 bottom-4 left-4 flex items-center justify-between text-[10px] font-semibold tracking-[0.18em] uppercase">
         <span className={cn("text-white/24", isRunning && "text-sky-100/70")}>
-          {isRunning ? "Generating" : "Model Canvas"}
+          {isRunning ? "Generating" : "Image Canvas"}
         </span>
         {isRunning ? (
           <span className="rounded-full bg-sky-400/14 px-2 py-0.5 text-sky-100">
