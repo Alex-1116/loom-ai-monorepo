@@ -142,7 +142,7 @@ export function WorkflowToolNode({
       widthClassName={toolDefinition?.renderer.width}
       isSelected={isSelected}
       executionStatus={executionStatus}
-      className="gap-4"
+      className={cn("gap-4", toolDefinition?.renderer.className)}
     >
       <WorkflowNodeHeader title={headerTitle} actions={headerActions} />
 

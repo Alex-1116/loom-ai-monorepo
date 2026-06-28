@@ -138,6 +138,7 @@ export type ToolDefinition = {
   createData: () => WorkflowNodeData
   renderer: {
     width?: string
+    className?: string
     renderTitle?: (props: ToolRendererProps) => React.ReactNode
     renderHeaderActions?: (props: ToolRendererProps) => React.ReactNode
     renderBody: (props: ToolRendererProps) => React.ReactNode
@@ -486,6 +487,7 @@ function createStandardToolDefinition({
   showRunAction = true,
   schema = DEFAULT_TOOL_SCHEMA,
   width = DEFAULT_TOOL_WIDTH,
+  className,
   getPortOffset = getNodePortOffset,
   renderTitle,
   renderHeaderActions,
@@ -505,6 +507,7 @@ function createStandardToolDefinition({
   showRunAction?: boolean
   schema?: ToolSchema
   width?: string
+  className?: string
   getPortOffset?: (index: number) => number
   renderTitle?: (props: ToolRendererProps) => React.ReactNode
   renderHeaderActions?: (props: ToolRendererProps) => React.ReactNode
@@ -533,6 +536,7 @@ function createStandardToolDefinition({
     }),
     renderer: {
       width,
+      className,
       renderTitle,
       renderHeaderActions,
       renderBody: renderBody ?? createDefaultToolRenderer(category),
@@ -1153,6 +1157,7 @@ export const TOOL_DEFINITIONS: readonly ToolDefinition[] = [
     renderBody: () => null,
     renderFooter: () => <></>,
     width: "w-[300px]",
+    className: "rounded-md",
   }),
   createStandardToolDefinition({
     key: "output",
@@ -1175,6 +1180,7 @@ export const TOOL_DEFINITIONS: readonly ToolDefinition[] = [
     renderBody: () => null,
     renderFooter: () => <></>,
     width: "w-[300px]",
+    className: "rounded-md",
   }),
   createStandardToolDefinition({
     key: "depth-anything-v2",
