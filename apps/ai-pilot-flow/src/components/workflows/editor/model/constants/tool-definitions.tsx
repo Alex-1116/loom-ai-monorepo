@@ -141,6 +141,7 @@ export type ToolDefinition = {
   menu: {
     category: string
     searchableText?: string
+    showInQuickMenu?: boolean
   }
   schema?: ToolSchema
   createData: () => WorkflowNodeData
@@ -487,6 +488,7 @@ function createStandardToolDefinition({
   label,
   category,
   searchableText,
+  showInQuickMenu = false,
   inputPorts = [],
   outputPorts = [],
   addInputLabel,
@@ -507,6 +509,7 @@ function createStandardToolDefinition({
   label: string
   category: string
   searchableText?: string
+  showInQuickMenu?: boolean
   inputPorts?: readonly WorkflowNodePortData[]
   outputPorts?: readonly WorkflowNodePortData[]
   addInputLabel?: string
@@ -529,6 +532,7 @@ function createStandardToolDefinition({
     menu: {
       category,
       searchableText,
+      showInQuickMenu,
     },
     schema,
     createData: () => ({
@@ -868,6 +872,7 @@ export const TOOL_DEFINITIONS: readonly ToolDefinition[] = [
     label: "Prompt",
     category: "Text tools",
     searchableText: "text prompt composer",
+    showInQuickMenu: true,
     outputPorts: [{ ...TEXT_OUTPUT_PORT, key: "prompt", label: "Prompt" }],
     addInputLabel: "Add variable",
     showAddInputAction: true,
@@ -1041,6 +1046,7 @@ export const TOOL_DEFINITIONS: readonly ToolDefinition[] = [
     label: "Import",
     category: "Helpers",
     searchableText: "file input import",
+    showInQuickMenu: true,
     outputPorts: [
       {
         ...RESULT_OUTPUT_PORT,
@@ -1061,6 +1067,7 @@ export const TOOL_DEFINITIONS: readonly ToolDefinition[] = [
     label: "Export",
     category: "Helpers",
     searchableText: "file output export",
+    showInQuickMenu: true,
     inputPorts: [
       {
         ...VALUE_INPUT_PORT,
@@ -1081,6 +1088,7 @@ export const TOOL_DEFINITIONS: readonly ToolDefinition[] = [
     label: "Preview",
     category: "Helpers",
     searchableText: "view inspect preview",
+    showInQuickMenu: true,
     inputPorts: [
       {
         ...VALUE_INPUT_PORT,
@@ -1455,6 +1463,9 @@ export const TOOL_MENU_CATEGORIES: readonly ToolMenuCategory[] = Array.from(
     new Map()
   ).values()
 )
+
+export const QUICK_MENU_TOOLS: readonly ToolDefinition[] =
+  TOOL_DEFINITIONS.filter((definition) => definition.menu.showInQuickMenu)
 
 export function getToolDefinition(toolKey?: string | null) {
   if (!toolKey) {

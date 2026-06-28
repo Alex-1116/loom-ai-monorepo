@@ -17,6 +17,7 @@ import {
   createImageModelNodeData,
 } from "@/components/workflows/editor/model/constants/image-model-definitions"
 import {
+  QUICK_MENU_TOOLS,
   TOOL_MENU_CATEGORIES,
   createToolNodeData,
 } from "@/components/workflows/editor/model/constants/tool-definitions"
@@ -141,6 +142,16 @@ const threeDModelMenuItems: readonly MenuItem[] =
     })),
   }))
 
+const quickMenuToolItems: readonly MenuActionItem[] = QUICK_MENU_TOOLS.map(
+  (definition) => ({
+    id: `tool-${definition.key}`,
+    label: definition.label,
+    nodeType: "tool" as const,
+    nodeData: createToolNodeData(definition),
+    searchableText: definition.menu.searchableText,
+  })
+)
+
 const toolMenuItems: readonly MenuItem[] = TOOL_MENU_CATEGORIES.map(
   (category) => ({
     id: category.id,
@@ -169,6 +180,7 @@ const menuItems: readonly MenuItem[] = [
       label: item.label,
       nodeType: item.type,
     })),
+  ...quickMenuToolItems,
   {
     id: "saved",
     label: "Saved",

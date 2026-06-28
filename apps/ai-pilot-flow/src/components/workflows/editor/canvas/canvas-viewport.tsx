@@ -29,6 +29,10 @@ import {
   createInitialWorkflowNodes,
   createWorkflowNode,
 } from "@/components/workflows/editor/nodes/registry/workflow-node-factory"
+import {
+  createToolNodeData,
+  getToolDefinition,
+} from "@/components/workflows/editor/model/constants/tool-definitions"
 import { renderWorkflowCanvasNode } from "@/components/workflows/editor/nodes/registry/workflow-canvas-node-renderers"
 import { useCanvasPan } from "@/components/workflows/editor/interactions/hooks/useCanvasPan"
 import { useCanvasNodeDrag } from "@/components/workflows/editor/interactions/hooks/useCanvasNodeDrag"
@@ -405,6 +409,7 @@ export function WorkflowCanvasViewport() {
           type: "tool",
           x: 0,
           y: 0,
+          data: createToolNodeData(getToolDefinition("prompt")!),
         }),
       ]
     })
