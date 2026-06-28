@@ -92,3 +92,8 @@ export { renderTextBody } from "./text-shape"
 export { renderToggleBody } from "./toggle-shape"
 export { renderListSelectorBody } from "./list-selector-shape"
 export { renderSeedBody } from "./seed-shape"
+export {
+  renderArrayBody,
+  renderArrayFooter,
+  renderArrayHeaderActions,
+} from "./array-shape"

@@ -51,6 +51,9 @@ import {
   renderToggleBody,
   renderListSelectorBody,
   renderSeedBody,
+  renderArrayBody,
+  renderArrayFooter,
+  renderArrayHeaderActions,
   renderPainterBody,
   renderPainterTitle,
   renderPromptConcatenatorBody,
@@ -1414,11 +1417,19 @@ export const TOOL_DEFINITIONS: readonly ToolDefinition[] = [
     label: "Array",
     category: "Datatypes",
     searchableText: "list array collection",
-    inputPorts: [VALUE_INPUT_PORT],
-    outputPorts: [VALUE_OUTPUT_PORT],
-    addInputLabel: "Add item",
-    showAddInputAction: true,
+    inputPorts: [TEXT_INPUT_PORT],
+    outputPorts: [
+      {
+        ...VALUE_OUTPUT_PORT,
+        label: "Array",
+        portToneClassName: "border-[#3b82f6]/60 bg-[#1c1d26]",
+        labelToneClassName: "text-[#3b82f6]",
+      },
+    ],
     showRunAction: false,
+    renderBody: renderArrayBody,
+    renderFooter: renderArrayFooter,
+    renderHeaderActions: renderArrayHeaderActions,
   }),
 ] as const
 
