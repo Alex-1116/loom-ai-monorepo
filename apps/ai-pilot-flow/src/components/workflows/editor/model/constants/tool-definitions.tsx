@@ -77,6 +77,7 @@ import {
   renderCompareBody,
   renderKlingElementBody,
   renderRunwayAleph2KeyframeBody,
+  renderBlendBody,
 } from "@/components/workflows/editor/nodes/blocks/tool/tool-shapes"
 
 export type ToolSchema = {
@@ -1272,8 +1273,39 @@ export const TOOL_DEFINITIONS: readonly ToolDefinition[] = [
     group: "helpers",
     label: "Blend",
     category: "Helpers",
-    inputPorts: [IMAGE_INPUT_PORT, IMAGE_INPUT_PORT_2],
-    outputPorts: [IMAGE_OUTPUT_PORT],
+    searchableText: "blend composite mix images",
+    inputPorts: [
+      {
+        key: "back",
+        label: "Back",
+        side: "left",
+        labelVisibility: "hover",
+        portToneClassName: "border-white/30 bg-[#1c1d26]",
+        labelToneClassName: "text-white/70",
+      },
+      {
+        key: "front",
+        label: "Front",
+        side: "left",
+        labelVisibility: "hover",
+        portToneClassName: "border-white/30 bg-[#1c1d26]",
+        labelToneClassName: "text-white/70",
+      },
+    ],
+    outputPorts: [
+      {
+        key: "result",
+        label: "Result",
+        side: "right",
+        labelVisibility: "hover",
+        portToneClassName: "border-white/30 bg-[#1c1d26]",
+        labelToneClassName: "text-white/70",
+      },
+    ],
+    showRunAction: false,
+    getPortOffset: getNodePortOffset,
+    renderBody: renderBlendBody,
+    renderFooter: () => <></>,
   }),
   createStandardToolDefinition({
     key: "number",
