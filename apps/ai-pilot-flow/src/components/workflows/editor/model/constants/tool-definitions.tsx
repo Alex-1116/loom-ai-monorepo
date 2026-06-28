@@ -74,6 +74,7 @@ import {
   renderRotateAndFlipBody,
   renderRotateAndFlipFooter,
   renderDepthAnythingV2Body,
+  renderCompareBody,
 } from "@/components/workflows/editor/nodes/blocks/tool/tool-shapes"
 
 export type ToolSchema = {
@@ -1190,8 +1191,18 @@ export const TOOL_DEFINITIONS: readonly ToolDefinition[] = [
     label: "Compare",
     category: "Helpers",
     searchableText: "diff compare values",
-    inputPorts: [VALUE_INPUT_PORT, VALUE_INPUT_PORT_2],
-    outputPorts: [VALUE_OUTPUT_PORT],
+    inputPorts: [
+      { ...VALUE_INPUT_PORT, label: "Input 1" },
+      { ...VALUE_INPUT_PORT_2, label: "Input 2" },
+    ],
+    outputPorts: [
+      { ...VALUE_OUTPUT_PORT, key: "output-1", label: "Output 1" },
+      { ...VALUE_OUTPUT_PORT, key: "output-2", label: "Output 2" },
+    ],
+    showRunAction: false,
+    getPortOffset: getNodePortOffset,
+    renderBody: renderCompareBody,
+    renderFooter: () => <></>,
   }),
   createStandardToolDefinition({
     key: "kling-element",
