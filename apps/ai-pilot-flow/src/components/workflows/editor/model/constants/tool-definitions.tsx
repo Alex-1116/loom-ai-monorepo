@@ -76,6 +76,7 @@ import {
   renderDepthAnythingV2Body,
   renderCompareBody,
   renderKlingElementBody,
+  renderRunwayAleph2KeyframeBody,
 } from "@/components/workflows/editor/nodes/blocks/tool/tool-shapes"
 
 export type ToolSchema = {
@@ -1251,8 +1252,20 @@ export const TOOL_DEFINITIONS: readonly ToolDefinition[] = [
     label: "Runway Aleph 2 Keyframe",
     category: "Helpers",
     searchableText: "keyframe runway video",
-    inputPorts: [VIDEO_INPUT_PORT],
-    outputPorts: [VIDEO_OUTPUT_PORT],
+    inputPorts: [{ ...IMAGE_INPUT_PORT, label: "Image*" }],
+    outputPorts: [
+      {
+        key: "aleph-2-keyframe",
+        label: "Aleph 2 Keyframe",
+        side: "right",
+        labelVisibility: "hover",
+        portToneClassName: "border-[#f59e0b] bg-[#1c1d26]",
+        labelToneClassName: "text-[#f59e0b]",
+      },
+    ],
+    showRunAction: false,
+    renderBody: renderRunwayAleph2KeyframeBody,
+    renderFooter: () => <></>,
   }),
   createStandardToolDefinition({
     key: "blend",

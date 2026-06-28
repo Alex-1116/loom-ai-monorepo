@@ -85,3 +85,4 @@ export {
 export { renderDepthAnythingV2Body } from "./depth-anything-v2-shape"
 export { renderCompareBody } from "./compare-shape"
 export { renderKlingElementBody } from "./kling-element-shape"
+export { renderRunwayAleph2KeyframeBody } from "./runway-aleph-2-keyframe-shape"
