@@ -82,3 +82,4 @@ export {
   renderRotateAndFlipBody,
   renderRotateAndFlipFooter,
 } from "./rotate-and-flip-shape"
+export { renderDepthAnythingV2Body } from "./depth-anything-v2-shape"

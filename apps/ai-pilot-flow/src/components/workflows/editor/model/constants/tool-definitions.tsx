@@ -73,6 +73,7 @@ import {
   renderVideoToGifTitle,
   renderRotateAndFlipBody,
   renderRotateAndFlipFooter,
+  renderDepthAnythingV2Body,
 } from "@/components/workflows/editor/nodes/blocks/tool/tool-shapes"
 
 export type ToolSchema = {
@@ -1177,8 +1178,11 @@ export const TOOL_DEFINITIONS: readonly ToolDefinition[] = [
     label: "Depth Anything V2",
     category: "Helpers",
     searchableText: "depth map image",
-    inputPorts: [IMAGE_INPUT_PORT],
-    outputPorts: [IMAGE_OUTPUT_PORT],
+    inputPorts: [{ ...IMAGE_INPUT_PORT, label: "Image*" }],
+    outputPorts: [{ ...IMAGE_OUTPUT_PORT, label: "Depth Map" }],
+    runLabel: "Run Model",
+    showRunAction: true,
+    renderBody: renderDepthAnythingV2Body,
   }),
   createStandardToolDefinition({
     key: "compare",
