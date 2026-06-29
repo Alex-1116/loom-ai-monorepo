@@ -333,7 +333,7 @@ export function useCanvasZoom({
       // const direction = event.deltaY < 0 ? "in" : "out"
       // const nextScale = getNextZoomStep(viewportRef.current.scale, direction)
       // 触控板/鼠标滚轮缩放用连续比例，而不是固定步进，避免灵敏度过高。
-      const wheelZoomFactor = Math.exp(-event.deltaY * 0.01)
+      const wheelZoomFactor = Math.exp(-event.deltaY * 0.035)
       const nextScale = clamp(
         normalizeScale(viewportRef.current.scale * wheelZoomFactor),
         MIN_SCALE,

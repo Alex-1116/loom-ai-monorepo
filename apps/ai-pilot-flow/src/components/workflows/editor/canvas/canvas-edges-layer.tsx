@@ -66,6 +66,10 @@ function getEdgeAnchor({
 }
 
 function createEdgePath(source: EdgeAnchor, target: EdgeAnchor) {
+  if (Math.abs(source.y - target.y) < 0.5) {
+    return `M ${source.x} ${source.y} L ${target.x} ${target.y}`
+  }
+
   const deltaX = target.x - source.x
   const controlOffset = Math.max(48, Math.abs(deltaX) * 0.4)
   const sourceControlX =
@@ -200,10 +204,11 @@ export function WorkflowCanvasEdgesLayer({
       <defs>
         <filter
           id="workflow-edge-glow"
-          x="-50%"
-          y="-50%"
-          width="200%"
-          height="200%"
+          filterUnits="userSpaceOnUse"
+          x="-100000"
+          y="-100000"
+          width="200000"
+          height="200000"
         >
           <feGaussianBlur result="blur" stdDeviation="2.5" />
           <feMerge>
@@ -221,13 +226,11 @@ export function WorkflowCanvasEdgesLayer({
             stroke={
               edgePath.tone === "preview"
                 ? "rgba(56, 189, 248, 0.18)"
-                : edgePath.isSelected || edgePath.isHovered
-                  ? "rgba(96, 165, 250, 0.22)"
-                  : "rgba(15, 23, 42, 0.18)"
+                : "rgba(15, 23, 42, 0.18)"
             }
             strokeLinecap="round"
             strokeDasharray={edgePath.tone === "preview" ? "10 8" : undefined}
-            strokeWidth={edgePath.isSelected || edgePath.isHovered ? 8 : 6}
+            strokeWidth={6}
           />
           <path
             className={cn(
@@ -249,7 +252,7 @@ export function WorkflowCanvasEdgesLayer({
             }
             strokeLinecap="round"
             strokeDasharray={edgePath.tone === "preview" ? "10 8" : undefined}
-            strokeWidth={edgePath.isSelected || edgePath.isHovered ? 3 : 2}
+            strokeWidth={edgePath.isSelected ? 3 : 2}
           />
           {edgePath.tone === "persisted" ? (
             <>
