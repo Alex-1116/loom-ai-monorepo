@@ -86,10 +86,11 @@ export function WorkflowRunPreviewPanel({
           type="button"
           size="icon-sm"
           variant="ghost"
+          disabled={isRunning}
           aria-label="关闭运行预览"
           title="关闭运行预览"
           onClick={onClose}
-          className="rounded-lg text-white/55 shadow-none hover:bg-white/6 hover:text-white"
+          className="rounded-lg text-white/55 shadow-none hover:bg-white/6 hover:text-white disabled:pointer-events-none disabled:opacity-40"
         >
           <X className="size-4" strokeWidth={2.2} />
         </Button>

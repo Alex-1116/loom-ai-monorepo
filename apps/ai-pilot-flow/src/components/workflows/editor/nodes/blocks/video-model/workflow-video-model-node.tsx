@@ -33,6 +33,7 @@ type WorkflowVideoModelNodeProps = {
   showRunAction?: boolean
   isSelected?: boolean
   executionStatus?: WorkflowExecutionStatus
+  runtimeError?: string
   onPortPointerDown?: WorkflowNodePortPointerHandler
   onAddInputClick?: () => void
   onRunClick?: () => void
@@ -55,6 +56,7 @@ export function WorkflowVideoModelNode({
   showRunAction = WORKFLOW_NODE_DEFAULTS["video-model"].showRunAction,
   isSelected = false,
   executionStatus,
+  runtimeError,
   onPortPointerDown,
   onAddInputClick,
   onRunClick,
@@ -125,7 +127,17 @@ export function WorkflowVideoModelNode({
     >
       <WorkflowNodeHeader title={title ?? videoModelDefinition?.label} />
 
-      <WorkflowNodeBody className="w-full">
+      <WorkflowNodeBody
+        className="w-full"
+        errorState={
+          runtimeError && executionStatus === "failed"
+            ? {
+                title: "Model run failed",
+                description: runtimeError,
+              }
+            : null
+        }
+      >
         {videoModelDefinition?.renderer.renderBody(rendererProps) ?? null}
       </WorkflowNodeBody>
 

@@ -29,6 +29,7 @@ type WorkflowImageModelNodeProps = {
   showRunAction?: boolean
   isSelected?: boolean
   executionStatus?: WorkflowExecutionStatus
+  runtimeError?: string
   onPortPointerDown?: WorkflowNodePortPointerHandler
   onAddInputClick?: () => void
   onRunClick?: () => void
@@ -51,6 +52,7 @@ export function WorkflowImageModelNode({
   showRunAction = WORKFLOW_NODE_DEFAULTS["image-model"].showRunAction,
   isSelected = false,
   executionStatus,
+  runtimeError,
   onPortPointerDown,
   onAddInputClick,
   onRunClick,
@@ -121,7 +123,17 @@ export function WorkflowImageModelNode({
     >
       <WorkflowNodeHeader title={title ?? imageModelDefinition?.label} />
 
-      <WorkflowNodeBody className="w-full">
+      <WorkflowNodeBody
+        className="w-full"
+        errorState={
+          runtimeError && executionStatus === "failed"
+            ? {
+                title: "Model run failed",
+                description: runtimeError,
+              }
+            : null
+        }
+      >
         {imageModelDefinition?.renderer.renderBody(rendererProps) ?? null}
       </WorkflowNodeBody>
 

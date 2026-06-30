@@ -8,12 +8,16 @@ import { WorkflowToolNode } from "@/components/workflows/editor/nodes/blocks/too
 import { WorkflowVideoModelNode } from "@/components/workflows/editor/nodes/blocks/video-model/workflow-video-model-node"
 import type { WorkflowCanvasNode } from "@/components/workflows/editor/model/types/workflow-node"
 import type { WorkflowNodePortPointerHandler } from "@/components/workflows/editor/nodes/shell/workflow-node-shell"
-import type { WorkflowExecutionStatus } from "@/components/workflows/shared/types/workflow-runtime"
+import type {
+  WorkflowExecutionStatus,
+  WorkflowNodeExecutionState,
+} from "@/components/workflows/shared/types/workflow-runtime"
 
 type WorkflowCanvasNodeRendererParams = {
   node: WorkflowCanvasNode
   isSelected: boolean
   executionStatus?: WorkflowExecutionStatus
+  executionState?: WorkflowNodeExecutionState
   onPortPointerDown?: WorkflowNodePortPointerHandler
   onRunPreview: () => void | Promise<void>
   onPatchNode?: (
@@ -35,6 +39,7 @@ const WORKFLOW_CANVAS_NODE_RENDERERS: Record<
     node,
     isSelected,
     executionStatus,
+    executionState,
     onPortPointerDown,
     onRunPreview,
   }) => (
@@ -42,6 +47,7 @@ const WORKFLOW_CANVAS_NODE_RENDERERS: Record<
       nodeId={node.id}
       isSelected={isSelected}
       executionStatus={executionStatus}
+      runtimeError={executionState?.error}
       title={node.data?.title}
       modelKey={node.data?.modelKey}
       inputPorts={node.data?.inputPorts}
@@ -60,6 +66,7 @@ const WORKFLOW_CANVAS_NODE_RENDERERS: Record<
     node,
     isSelected,
     executionStatus,
+    executionState,
     onPortPointerDown,
     onRunPreview,
   }) => (
@@ -67,6 +74,7 @@ const WORKFLOW_CANVAS_NODE_RENDERERS: Record<
       nodeId={node.id}
       isSelected={isSelected}
       executionStatus={executionStatus}
+      runtimeError={executionState?.error}
       title={node.data?.title}
       modelKey={node.data?.modelKey}
       inputPorts={node.data?.inputPorts}
@@ -85,6 +93,7 @@ const WORKFLOW_CANVAS_NODE_RENDERERS: Record<
     node,
     isSelected,
     executionStatus,
+    executionState,
     onPortPointerDown,
     onRunPreview,
   }) => (
@@ -92,6 +101,7 @@ const WORKFLOW_CANVAS_NODE_RENDERERS: Record<
       nodeId={node.id}
       isSelected={isSelected}
       executionStatus={executionStatus}
+      runtimeError={executionState?.error}
       title={node.data?.title}
       modelKey={node.data?.modelKey}
       inputPorts={node.data?.inputPorts}
@@ -110,6 +120,7 @@ const WORKFLOW_CANVAS_NODE_RENDERERS: Record<
     node,
     isSelected,
     executionStatus,
+    executionState,
     onPortPointerDown,
     onPatchNode,
     onCommitNodeChanges,
@@ -119,6 +130,7 @@ const WORKFLOW_CANVAS_NODE_RENDERERS: Record<
       nodeId={node.id}
       isSelected={isSelected}
       executionStatus={executionStatus}
+      runtimeError={executionState?.error}
       toolKey={node.data?.toolKey}
       title={node.data?.title}
       content={node.data?.content}

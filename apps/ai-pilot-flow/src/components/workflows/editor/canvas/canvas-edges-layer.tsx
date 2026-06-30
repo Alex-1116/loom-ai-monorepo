@@ -17,11 +17,18 @@ type WorkflowCanvasNodeSize = {
   height: number
 }
 
+export type WorkflowEdgeExecutionStatus =
+  | "idle"
+  | "flowing"
+  | "succeeded"
+  | "failed"
+
 type WorkflowCanvasEdgesLayerProps = {
   nodes: WorkflowCanvasNode[]
   nodeSizes: Record<string, WorkflowCanvasNodeSize>
   portAnchors: Record<string, CanvasNodePortAnchors>
   edges: WorkflowEdge[]
+  edgeExecutionStatuses?: Record<string, WorkflowEdgeExecutionStatus>
   selectedEdgeIds?: string[]
   onSelectEdge?: (edgeId: string) => void
   onReconnectEdgePointerDown?: (
@@ -85,6 +92,7 @@ export function WorkflowCanvasEdgesLayer({
   nodeSizes,
   portAnchors,
   edges,
+  edgeExecutionStatuses = {},
   selectedEdgeIds = [],
   onSelectEdge,
   onReconnectEdgePointerDown,
@@ -254,6 +262,67 @@ export function WorkflowCanvasEdgesLayer({
             strokeDasharray={edgePath.tone === "preview" ? "10 8" : undefined}
             strokeWidth={edgePath.isSelected ? 3 : 2}
           />
+          {edgePath.tone === "persisted"
+            ? (() => {
+                const executionStatus =
+                  edgeExecutionStatuses[edgePath.id] ?? "idle"
+                const isAnimated = executionStatus !== "idle"
+
+                if (!isAnimated) {
+                  return null
+                }
+
+                const animatedStroke =
+                  executionStatus === "failed"
+                    ? "#f87171"
+                    : executionStatus === "succeeded"
+                      ? "#22c55e"
+                      : "#38bdf8"
+
+                return (
+                  <path
+                    d={edgePath.path}
+                    fill="none"
+                    filter="url(#workflow-edge-glow)"
+                    pointerEvents="none"
+                    stroke={animatedStroke}
+                    strokeLinecap="round"
+                    strokeDasharray={
+                      executionStatus === "flowing" ? "12 10" : undefined
+                    }
+                    strokeWidth={1.5}
+                  >
+                    {executionStatus === "flowing" ? (
+                      <animate
+                        attributeName="stroke-dashoffset"
+                        dur="900ms"
+                        from="0"
+                        repeatCount="indefinite"
+                        to="-44"
+                      />
+                    ) : null}
+                    {executionStatus === "succeeded" ? (
+                      <animate
+                        attributeName="opacity"
+                        dur="640ms"
+                        from="1"
+                        repeatCount="1"
+                        to="0.2"
+                      />
+                    ) : null}
+                    {executionStatus === "failed" ? (
+                      <animate
+                        attributeName="opacity"
+                        dur="240ms"
+                        from="1"
+                        repeatCount="2"
+                        to="0.35"
+                      />
+                    ) : null}
+                  </path>
+                )
+              })()
+            : null}
           {edgePath.tone === "persisted" ? (
             <>
               <path

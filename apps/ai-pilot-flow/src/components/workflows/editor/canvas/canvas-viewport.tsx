@@ -11,7 +11,10 @@ import {
 import { WorkflowCanvasViewToolbar } from "@/components/workflows/editor/chrome/toolbar/canvas-view-toolbar"
 import { WorkflowCanvasBackground } from "@/components/workflows/editor/canvas/canvas-background"
 import { WorkflowCanvasContextMenu } from "@/components/workflows/editor/canvas/canvas-context-menu"
-import { WorkflowCanvasEdgesLayer } from "@/components/workflows/editor/canvas/canvas-edges-layer"
+import {
+  WorkflowCanvasEdgesLayer,
+  type WorkflowEdgeExecutionStatus,
+} from "@/components/workflows/editor/canvas/canvas-edges-layer"
 import { WorkflowCanvasGuidesLayer } from "@/components/workflows/editor/canvas/canvas-guides-layer"
 import { WorkflowCanvasSelectionLayer } from "@/components/workflows/editor/canvas/canvas-selection-layer"
 import { WorkflowCanvasLeftToolbar } from "@/components/workflows/editor/chrome/toolbar/canvas-left-toolbar"
@@ -51,7 +54,7 @@ import { useCanvasSelectionDrag } from "@/components/workflows/editor/interactio
 import { useCanvasEdgeConnection } from "@/components/workflows/editor/interactions/hooks/useCanvasEdgeConnection"
 import { runWorkflowDocument } from "@/components/workflows/runtime"
 import type {
-  WorkflowExecutionStatus,
+  WorkflowNodeExecutionState,
   WorkflowRunResult,
 } from "@/components/workflows/shared"
 
@@ -62,6 +65,7 @@ type WorkflowCanvasNodeSize = {
 
 const initialNodes = createInitialWorkflowNodes()
 const SELECTION_OVERLAY_PADDING = 5
+const NODE_SUCCESS_RESET_DELAY_MS = 1200
 
 function formatZoom(scale: number) {
   return `${Math.round(scale * 100)}%`
@@ -91,6 +95,8 @@ export function WorkflowCanvasViewport() {
   const importInputRef = React.useRef<HTMLInputElement | null>(null)
   const nodesRef = React.useRef<WorkflowCanvasNode[]>(initialNodes)
   const nodeSizesRef = React.useRef<Record<string, WorkflowCanvasNodeSize>>({})
+  const edgeResetTimersRef = React.useRef<Record<string, number>>({})
+  const nodeResetTimersRef = React.useRef<Record<string, number>>({})
   const [activeTool, setActiveTool] =
     React.useState<WorkflowCanvasTool>("select")
   const [isRunningPreview, setIsRunningPreview] = React.useState(false)
@@ -100,8 +106,11 @@ export function WorkflowCanvasViewport() {
   const [runPreviewError, setRunPreviewError] = React.useState<string | null>(
     null
   )
-  const [nodeExecutionStatuses, setNodeExecutionStatuses] = React.useState<
-    Record<string, WorkflowExecutionStatus>
+  const [nodeExecutionStates, setNodeExecutionStates] = React.useState<
+    Record<string, WorkflowNodeExecutionState>
+  >({})
+  const [edgeExecutionStatuses, setEdgeExecutionStatuses] = React.useState<
+    Record<string, WorkflowEdgeExecutionStatus>
   >({})
   const {
     nodes,
@@ -193,6 +202,112 @@ export function WorkflowCanvasViewport() {
     // 节点尺寸由独立 hook 维护，这里只同步给吸附层读取。
     nodeSizesRef.current = nodeSizes
   }, [nodeSizes])
+
+  const clearEdgeExecutionTimers = React.useCallback(() => {
+    Object.values(edgeResetTimersRef.current).forEach((timerId) => {
+      window.clearTimeout(timerId)
+    })
+    edgeResetTimersRef.current = {}
+  }, [])
+
+  const clearNodeExecutionTimers = React.useCallback(() => {
+    Object.values(nodeResetTimersRef.current).forEach((timerId) => {
+      window.clearTimeout(timerId)
+    })
+    nodeResetTimersRef.current = {}
+  }, [])
+
+  const resetEdgeExecutionStatuses = React.useCallback(() => {
+    clearEdgeExecutionTimers()
+    setEdgeExecutionStatuses({})
+  }, [clearEdgeExecutionTimers])
+
+  const resetNodeExecutionStates = React.useCallback(() => {
+    clearNodeExecutionTimers()
+    setNodeExecutionStates({})
+  }, [clearNodeExecutionTimers])
+
+  const clearNodeExecutionResetTimer = React.useCallback((nodeId: string) => {
+    const timerId = nodeResetTimersRef.current[nodeId]
+    if (!timerId) {
+      return
+    }
+
+    window.clearTimeout(timerId)
+    delete nodeResetTimersRef.current[nodeId]
+  }, [])
+
+  const scheduleNodeExecutionReset = React.useCallback(
+    (nodeId: string) => {
+      clearNodeExecutionResetTimer(nodeId)
+      nodeResetTimersRef.current[nodeId] = window.setTimeout(() => {
+        setNodeExecutionStates((current) => {
+          if (!(nodeId in current)) {
+            return current
+          }
+
+          const next = { ...current }
+          delete next[nodeId]
+          return next
+        })
+        delete nodeResetTimersRef.current[nodeId]
+      }, NODE_SUCCESS_RESET_DELAY_MS)
+    },
+    [clearNodeExecutionResetTimer]
+  )
+
+  React.useEffect(() => {
+    return () => {
+      clearEdgeExecutionTimers()
+      clearNodeExecutionTimers()
+    }
+  }, [clearEdgeExecutionTimers, clearNodeExecutionTimers])
+
+  const markIncomingEdgesExecutionStatus = React.useCallback(
+    (nodeId: string, status: WorkflowEdgeExecutionStatus) => {
+      const incomingEdgeIds = edges
+        .filter((edge) => edge.target.nodeId === nodeId)
+        .map((edge) => edge.id)
+
+      if (incomingEdgeIds.length === 0) {
+        return
+      }
+
+      setEdgeExecutionStatuses((current) => {
+        const next = { ...current }
+        incomingEdgeIds.forEach((edgeId) => {
+          next[edgeId] = status
+        })
+        return next
+      })
+
+      incomingEdgeIds.forEach((edgeId) => {
+        const existingTimerId = edgeResetTimersRef.current[edgeId]
+        if (existingTimerId) {
+          window.clearTimeout(existingTimerId)
+          delete edgeResetTimersRef.current[edgeId]
+        }
+
+        if (status === "flowing") {
+          return
+        }
+
+        edgeResetTimersRef.current[edgeId] = window.setTimeout(() => {
+          setEdgeExecutionStatuses((current) => {
+            if (!(edgeId in current)) {
+              return current
+            }
+
+            const next = { ...current }
+            delete next[edgeId]
+            return next
+          })
+          delete edgeResetTimersRef.current[edgeId]
+        }, 640)
+      })
+    },
+    [edges]
+  )
 
   const {
     guides: activeSnapGuides,
@@ -482,7 +597,8 @@ export function WorkflowCanvasViewport() {
     setIsRunningPreview(true)
     setRunPreviewResult(null)
     setRunPreviewError(null)
-    setNodeExecutionStatuses({})
+    resetNodeExecutionStates()
+    resetEdgeExecutionStatuses()
 
     try {
       if (validationErrors.length > 0) {
@@ -496,10 +612,27 @@ export function WorkflowCanvasViewport() {
           edges,
         },
         onNodeStateChange: (nodeState) => {
-          setNodeExecutionStatuses((current) => ({
+          clearNodeExecutionResetTimer(nodeState.nodeId)
+          setNodeExecutionStates((current) => ({
             ...current,
-            [nodeState.nodeId]: nodeState.status,
+            [nodeState.nodeId]: nodeState,
           }))
+
+          if (nodeState.status === "running") {
+            markIncomingEdgesExecutionStatus(nodeState.nodeId, "flowing")
+            return
+          }
+
+          if (
+            nodeState.status === "succeeded" ||
+            nodeState.status === "failed"
+          ) {
+            markIncomingEdgesExecutionStatus(nodeState.nodeId, nodeState.status)
+          }
+
+          if (nodeState.status === "succeeded") {
+            scheduleNodeExecutionReset(nodeState.nodeId)
+          }
         },
       })
 
@@ -512,7 +645,17 @@ export function WorkflowCanvasViewport() {
     } finally {
       setIsRunningPreview(false)
     }
-  }, [edges, isRunningPreview, nodes, viewport])
+  }, [
+    edges,
+    isRunningPreview,
+    clearNodeExecutionResetTimer,
+    markIncomingEdgesExecutionStatus,
+    nodes,
+    resetNodeExecutionStates,
+    scheduleNodeExecutionReset,
+    resetEdgeExecutionStatuses,
+    viewport,
+  ])
 
   const handleTriggerImport = React.useCallback(() => {
     if (!importInputRef.current) {
@@ -773,7 +916,8 @@ export function WorkflowCanvasViewport() {
               setIsRunningPreview(false)
               setRunPreviewResult(null)
               setRunPreviewError(null)
-              setNodeExecutionStatuses({})
+              resetNodeExecutionStates()
+              resetEdgeExecutionStatuses()
             }}
           />
         </div>
@@ -820,6 +964,7 @@ export function WorkflowCanvasViewport() {
                 nodeSizes={nodeSizes}
                 portAnchors={portAnchors}
                 edges={edges}
+                edgeExecutionStatuses={edgeExecutionStatuses}
                 selectedEdgeIds={selectedEdgeIds}
                 onSelectEdge={handleSelectEdge}
                 onReconnectEdgePointerDown={handleEdgeReconnectPointerDown}
@@ -874,7 +1019,8 @@ export function WorkflowCanvasViewport() {
                   {renderWorkflowCanvasNode({
                     node,
                     isSelected: selectedNodeIdSet.has(node.id),
-                    executionStatus: nodeExecutionStatuses[node.id],
+                    executionStatus: nodeExecutionStates[node.id]?.status,
+                    executionState: nodeExecutionStates[node.id],
                     onPortPointerDown: handlePortPointerDown,
                     onRunPreview: handleRunPreview,
                     onPatchNode: handlePatchNode,

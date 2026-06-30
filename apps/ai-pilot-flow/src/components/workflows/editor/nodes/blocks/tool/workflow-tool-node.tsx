@@ -36,6 +36,7 @@ type WorkflowToolNodeProps = {
   showRunAction?: boolean
   isSelected?: boolean
   executionStatus?: WorkflowExecutionStatus
+  runtimeError?: string
   onPortPointerDown?: WorkflowNodePortPointerHandler
   onAddInputClick?: () => void
   onContentChange?: (value: string) => void
@@ -60,6 +61,7 @@ export function WorkflowToolNode({
   showRunAction = WORKFLOW_NODE_DEFAULTS.tool.showRunAction,
   isSelected = false,
   executionStatus,
+  runtimeError,
   onPortPointerDown,
   onAddInputClick,
   onContentChange,
@@ -147,7 +149,19 @@ export function WorkflowToolNode({
       <WorkflowNodeHeader title={headerTitle} actions={headerActions} />
 
       {bodyContent ? (
-        <WorkflowNodeBody className="w-full">{bodyContent}</WorkflowNodeBody>
+        <WorkflowNodeBody
+          className="w-full"
+          errorState={
+            runtimeError && executionStatus === "failed"
+              ? {
+                  title: "Tool run failed",
+                  description: runtimeError,
+                }
+              : null
+          }
+        >
+          {bodyContent}
+        </WorkflowNodeBody>
       ) : null}
 
       {customFooter ?? (

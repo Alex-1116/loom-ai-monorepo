@@ -33,6 +33,7 @@ type WorkflowThreeDModelNodeProps = {
   showRunAction?: boolean
   isSelected?: boolean
   executionStatus?: WorkflowExecutionStatus
+  runtimeError?: string
   onPortPointerDown?: WorkflowNodePortPointerHandler
   onAddInputClick?: () => void
   onRunClick?: () => void
@@ -54,6 +55,7 @@ export function WorkflowThreeDModelNode({
   showRunAction = WORKFLOW_NODE_DEFAULTS["3d-model"].showRunAction,
   isSelected = false,
   executionStatus,
+  runtimeError,
   onPortPointerDown,
   onAddInputClick,
   onRunClick,
@@ -124,7 +126,17 @@ export function WorkflowThreeDModelNode({
     >
       <WorkflowNodeHeader title={title ?? threeDModelDefinition?.label} />
 
-      <WorkflowNodeBody className="w-full">
+      <WorkflowNodeBody
+        className="w-full"
+        errorState={
+          runtimeError && executionStatus === "failed"
+            ? {
+                title: "Model run failed",
+                description: runtimeError,
+              }
+            : null
+        }
+      >
         {threeDModelDefinition?.renderer.renderBody(rendererProps) ?? null}
       </WorkflowNodeBody>
 

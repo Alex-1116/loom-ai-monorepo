@@ -33,6 +33,8 @@ export function WorkflowNodeShell({
         shellToneClassName,
         isSelected && "ring-1 ring-white/70",
         isDragging && "shadow-[0_26px_72px_rgba(0,0,0,0.52)]",
+        executionStatus === "pending" &&
+          "border-white/15 bg-white/[0.03] shadow-[0_20px_60px_rgba(255,255,255,0.06)]",
         executionStatus === "running" &&
           "border-sky-400/45 bg-sky-400/[0.06] shadow-[0_20px_60px_rgba(14,165,233,0.18)]",
         executionStatus === "succeeded" &&
@@ -47,6 +49,7 @@ export function WorkflowNodeShell({
         <div
           className={cn(
             "pointer-events-none absolute top-3 right-3 rounded-full px-2 py-0.5 text-[10px] font-semibold tracking-[0.18em] uppercase",
+            executionStatus === "pending" && "bg-white/10 text-white/72",
             executionStatus === "running" && "bg-sky-400/14 text-sky-100",
             executionStatus === "succeeded" &&
               "bg-emerald-400/14 text-emerald-100",
