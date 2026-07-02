@@ -4,7 +4,7 @@ import { Geist, Geist_Mono } from "next/font/google"
 
 import "@loom/ui/globals.css"
 import { TooltipProvider } from "@loom/ui/components/tooltip"
-import { ThemeProvider } from "@/components/basics/theme/theme-provider"
+import { ThemeProvider } from "@/components/providers/theme-provider"
 import { cn } from "@loom/ui/lib/utils"
 
 const fontSans = Geist({

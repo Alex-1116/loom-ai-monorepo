@@ -16,6 +16,7 @@ import { Separator } from "@loom/ui/components/separator"
 import { SidebarTrigger } from "@loom/ui/components/sidebar"
 import { sidebarGroups } from "@/components/dashboard/sidebar/sidebar-data"
 import { type SidebarNavigationGroup } from "@/components/dashboard/sidebar/sidebar-types"
+import ThemeToggle from "@/components/basics/theme/theme-toggle"
 
 type BreadcrumbEntry = {
   href: string
@@ -121,6 +122,9 @@ export function AppHeader() {
             </Breadcrumb>
           </>
         ) : null}
+      </div>
+      <div className="px-4 lg:px-6">
+        <ThemeToggle />
       </div>
     </header>
   )
