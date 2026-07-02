@@ -1,18 +1,11 @@
 import type { ReactNode } from "react"
 
-import { SidebarInset, SidebarProvider } from "@loom/ui/components/sidebar"
+import DashboardLayout from "@/components/dashboard/layout"
 
-import { AppSidebar } from "@/layouts/sidebar"
-
-export default function DashboardLayout({
+export default function DashboardLayoutRoot({
   children,
 }: Readonly<{
   children: ReactNode
 }>) {
-  return (
-    <SidebarProvider>
-      <AppSidebar />
-      <SidebarInset>{children}</SidebarInset>
-    </SidebarProvider>
-  )
+  return <DashboardLayout>{children}</DashboardLayout>
 }

@@ -1,7 +1,10 @@
-import { Button } from "@loom/ui/components/button"
-
-import { PageShell } from "@/layouts/page-shell"
-import { PlaceholderCard } from "@/layouts/placeholder-card"
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@loom/ui/components/card"
 
 const settingSections = [
   {
@@ -20,29 +23,24 @@ const settingSections = [
 
 export default function SettingsPage() {
   return (
-    <PageShell
-      eyebrow="Settings"
-      title="系统设置"
-      description="用于承载模型接入、租户管理和平台配置等后台能力。"
-      actions={
-        <Button variant="outline" size="sm">
-          保存占位配置
-        </Button>
-      }
-    >
-      <section className="grid gap-4 lg:grid-cols-3">
-        {settingSections.map((section) => (
-          <PlaceholderCard
-            key={section.title}
-            title={section.title}
-            description={section.description}
-          >
-            <div className="rounded-xl border border-dashed px-4 py-8 text-sm text-muted-foreground">
-              当前仅保留结构占位，后续在这里接入对应模块。
-            </div>
-          </PlaceholderCard>
-        ))}
-      </section>
-    </PageShell>
+    <div className="flex flex-1 flex-col">
+      <div className="flex flex-1 flex-col gap-4 p-4">
+        <section className="grid gap-4 lg:grid-cols-3">
+          {settingSections.map((section) => (
+            <Card className="aspect-[16/9] bg-muted/50" key={section.title}>
+              <CardHeader>
+                <CardTitle>{section.title}</CardTitle>
+                <CardDescription>{section.description}</CardDescription>
+              </CardHeader>
+              <CardContent className="flex flex-1">
+                <div className="flex h-full w-full items-center justify-center rounded-xl border border-dashed px-4 py-8 text-sm text-muted-foreground">
+                  当前仅保留结构占位，后续在这里接入对应模块。
+                </div>
+              </CardContent>
+            </Card>
+          ))}
+        </section>
+      </div>
+    </div>
   )
 }
